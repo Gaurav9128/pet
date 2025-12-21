@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react'
 import './PlaceOrder.css'
 import { StoreContext } from '../../context/StoreContext'
-import Title from '../../Components/Title'
+import Title from '../../components/Title'
 import { assets } from '../../assets/assets'
 import { useNavigate } from 'react-router-dom'
 

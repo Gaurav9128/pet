@@ -1,9 +1,9 @@
 import React,{useState} from 'react'
 import './Home.css'
-import Header from '../../Components/Header/Header'
-import ExploreMenu from '../../Components/ExploreMenu/ExploreMenu'
+import Header from '../../components/Header/Header'
+import ExploreMenu from '../../components/ExploreMenu/ExploreMenu'
 // import FoodDisplay from '../../Components/FoodDisplay/FoodDisplay'
-import BestSeller from '../../Components/BestSeller';
+import BestSeller from '../../components/BestSeller';
 const Home = () => {
 
   const[category,setCategory]=useState("All");

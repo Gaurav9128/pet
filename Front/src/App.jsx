@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
-import Navbar from './Components/Navbar/Navbar';
+import Navbar from './components/Navbar/Navbar.jsx';
 import { Route, Routes } from 'react-router-dom';
 import Home from './Pages/Home/Home';
 import Cart from './Pages/Cart/Cart';
 import PlaceOrder from './Pages/PlaceOrder/PlaceOrder';
-import Footer from './Components/Footer/Footer';
-import LoginPopUp from './Components/LoginPopUp/LoginPopUp';
+import Footer from './components/Footer/Footer.jsx';
+import LoginPopUp from './components/LoginPopUp/LoginPopUp.jsx';
 import Orders from './Pages/Orders';
-import SearchBar from './Components/SearchBar';
+import SearchBar from './components/SearchBar.jsx';
 import StoreContextProvider from './context/StoreContext';
 import Collection from './Pages/Collection';
 import Product from './Pages/Product';
