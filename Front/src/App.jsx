@@ -12,7 +12,7 @@ import StoreContextProvider from './context/StoreContext';
 import Collection from './Pages/Collection';
 import Product from './Pages/Product';
 import PrivacyPolicy from './Pages/PrivacyPolicy.jsx';
-import TermsAndConditions from './pages/Term-condition.jsx';
+import TermsAndConditions from './Pages/TermCondition.jsx';
 
 
 const App = () => {
