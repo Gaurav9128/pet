@@ -11,7 +11,7 @@ import SearchBar from './Components/SearchBar';
 import StoreContextProvider from './context/StoreContext';
 import Collection from './Pages/Collection';
 import Product from './Pages/Product';
-import PrivacyPolicy from './pages/privacy-policy.jsx';
+import PrivacyPolicy from './Pages/PrivacyPolicy.jsx';
 import TermsAndConditions from './pages/Term-condition.jsx';
 
 
