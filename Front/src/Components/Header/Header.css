@@ -1,0 +1,32 @@
+.header{
+    height:34vw;
+    margin:30px auto;
+    background-size: contain;
+    position: relative;
+}
+
+.homeBannerSection {
+  width: 100%;
+  margin-top: 20px;
+}
+
+.homeBannerSection img {
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+}
+
+@media (max-width:1050px){
+    .header{
+        height:40vw;
+    }
+    .header-contents{
+      max-width:45px;
+    }
+}
+@media (max-width:750px){
+    
+    .header-contents{
+      max-width:65%;
+    }
+}

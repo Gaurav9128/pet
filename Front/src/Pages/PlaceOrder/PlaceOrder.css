@@ -1,0 +1,210 @@
+.place-order{
+   display: flex;
+   align-items: flex-start;
+   justify-content: space-between;
+   gap: 50px;
+   margin-top: 100px; 
+}
+
+/* LEFT SIDE */
+.place-order-left{
+    width: 100%;
+    max-width: max(30%, 500px);
+}
+
+.place-order-left .title{
+    font-size: 30px;
+    font-weight: 600;
+    margin-bottom: 40px;
+}
+
+.place-order-left input{
+    margin-bottom: 15px;
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #c5c5c5;
+    border-radius: 4px;
+    outline-color: #2563eb; /* blue */
+}
+
+.place-order-left .multi-fields{
+    display: flex;
+    gap: 10px;
+}
+
+/* RIGHT SIDE */
+.place-order-right{
+    width: 100%;
+    max-width: max(40%,500px);
+}
+
+/* CART TOTAL BOX */
+.cart-total{
+    border: 1px solid #ddd;
+    padding: 25px;
+    border-radius: 6px;
+    background-color: #fff;
+}
+
+.cart-total-details{
+    display: flex;
+    justify-content: space-between;
+    margin: 12px 0;
+}
+
+.cart-total-details.total{
+    font-weight: 600;
+    font-size: 15px;
+}
+
+/* PAYMENT METHOD */
+.payment-options{
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+    margin-bottom: 25px; /* space before button */
+}
+
+.payment-box{
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border: 1px solid #ccc;
+    padding: 12px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.payment-box img{
+    height: 24px;
+    object-fit: contain;
+}
+
+.payment-box.active{
+    border-color: #16a34a; /* green */
+}
+
+.radio{
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 1px solid #555;
+}
+
+.payment-box.active .radio{
+    background: #16a34a;
+}
+
+/* PLACE ORDER BUTTON */
+.place-order .cart-total button{
+    margin-top: 10px;
+    width: 100%;
+    padding: 12px 0;
+    background-color: #000;
+    color: #fff;
+    border: 2px solid #000;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.place-order .cart-total button:hover{
+    background-color: transparent;
+    color: #000;
+}
+.order-btn{
+    width: 100%;
+    padding: 12px 0;
+    background-color: #000;    /* black background */
+    color: #fff;               /* white text */
+    border: 2px solid #000;    /* black border */
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 20px;          /* gap from payment section */
+}
+
+.order-btn:hover{
+    background-color: transparent;
+    color: #000;
+}
+
+/* Footer spacing */
+footer {
+    margin-top: 40px; /* PLACE ORDER button ke neeche gap */
+    padding: 20px;
+    background-color: #f3f3f3;
+    text-align: center;
+}
+
+/* Agar form ke bottom se footer ko aur gap chahiye */
+.place-order {
+    padding-bottom: 40px; /* footer se gap create kare */
+}
+
+/* =========================
+   MOBILE RESPONSIVE FIX
+   ========================= */
+@media (max-width: 768px) {
+
+  .place-order {
+    flex-direction: column;   /* LEFT & RIGHT one below another */
+    gap: 30px;
+    margin-top: 40px;
+  }
+
+  /* LEFT & RIGHT full width */
+  .place-order-left,
+  .place-order-right {
+    max-width: 100%;
+    width: 100%;
+  }
+
+  /* Title size reduce */
+  .place-order-left .title {
+    font-size: 22px;
+    margin-bottom: 25px;
+  }
+
+  /* Multi fields stack */
+  .place-order-left .multi-fields {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  /* Inputs thoda tall */
+  .place-order-left input {
+    padding: 12px;
+    font-size: 14px;
+  }
+
+  /* Cart box spacing */
+  .cart-total {
+    padding: 20px;
+  }
+
+  /* Payment options vertical */
+  .payment-options {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .payment-box {
+    width: 100%;
+  }
+
+  /* Order button fix */
+  .order-btn {
+    font-size: 15px;
+    padding: 14px 0;
+  }
+
+  footer {
+    margin-top: 30px;
+  }
+}

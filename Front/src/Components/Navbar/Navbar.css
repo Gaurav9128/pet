@@ -1,0 +1,400 @@
+/* ========================= */
+/* MAIN NAVBAR */
+/* ========================= */
+.navbar {
+    padding: 20px 0px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+    border-bottom: 1px solid #ddd;
+}
+
+/* Logo */
+.navbar .logo {
+    width: 150px;
+    cursor: pointer;
+}
+
+/* ========================= */
+/* LEFT AREA (Logo + Categories) */
+/* ========================= */
+.navbar-left {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    position: relative;
+}
+
+/* All Categories Button */
+.category-btn {
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    font-weight: 600;
+    color: #233a95;
+}
+
+/* Category Dropdown */
+.category-dropdown {
+    position: absolute;
+    top: 50px;    /* Logo ke niche perfect */
+    left: 0;
+    width: 320px;
+    background: #fff;
+    border: 1px solid #ddd;
+    box-shadow: 0px 3px 12px rgba(0, 0, 0, 0.12);
+    padding: 20px;
+    z-index: 200;
+    max-height: 400px;
+    overflow-y: auto;
+    border-radius: 6px;
+}
+
+.category-section {
+    margin-bottom: 20px;
+}
+
+.category-section h3 {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #333;
+}
+
+.category-section p {
+    margin: 5px 0;
+    color: #555;
+    cursor: pointer;
+}
+
+.category-section p:hover {
+    color: #000;
+}
+
+/* ========================= */
+/* RIGHT SIDE (Search, Cart, Login) */
+/* ========================= */
+.navbar-right {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.nav-icon {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+/* Cart Notification Dot */
+.navbar-search-icon {
+    position: relative;
+}
+
+.navbar-search-icon .dot {
+    position: absolute;
+    min-width: 10px;
+    min-height: 10px;
+    background-color: red;
+    border-radius: 50%;
+    top: -6px;
+    right: -6px;
+}
+
+/* Login Button */
+.navbar button {
+    background: transparent;
+    font-size: 15px;
+    color: #49557e;
+    border: 1px solid #233a95;
+    padding: 10px 20px;
+    border-radius: 50px;
+    cursor: pointer;
+}
+
+.navbar button:hover {
+    background-color: #233a95;
+    color: white;
+    transition: all 0.3s ease;
+}
+.category-row {
+  border-bottom: 1px solid #e5e5e5;
+  padding: 12px 0;
+  cursor: pointer;
+}
+
+.category-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.category-title h3 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.toggle-btn {
+  font-size: 22px;
+  font-weight: bold;
+  padding: 0 10px;
+}
+
+.subcategory-box {
+  background: #e7e9ef;     /* SAME AS YOUR SECOND IMAGE */
+  padding: 15px 25px;
+  margin-top: 10px;
+  border-radius: 4px;
+}
+
+.subcategory-box p {
+  margin: 5px 0;
+  font-size: 14px;
+  color: #444;
+}
+
+
+/* ========================= */
+/* RESPONSIVE SETTINGS */
+/* ========================= */
+
+@media (max-width:1050px){
+    .navbar .logo {
+        width: 140px;
+    }
+    .navbar-right {
+        gap: 25px;
+    }
+    .navbar-right img {
+        width: 22px;
+    }
+    .navbar-right button {
+        padding: 8px 25px;
+    }
+}
+
+@media (max-width:900px){
+    .navbar .logo {
+        width: 120px;
+    }
+    .navbar-right {
+        gap: 20px;
+    }
+    .navbar-right img {
+        width: 20px;
+    }
+    .navbar-right button {
+        padding: 7px 20px;
+        font-size: 15px;
+    }
+}
+
+@media (max-width:750px){
+    .category-btn {
+        font-size: 16px;
+    }
+}
+@media (max-width: 600px) {
+
+  /* Navbar */
+  .navbar {
+    padding: 10px 12px;
+    height: 56px;
+  }
+
+  .navbar-left {
+    gap: 8px;
+  }
+
+  .navbar .logo {
+    width: 90px;
+  }
+
+  /* CATEGORY = HAMBURGER */
+  .category-btn {
+    font-size: 0 !important;
+    border: 1px solid #233a95;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+  }
+
+  .category-btn::before {
+    content: "☰";
+    font-size: 20px;
+    color: #233a95;
+  }
+
+  /* RIGHT SIDE */
+  .navbar-right {
+    gap: 14px;
+  }
+
+  .nav-icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  /* SIGN IN = USER ICON ONLY */
+  .navbar-right button {
+    font-size: 0;
+    border: none;
+    padding: 0;
+    background: transparent;
+  }
+
+  .navbar-right button::before {
+    content: "👤";
+    font-size: 20px;
+  }
+
+  /* FULL SCREEN CATEGORY MENU */
+  .category-dropdown {
+    position: fixed;
+    top: 56px;
+    left: 0;
+    width: 100%;
+    height: calc(100vh - 56px);
+    padding: 12px 15px;
+    border-radius: 0;
+    box-shadow: none;
+    overflow-y: auto;
+    animation: slideDown 0.3s ease;
+  }
+
+  /* CATEGORY LIST */
+  .category-row {
+    padding: 14px 0;
+  }
+
+  .category-title h3,
+  .cat-link {
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  .toggle-btn {
+    font-size: 18px;
+    color: #555;
+  }
+}
+
+/* Animation */
+@keyframes slideDown {
+  from {
+    transform: translateY(-10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+@media (max-width: 600px) {
+
+  /* Navbar */
+  .navbar {
+    padding: 10px 12px;
+    height: 56px;
+  }
+
+  .navbar-left {
+    gap: 8px;
+  }
+
+  .navbar .logo {
+    width: 90px;
+  }
+
+  /* CATEGORY = HAMBURGER */
+  .category-btn {
+    font-size: 0 !important;
+    border: 1px solid #233a95;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+  }
+
+  .category-btn::before {
+    content: "☰";
+    font-size: 20px;
+    color: #233a95;
+  }
+
+  /* RIGHT SIDE */
+  .navbar-right {
+    gap: 14px;
+  }
+
+  .nav-icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  /* SIGN IN = USER ICON ONLY */
+  .navbar-right button {
+    font-size: 0;
+    border: none;
+    padding: 0;
+    background: transparent;
+  }
+
+  .navbar-right button::before {
+    content: "👤";
+    font-size: 20px;
+  }
+
+  /* FULL SCREEN CATEGORY MENU */
+  .category-dropdown {
+    position: fixed;
+    top: 56px;
+    left: 0;
+    width: 100%;
+    height: calc(100vh - 56px);
+    padding: 12px 15px;
+    border-radius: 0;
+    box-shadow: none;
+    overflow-y: auto;
+    animation: slideDown 0.3s ease;
+  }
+
+  /* CATEGORY LIST */
+  .category-row {
+    padding: 14px 0;
+  }
+
+  .category-title h3,
+  .cat-link {
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  .toggle-btn {
+    font-size: 18px;
+    color: #555;
+  }
+}
+
+/* Animation */
+@keyframes slideDown {
+  from {
+    transform: translateY(-10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
