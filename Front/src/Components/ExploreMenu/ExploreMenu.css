@@ -1,3 +1,8 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
 .explore-menu{
     display: flex;
     flex-direction: column;
@@ -23,19 +28,28 @@ h1 {
 
 /* Card container small */
 .explore-menu-list-item {
-  width: 180px;          /* smaller width */
-  min-width: 160px;
+  flex: 0 0 180px;          /* 🔥 NO grow, NO shrink */
+  width: 180px;
+  max-width: 180px;
+  min-width: 180px;
+
+  height: 200px;           /* ⭐ SAME HEIGHT FOR ALL */
+
+  padding: 14px;
+  border-radius: 22px;
   background: #fff;
-  border-radius: 18px;
   border: 1px solid #f3d9e0;
-  padding: 10px;
-  text-align: center;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
 }
 
 /* Image smaller */
 .explore-menu-list-item img {
   width: 100%;
-  height: 160px;          /* smaller image height */
+  height: 150px;          /* smaller image height */
   object-fit: contain;
   border-radius: 12px;
   background: #ffeef4;   /* light pink bg like screenshot */
@@ -65,9 +79,9 @@ h1 {
     background-color:#e2e2e2;
 }
 
-.explore-menu-list-item .active{
-    border: 4px solid #ff4d6d;
-    padding: 2px;
+.explore-menu-list-item.active {
+  outline: 4px solid #ff4d6d;   /* outline size change nahi karta */
+  outline-offset: -4px;
 }
 @media(max-width:1050px){
   .explore-menu{

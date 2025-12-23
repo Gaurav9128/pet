@@ -50,18 +50,22 @@ const Navbar = ({ setShowLogin }) => {
           <img src={assets.logo} alt="logo" className="logo" />
         </Link>
 
-        <button
+        {/* <button
           ref={buttonRef}
           className="category-btn"
           onClick={() => setOpenCategories(!openCategories)}
         >
           ☰ All Categories
+        </button> */}
+
+        <button className="category-btn" onClick={() => setOpenCategories(!openCategories)} ref={buttonRef}>
+          <span className="category-text"> ☰ All Categories</span>
         </button>
 
         {/* CATEGORY DROPDOWN */}
         {openCategories && (
           <div className="category-dropdown" ref={dropdownRef}>
-            
+
             {/* CAT FOOD */}
             <div className="category-row">
               <div className="category-title">

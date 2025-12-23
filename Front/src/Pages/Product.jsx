@@ -57,12 +57,12 @@ const Product = () => {
         <div className='flex-1 flex flex-col-reverse gap-3 sm:flex-row'>
           <div className='flex sm:flex-col overflow-x-auto sm:overflow-y-scroll justify-between sm:justify-normal sm:w-[18.7%] w-full'>
             {productData.image.map((item, index) => (
-              <img 
-                onClick={() => setImage(item)} 
-                src={item} 
-                key={index} 
-                className='w-[24%] sm:w-full sm:mb-3 flex-shrink-0 cursor-pointer' 
-                alt="" 
+              <img
+                onClick={() => setImage(item)}
+                src={item}
+                key={index}
+                className='w-[24%] sm:w-full sm:mb-3 flex-shrink-0 cursor-pointer'
+                alt=""
               />
             ))}
           </div>
@@ -105,28 +105,38 @@ const Product = () => {
           <br />
           <button
             onClick={handleAddToCart}
-            className="border border-white-500 text-white-500 bg-white px-10 py-3 text-base font-semibold hover:bg-blue-50 active:bg-blue-100 transition-all duration-200">
+            className="
+    border border-orange-500
+    text-orange-500
+    bg-white
+    px-10 py-3.5
+    text-lg font-semibold
+    rounded-lg
+    hover:bg-orange-500 hover:text-white
+    transition-all duration-200
+  "
+          >
             Add to cart
           </button>
 
           {/* Info */}
           <div className='text-sm text-gray-500 mt-5 flex flex-col gap-1'>
-            <br/>
+            <br />
             <p>100% Original product.</p>
             <p>Cash on delivery is available on this product.</p>
             <p>Easy return and exchange policy within 7 days.</p>
           </div>
         </div>
       </div>
-      <br/>
-      <br/>
+      <br />
+      <br />
       {/* Description & Reviews */}
       <div className='mt-20'>
         <div className='flex gap-3'>
           <b className='border px-5 py-3 text-sm'>Description</b>
           <p className='border px-5 py-3 text-sm'>Reviews</p>
         </div>
-        <br/>
+        <br />
         <div className='flex flex-col gap-4 border px-6 py-6 text-sm text-gray-500'>
           <p>An e-commerce website is an online platform that facilitates the buying and selling of products or services over the internet...</p>
         </div>
