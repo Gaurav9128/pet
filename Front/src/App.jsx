@@ -35,7 +35,7 @@ const App = () => {
           <Route path='/cats' element={<Collection />} />
           <Route path="/product/:productId" element={<Product />} />
           <Route path="/privacypolicy" element={<PrivacyPolicy />} />
-          <Route path='/Termcondition' element={<TermsAndConditions />} />
+         <Route path='/termscondition' element={<TermsAndConditions />} />
         </Routes>
       </div>
 
