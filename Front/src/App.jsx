@@ -34,8 +34,8 @@ const App = () => {
           <Route path='/payment' element={<Orders />} />
           <Route path='/cats' element={<Collection />} />
           <Route path="/product/:productId" element={<Product />} />
-          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-          <Route path='/Term-condition' element={<TermsAndConditions />} />
+          <Route path="/privacypolicy" element={<PrivacyPolicy />} />
+          <Route path='/Termcondition' element={<TermsAndConditions />} />
         </Routes>
       </div>
 

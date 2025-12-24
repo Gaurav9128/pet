@@ -19,8 +19,8 @@ const Footer = () => {
           <ul>
            <li className="hover:text-blue-600 hover:underline cursor-pointer"><a href="/">Home</a></li>
            <li className="hover:text-blue-600 hover:underline cursor-pointer"><a href="/contact">Contact Us</a></li>
-            <li className="hover:text-blue-600 hover:underline cursor-pointer"><a href="/privacy-policy">Privacy Policy</a></li>
-            <li className="hover:text-blue-600 hover:underline cursor-pointer"><a href="/Term-condition">Terms&Conditions</a></li>
+            <li className="hover:text-blue-600 hover:underline cursor-pointer"><a href="/privacypolicy">Privacy Policy</a></li>
+            <li className="hover:text-blue-600 hover:underline cursor-pointer"><a href="/Termcondition">Terms&Conditions</a></li>
           </ul>
         </div>
 
