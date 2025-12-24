@@ -18,14 +18,14 @@ const Navbar = ({ setShowLogin }) => {
     setOpenCat(openCat === id ? null : id);
   };
 
-  /* ✅ CATEGORY CLICK → CLOSE DROPDOWN */
+  /* CATEGORY CLICK → CLOSE DROPDOWN */
   const handleCategoryClick = () => {
     setOpenCategories(false);
     setOpenCat(null);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  /* Outside click close */
+  /* OUTSIDE CLICK CLOSE */
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -42,6 +42,19 @@ const Navbar = ({ setShowLogin }) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  /* 🔥 AUTO CLOSE ON SCROLL (MOBILE ONLY) */
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.innerWidth < 640) {
+        setOpenCategories(false);
+        setOpenCat(null);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
     <div className="navbar">
       {/* LEFT */}
@@ -50,15 +63,11 @@ const Navbar = ({ setShowLogin }) => {
           <img src={assets.logo} alt="logo" className="logo" />
         </Link>
 
-        {/* <button
-          ref={buttonRef}
+        <button
           className="category-btn"
           onClick={() => setOpenCategories(!openCategories)}
+          ref={buttonRef}
         >
-          ☰ All Categories
-        </button> */}
-
-        <button className="category-btn" onClick={() => setOpenCategories(!openCategories)} ref={buttonRef}>
           <span className="category-text"> ☰ All Categories</span>
         </button>
 
@@ -66,102 +75,37 @@ const Navbar = ({ setShowLogin }) => {
         {openCategories && (
           <div className="category-dropdown" ref={dropdownRef}>
 
-            {/* CAT FOOD */}
             <div className="category-row">
               <div className="category-title">
-                <Link
-                  to="/cats"
-                  className="cat-link"
-                  onClick={handleCategoryClick}
-                >
+                <Link to="/cats" className="cat-link" onClick={handleCategoryClick}>
                   CAT FOOD
                 </Link>
-                <span
-                  className="toggle-btn"
-                  onClick={() => toggleCategory(1)}
-                >
+                <span className="toggle-btn" onClick={() => toggleCategory(1)}>
                   {openCat === 1 ? "−" : "+"}
                 </span>
               </div>
             </div>
 
-            {/* DOG FOOD */}
-            <div className="category-row">
-              <div className="category-title">
-                <h3 onClick={handleCategoryClick}>DOG FOOD</h3>
-                <span
-                  className="toggle-btn"
-                  onClick={() => toggleCategory(2)}
-                >
-                  {openCat === 2 ? "−" : "+"}
-                </span>
+            {[
+              "DOG FOOD",
+              "SMALL PETS",
+              "PET PARENT",
+              "HENLO",
+              "PHARMACY",
+              "SHOP BY BREED"
+            ].map((item, index) => (
+              <div className="category-row" key={item}>
+                <div className="category-title">
+                  <h3 onClick={handleCategoryClick}>{item}</h3>
+                  <span
+                    className="toggle-btn"
+                    onClick={() => toggleCategory(index + 2)}
+                  >
+                    {openCat === index + 2 ? "−" : "+"}
+                  </span>
+                </div>
               </div>
-            </div>
-
-            {/* SMALL PETS */}
-            <div className="category-row">
-              <div className="category-title">
-                <h3 onClick={handleCategoryClick}>SMALL PETS</h3>
-                <span
-                  className="toggle-btn"
-                  onClick={() => toggleCategory(3)}
-                >
-                  {openCat === 3 ? "−" : "+"}
-                </span>
-              </div>
-            </div>
-
-            {/* PET PARENT */}
-            <div className="category-row">
-              <div className="category-title">
-                <h3 onClick={handleCategoryClick}>PET PARENT</h3>
-                <span
-                  className="toggle-btn"
-                  onClick={() => toggleCategory(4)}
-                >
-                  {openCat === 4 ? "−" : "+"}
-                </span>
-              </div>
-            </div>
-
-            {/* HENLO */}
-            <div className="category-row">
-              <div className="category-title">
-                <h3 onClick={handleCategoryClick}>HENLO</h3>
-                <span
-                  className="toggle-btn"
-                  onClick={() => toggleCategory(5)}
-                >
-                  {openCat === 5 ? "−" : "+"}
-                </span>
-              </div>
-            </div>
-
-            {/* PHARMACY */}
-            <div className="category-row">
-              <div className="category-title">
-                <h3 onClick={handleCategoryClick}>PHARMACY</h3>
-                <span
-                  className="toggle-btn"
-                  onClick={() => toggleCategory(6)}
-                >
-                  {openCat === 6 ? "−" : "+"}
-                </span>
-              </div>
-            </div>
-
-            {/* SHOP BY BREED */}
-            <div className="category-row">
-              <div className="category-title">
-                <h3 onClick={handleCategoryClick}>SHOP BY BREED</h3>
-                <span
-                  className="toggle-btn"
-                  onClick={() => toggleCategory(7)}
-                >
-                  {openCat === 7 ? "−" : "+"}
-                </span>
-              </div>
-            </div>
+            ))}
 
           </div>
         )}

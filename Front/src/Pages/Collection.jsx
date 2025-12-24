@@ -10,41 +10,45 @@ const Collection = () => {
 
   const [showFilter, setShowFilter] = useState(false);
   const [filterProducts, setFilterProducts] = useState([]);
+
+  // ✅ FINAL APPLIED FILTERS
   const [category, setCategory] = useState([]);
   const [subCategory, setSubCategory] = useState([]);
+
+  // ⏳ TEMP FILTERS
+  const [tempCategory, setTempCategory] = useState([]);
+  const [tempSubCategory, setTempSubCategory] = useState([]);
+
   const [sortType, setSortType] = useState('relavent');
 
   /* =======================
-     🔽 AUTO CLOSE FILTER ON SCROLL (MOBILE ONLY)
-     ======================= */
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.innerWidth < 640) {
-        setShowFilter(false);
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  /* =======================
-     CATEGORY TOGGLE
+     TOGGLE TEMP CATEGORY
      ======================= */
   const toggleCategory = (e) => {
-    if (category.includes(e.target.value)) {
-      setCategory(prev => prev.filter(item => item !== e.target.value));
-    } else {
-      setCategory(prev => [...prev, e.target.value]);
-    }
+    const value = e.target.value;
+    setTempCategory(prev =>
+      prev.includes(value)
+        ? prev.filter(item => item !== value)
+        : [...prev, value]
+    );
   };
 
   const toggleSubCategory = (e) => {
-    if (subCategory.includes(e.target.value)) {
-      setSubCategory(prev => prev.filter(item => item !== e.target.value));
-    } else {
-      setSubCategory(prev => [...prev, e.target.value]);
-    }
+    const value = e.target.value;
+    setTempSubCategory(prev =>
+      prev.includes(value)
+        ? prev.filter(item => item !== value)
+        : [...prev, value]
+    );
+  };
+
+  /* =======================
+     DONE BUTTON
+     ======================= */
+  const handleDone = () => {
+    setCategory(tempCategory);
+    setSubCategory(tempSubCategory);
+    setShowFilter(false); // ✅ ONLY HERE FILTER CLOSES
   };
 
   /* =======================
@@ -130,8 +134,13 @@ const Collection = () => {
 
           {['Cat Food','Dog Food','Small Pets','Pet Parent','Henlo','Pharmacy','Consult a Vet']
             .map(item => (
-              <label key={item} className="flex items-center gap-3 text-gray-700 mb-2">
-                <input type="checkbox" value={item} onChange={toggleCategory} />
+              <label key={item} className="flex items-center gap-3 mb-2 text-gray-700">
+                <input
+                  type="checkbox"
+                  value={item}
+                  onChange={toggleCategory}
+                  checked={tempCategory.includes(item)}
+                />
                 {item}
               </label>
           ))}
@@ -147,11 +156,24 @@ const Collection = () => {
             'BakedDryFood','PremiumDogFood','Biscuits&Cookies','Bones&Chews',
             'SkinCare','JointCare','KidneyCare','LiverCare','CardiacCare','Eye&EarCare'
           ].map(item => (
-            <label key={item} className="flex items-center gap-3 text-gray-700 mb-2">
-              <input type="checkbox" value={item} onChange={toggleSubCategory} />
+            <label key={item} className="flex items-center gap-3 mb-2 text-gray-700">
+              <input
+                type="checkbox"
+                value={item}
+                onChange={toggleSubCategory}
+                checked={tempSubCategory.includes(item)}
+              />
               {item.replace(/&/g, ' & ')}
             </label>
           ))}
+
+          {/* DONE BUTTON */}
+          <button
+            onClick={handleDone}
+            className="mt-4 w-full bg-black text-white py-2 rounded"
+          >
+            Done
+          </button>
         </div>
       </div>
 
@@ -159,7 +181,6 @@ const Collection = () => {
       <div className="flex-1">
         <div className="flex justify-between text-base sm:text-2xl mb-4">
           <Title text1={'ALL'} text2={'COLLECTIONS'} />
-
           <select
             onChange={(e) => setSortType(e.target.value)}
             className="border-2 border-gray-300 text-sm px-2"
