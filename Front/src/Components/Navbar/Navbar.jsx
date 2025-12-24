@@ -35,6 +35,7 @@ const Navbar = ({ setShowLogin }) => {
         !buttonRef.current.contains(event.target)
       ) {
         setOpenCategories(false);
+        setOpenCat(null);
       }
     };
 
@@ -42,13 +43,11 @@ const Navbar = ({ setShowLogin }) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  /* 🔥 AUTO CLOSE ON SCROLL (MOBILE ONLY) */
+  /* ✅ AUTO CLOSE ON SCROLL (ALL DEVICES) */
   useEffect(() => {
     const handleScroll = () => {
-      if (window.innerWidth < 640) {
-        setOpenCategories(false);
-        setOpenCat(null);
-      }
+      setOpenCategories(false);
+      setOpenCat(null);
     };
 
     window.addEventListener("scroll", handleScroll);
@@ -74,7 +73,6 @@ const Navbar = ({ setShowLogin }) => {
         {/* CATEGORY DROPDOWN */}
         {openCategories && (
           <div className="category-dropdown" ref={dropdownRef}>
-
             <div className="category-row">
               <div className="category-title">
                 <Link to="/cats" className="cat-link" onClick={handleCategoryClick}>
@@ -106,7 +104,6 @@ const Navbar = ({ setShowLogin }) => {
                 </div>
               </div>
             ))}
-
           </div>
         )}
       </div>
