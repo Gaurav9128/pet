@@ -47,14 +47,14 @@ const TermsAndConditions = () => {
 
             <h3>7. Lost or Damaged Shipments</h3>
             <ul>
-                <li>If your shipment is lost or damaged in transit, please contact us immediately at [abc@gmail.com || +91-8824454873].</li>
+                <li>If your shipment is lost or damaged in transit, please contact us immediately at [Rizwaanbhati.rb1004@gmail.com || +91- 987654321].</li>
                 <li>We will work with the courier service to resolve the issue and provide a replacement or refund if applicable.</li>
             </ul><br/>
 
             <h3>8. Contact Us</h3>
             <ul>
-                <li><strong>Email:</strong> [abc@gmail.com]</li>
-                <li><strong>Phone:</strong> [+91-8824454873]</li>
+                <li><strong>Email:</strong> [Rizwaanbhati.rb1004@gmail.com]</li>
+                <li><strong>Phone:</strong> [+91- 987654321]</li>
                 <li><strong>Address:</strong> [Malviya Nagar Jaipur(302017)]</li>
             </ul><br/>
 
@@ -71,14 +71,14 @@ const TermsAndConditions = () => {
             <h3>2. Cancellation Policy</h3>
             <ul>
                 <li>Orders can be canceled within 24 hours of placement if they have not yet been shipped.</li>
-                <li>To cancel an order, please contact us immediately at [abc@gmail.com || +91-8824454873].</li>
+                <li>To cancel an order, please contact us immediately at [Rizwaanbhati.rb1004@gmail.com || +91- 987654321].</li>
                 <li>If the order has already been shipped, cancellation is not possible, but you may initiate a return.</li>
             </ul> <br/>
 
             <h3>3. Return Policy</h3>
             <ul>
                 <li>Items can be returned within 3 days of delivery if they are unused, unworn, and in their original packaging with tags intact.</li>
-                <li>To initiate a return, contact us at [abc@gmail.com || +91-8824454873] with your order details and reason for return.</li>
+                <li>To initiate a return, contact us at [Rizwaanbhati.rb1004@gmail.com || +91- 987654321] with your order details and reason for return.</li>
                 <li>The customer is responsible for return shipping costs unless the return is due to a defect or error on our part.</li>
                 <li>Once the returned item is received and inspected, we will notify you of the approval or rejection of your return.</li>
             </ul><br/>
@@ -98,8 +98,8 @@ const TermsAndConditions = () => {
 
             <h3>6. Contact Us</h3>
             <ul>
-                <li><strong>Email:</strong> [abc@gmail.com]</li>
-                <li><strong>Phone:</strong> [+91-8824454873]</li>
+                <li><strong>Email:</strong> [Rizwaanbhati.rb1004@gmail.com]</li>
+                <li><strong>Phone:</strong> [+91- 987654321]</li>
                 <li><strong>Address:</strong> [Malviya Nagar Jaipur(302017)]</li>
             </ul><br/>
 

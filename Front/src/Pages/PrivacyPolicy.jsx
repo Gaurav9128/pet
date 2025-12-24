@@ -48,7 +48,7 @@ const PrivacyPolicy = () => {
                 <li><strong>Deletion:</strong> Request the deletion of your personal information (subject to legal obligations).</li>
                 <li><strong>Opt-Out:</strong> Unsubscribe from marketing communications.</li>
             </ul>
-            <p>To exercise these rights, please contact us at [abc@gmail.com].</p> <br/>
+            <p>To exercise these rights, please contact us at [Rizwaanbhati.rb1004@gmail.com].</p> <br/>
 
             <h2>6. Cookies and Tracking Technologies</h2>
             <p>We use cookies and similar technologies to enhance your browsing experience. You can control cookies through your browser settings. Please note that disabling cookies may affect the functionality of our website.</p>
@@ -65,8 +65,8 @@ const PrivacyPolicy = () => {
             <h2>9. Contact Us</h2>
             <p>If you have any questions or concerns about this Privacy Policy or our data practices, please contact us:</p>
             <ul>
-                <li><strong>Email:</strong> [abc@gmail.com]</li>
-                <li><strong>Phone:</strong> [+91-8824454873]</li>
+                <li><strong>Email:</strong> [Rizwaanbhati.rb1004@gmail.com]</li>
+                <li><strong>Phone:</strong> [+91- 987654321]</li>
                 <li><strong>Address:</strong> [Malviya Nagar Jaipur (302017)]</li>
             </ul> <br/>
 
