@@ -103,96 +103,202 @@ const Collection = () => {
           <img className={`h-3 sm:hidden ${showFilter ? 'rotate-90' : ''}`} src={assets.dropdown_icon} alt="" />
         </p>
         {/* Category Filter */}
-        <div className={`border border-gray-300 pl-5 py-3 mt-6 ${showFilter ? '' :'hidden'} sm:block`}>
-          <p className='mb-3 text-sm font-medium'>CATEGORIES</p>
-          <div className='flex flex-col gap-2 text-sm font-light text-gray-700'>
-            <p className='flex gap-2'>
-              <input className='w-3' type="checkbox" value={'Cat Food'} onChange={toggleCategory}/> Cat Food
-            </p>
-            <p className='flex gap-2'>
-              <input className='w-3' type="checkbox" value={'Dog Food'} onChange={toggleCategory}/> Dog Food
-            </p>
-            <p className='flex gap-2'>
-              <input className='w-3' type="checkbox" value={'Small Pets'} onChange={toggleCategory}/> Small Pets
-            </p>
-             <p className='flex gap-2'>
-              <input className='w-3' type="checkbox" value={'Pet Parent'} onChange={toggleCategory}/> Pet Parent
-            </p>
-            <p className='flex gap-2'>
-              <input className='w-3' type="checkbox" value={'Henlo'} onChange={toggleCategory}/>Henlo
-            </p>
-            <p className='flex gap-2'>
-              <input className='w-3' type="checkbox" value={'Pharmacy'} onChange={toggleCategory}/>Pharmacy
-            </p>
-            <p className='flex gap-2'>
-              <input className='w-3' type="checkbox" value={'Consult a Vet'} onChange={toggleCategory}/>Consult a Vet
-            </p>
-          </div>
-        </div>
+        <div
+  className={`border border-gray-300 pl-5 py-4 mt-6 ${
+    showFilter ? '' : 'hidden'
+  } sm:block`}
+>
+  <p className="mb-4 text-base sm:text-sm font-semibold">
+    CATEGORIES
+  </p>
+
+  <div className="flex flex-col gap-3 text-gray-700">
+    <p className="flex items-center gap-3 text-base sm:text-sm">
+      <input
+        className="w-4 h-4 sm:w-3 sm:h-3"
+        type="checkbox"
+        value={'Cat Food'}
+        onChange={toggleCategory}
+      />
+      Cat Food
+    </p>
+
+    <p className="flex items-center gap-3 text-base sm:text-sm">
+      <input
+        className="w-4 h-4 sm:w-3 sm:h-3"
+        type="checkbox"
+        value={'Dog Food'}
+        onChange={toggleCategory}
+      />
+      Dog Food
+    </p>
+
+    <p className="flex items-center gap-3 text-base sm:text-sm">
+      <input
+        className="w-4 h-4 sm:w-3 sm:h-3"
+        type="checkbox"
+        value={'Small Pets'}
+        onChange={toggleCategory}
+      />
+      Small Pets
+    </p>
+
+    <p className="flex items-center gap-3 text-base sm:text-sm">
+      <input
+        className="w-4 h-4 sm:w-3 sm:h-3"
+        type="checkbox"
+        value={'Pet Parent'}
+        onChange={toggleCategory}
+      />
+      Pet Parent
+    </p>
+
+    <p className="flex items-center gap-3 text-base sm:text-sm">
+      <input
+        className="w-4 h-4 sm:w-3 sm:h-3"
+        type="checkbox"
+        value={'Henlo'}
+        onChange={toggleCategory}
+      />
+      Henlo
+    </p>
+
+    <p className="flex items-center gap-3 text-base sm:text-sm">
+      <input
+        className="w-4 h-4 sm:w-3 sm:h-3"
+        type="checkbox"
+        value={'Pharmacy'}
+        onChange={toggleCategory}
+      />
+      Pharmacy
+    </p>
+
+    <p className="flex items-center gap-3 text-base sm:text-sm">
+      <input
+        className="w-4 h-4 sm:w-3 sm:h-3"
+        type="checkbox"
+        value={'Consult a Vet'}
+        onChange={toggleCategory}
+      />
+      Consult a Vet
+    </p>
+  </div>
+</div>
+
         <br/>
         {/* SubCategory Filter */}
-        <div className={`border border-gray-300 pl-5 py-3 my-5 ${showFilter ? '' :'hidden'} sm:block`}>
-          <p className='mb-3 text-sm font-medium'>TYPE</p>
-          <div className='flex flex-col gap-2 text-sm font-light text-gray-700'>
-            <p className='flex gap-2'>
-              <input className='w-3' type="checkbox" value={'DryFood'} onChange={toggleSubCategory}/> Dry Food
-            </p>
-            <p className='flex gap-2'>
-              <input className='w-3' type="checkbox" value={'WetFood'} onChange={toggleSubCategory}/> Wet Food
-            </p>
-            <p className='flex gap-2'>
-              <input className='w-3' type="checkbox" value={'KittenFood'} onChange={toggleSubCategory}/>Kitten Food
-            </p>
-            <p className='flex gap-2'>
-              <input className='w-3' type="checkbox" value={'PremiumFood'} onChange={toggleSubCategory}/>Premium Food
-            </p>
-            <p className='flex gap-2'>
-              <input className='w-3' type="checkbox" value={'CreamyTreats'} onChange={toggleSubCategory}/>Creamy Treats
-            </p>
-            <p className='flex gap-2'>
-              <input className='w-3' type="checkbox" value={'JerkyTreats'} onChange={toggleSubCategory}/>Jerky Treats
-            </p>
-            <p className='flex gap-2'>
-              <input className='w-3' type="checkbox" value={'CrunchyTreats'} onChange={toggleSubCategory}/>Crunchy Treats
-            </p>
-            <p className='flex gap-2'>
-              <input className='w-3' type="checkbox" value={'PuppyFood'} onChange={toggleSubCategory}/>Puppy Food
-            </p>
-            <p className='flex gap-2'>
-              <input className='w-3' type="checkbox" value={'GrainFreeFood'} onChange={toggleSubCategory}/>Grain Free Food
-            </p>
-            <p className='flex gap-2'>
-              <input className='w-3' type="checkbox" value={'BakedDryFood'} onChange={toggleSubCategory}/>Baked Dry Food
-            </p>
-            <p className='flex gap-2'>
-              <input className='w-3' type="checkbox" value={'PremiumDogFood'} onChange={toggleSubCategory}/>Premium Dog Food
-            </p>
-            <p className='flex gap-2'>
-              <input className='w-3' type="checkbox" value={'Biscuits&Cookies'} onChange={toggleSubCategory}/>Biscuits & Cookies
-            </p>
-            <p className='flex gap-2'>
-              <input className='w-3' type="checkbox" value={'Bones&Chews'} onChange={toggleSubCategory}/>Bones & Chews
-            </p>
-            <p className='flex gap-2'>
-              <input className='w-3' type="checkbox" value={'SkinCare'} onChange={toggleSubCategory}/>Skin Care
-            </p>
-            <p className='flex gap-2'>
-              <input className='w-3' type="checkbox" value={'JointCare'} onChange={toggleSubCategory}/>Joint Care
-            </p>
-            <p className='flex gap-2'>
-              <input className='w-3' type="checkbox" value={'KidneyCare'} onChange={toggleSubCategory}/>Kidney Care
-            </p>
-            <p className='flex gap-2'>
-              <input className='w-3' type="checkbox" value={'LiverCare'} onChange={toggleSubCategory}/>Liver Care
-            </p>
-            <p className='flex gap-2'>
-              <input className='w-3' type="checkbox" value={'CardiacCare'} onChange={toggleSubCategory}/>Cardiac Care
-            </p>
-            <p className='flex gap-2'>
-              <input className='w-3' type="checkbox" value={'Eye&EarCare'} onChange={toggleSubCategory}/>Eye & Ear Care
-            </p>
-          </div>
-        </div>
+        <div
+  className={`border border-gray-300 pl-5 py-4 my-5 ${
+    showFilter ? '' : 'hidden'
+  } sm:block`}
+>
+  <p className="mb-4 text-base sm:text-sm font-semibold">
+    TYPE
+  </p>
+
+  <div className="flex flex-col gap-3 text-gray-700">
+    <p className="flex items-center gap-3 text-base sm:text-sm">
+      <input
+        className="w-4 h-4 sm:w-3 sm:h-3"
+        type="checkbox"
+        value={'DryFood'}
+        onChange={toggleSubCategory}
+      />
+      Dry Food
+    </p>
+
+    <p className="flex items-center gap-3 text-base sm:text-sm">
+      <input className="w-4 h-4 sm:w-3 sm:h-3" type="checkbox" value={'WetFood'} onChange={toggleSubCategory} />
+      Wet Food
+    </p>
+
+    <p className="flex items-center gap-3 text-base sm:text-sm">
+      <input className="w-4 h-4 sm:w-3 sm:h-3" type="checkbox" value={'KittenFood'} onChange={toggleSubCategory} />
+      Kitten Food
+    </p>
+
+    <p className="flex items-center gap-3 text-base sm:text-sm">
+      <input className="w-4 h-4 sm:w-3 sm:h-3" type="checkbox" value={'PremiumFood'} onChange={toggleSubCategory} />
+      Premium Food
+    </p>
+
+    <p className="flex items-center gap-3 text-base sm:text-sm">
+      <input className="w-4 h-4 sm:w-3 sm:h-3" type="checkbox" value={'CreamyTreats'} onChange={toggleSubCategory} />
+      Creamy Treats
+    </p>
+
+    <p className="flex items-center gap-3 text-base sm:text-sm">
+      <input className="w-4 h-4 sm:w-3 sm:h-3" type="checkbox" value={'JerkyTreats'} onChange={toggleSubCategory} />
+      Jerky Treats
+    </p>
+
+    <p className="flex items-center gap-3 text-base sm:text-sm">
+      <input className="w-4 h-4 sm:w-3 sm:h-3" type="checkbox" value={'CrunchyTreats'} onChange={toggleSubCategory} />
+      Crunchy Treats
+    </p>
+
+    <p className="flex items-center gap-3 text-base sm:text-sm">
+      <input className="w-4 h-4 sm:w-3 sm:h-3" type="checkbox" value={'PuppyFood'} onChange={toggleSubCategory} />
+      Puppy Food
+    </p>
+
+    <p className="flex items-center gap-3 text-base sm:text-sm">
+      <input className="w-4 h-4 sm:w-3 sm:h-3" type="checkbox" value={'GrainFreeFood'} onChange={toggleSubCategory} />
+      Grain Free Food
+    </p>
+
+    <p className="flex items-center gap-3 text-base sm:text-sm">
+      <input className="w-4 h-4 sm:w-3 sm:h-3" type="checkbox" value={'BakedDryFood'} onChange={toggleSubCategory} />
+      Baked Dry Food
+    </p>
+
+    <p className="flex items-center gap-3 text-base sm:text-sm">
+      <input className="w-4 h-4 sm:w-3 sm:h-3" type="checkbox" value={'PremiumDogFood'} onChange={toggleSubCategory} />
+      Premium Dog Food
+    </p>
+
+    <p className="flex items-center gap-3 text-base sm:text-sm">
+      <input className="w-4 h-4 sm:w-3 sm:h-3" type="checkbox" value={'Biscuits&Cookies'} onChange={toggleSubCategory} />
+      Biscuits & Cookies
+    </p>
+
+    <p className="flex items-center gap-3 text-base sm:text-sm">
+      <input className="w-4 h-4 sm:w-3 sm:h-3" type="checkbox" value={'Bones&Chews'} onChange={toggleSubCategory} />
+      Bones & Chews
+    </p>
+
+    <p className="flex items-center gap-3 text-base sm:text-sm">
+      <input className="w-4 h-4 sm:w-3 sm:h-3" type="checkbox" value={'SkinCare'} onChange={toggleSubCategory} />
+      Skin Care
+    </p>
+
+    <p className="flex items-center gap-3 text-base sm:text-sm">
+      <input className="w-4 h-4 sm:w-3 sm:h-3" type="checkbox" value={'JointCare'} onChange={toggleSubCategory} />
+      Joint Care
+    </p>
+
+    <p className="flex items-center gap-3 text-base sm:text-sm">
+      <input className="w-4 h-4 sm:w-3 sm:h-3" type="checkbox" value={'KidneyCare'} onChange={toggleSubCategory} />
+      Kidney Care
+    </p>
+
+    <p className="flex items-center gap-3 text-base sm:text-sm">
+      <input className="w-4 h-4 sm:w-3 sm:h-3" type="checkbox" value={'LiverCare'} onChange={toggleSubCategory} />
+      Liver Care
+    </p>
+
+    <p className="flex items-center gap-3 text-base sm:text-sm">
+      <input className="w-4 h-4 sm:w-3 sm:h-3" type="checkbox" value={'CardiacCare'} onChange={toggleSubCategory} />
+      Cardiac Care
+    </p>
+
+    <p className="flex items-center gap-3 text-base sm:text-sm">
+      <input className="w-4 h-4 sm:w-3 sm:h-3" type="checkbox" value={'Eye&EarCare'} onChange={toggleSubCategory} />
+      Eye & Ear Care
+    </p>
+  </div>
+</div>
+
       </div>
 
       {/* Right Side */}

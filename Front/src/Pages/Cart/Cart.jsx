@@ -4,11 +4,22 @@ import { StoreContext } from '../../context/StoreContext';
 import { useNavigate } from 'react-router-dom';
 
 const Cart = () => {
-  const { cartItems, removeFromCart, increaseQuantity, decreaseQuantity, getTotalCartAmount } = useContext(StoreContext);
+  const {
+    cartItems,
+    removeFromCart,
+    increaseQuantity,
+    decreaseQuantity,
+    getTotalCartAmount
+  } = useContext(StoreContext);
+
   const navigate = useNavigate();
+
+  // ✅ check if cart is empty
+  const isCartEmpty = Object.keys(cartItems).length === 0;
 
   return (
     <div className='cart'>
+      {/* CART ITEMS */}
       <div className="cart-items">
         <div className="cart-items-title">
           <p>Items</p>
@@ -18,72 +29,113 @@ const Cart = () => {
           <p>Total</p>
           <p>Remove</p>
         </div>
+
         <br />
         <hr />
 
-        {/* Loop through cartItems keys instead of products */}
-        {Object.keys(cartItems).map((cartKey, index) => {
-          const item = cartItems[cartKey]; // object with { quantity, price, size, name }
-          
-          return (
-            <div key={index}>
-              <div className='cart-items-title cart-items-item'>
-                <img src={item.image} alt='' className='cart-item-image' />
-                {/* Show size in title */}
-                <p>{item.name} ({item.size})</p>
-                <p>₹{item.price}</p>
+        {/* CART PRODUCTS */}
+        {!isCartEmpty &&
+          Object.keys(cartItems).map((cartKey, index) => {
+            const item = cartItems[cartKey];
 
-                {/* Quantity Control */}
-                <div className='quantity-control'>
-                  <button onClick={() => decreaseQuantity(cartKey)}>-</button>
-                  <span>{item.quantity}</span>
-                  <button onClick={() => increaseQuantity(cartKey)}>+</button>
+            return (
+              <div key={index}>
+                <div className='cart-items-title cart-items-item'>
+                  <img src={item.image} alt={item.name} className='cart-item-image' />
+
+                  <p>
+                    {item.name} ({item.size})
+                  </p>
+
+                  <p>₹{item.price}</p>
+
+                  {/* QUANTITY CONTROL */}
+                  <div className='quantity-control'>
+                    <button onClick={() => decreaseQuantity(cartKey)}>-</button>
+                    <span>{item.quantity}</span>
+                    <button onClick={() => increaseQuantity(cartKey)}>+</button>
+                  </div>
+
+                  <p>₹{item.price * item.quantity}</p>
+
+                  <p
+                    onClick={() => removeFromCart(cartKey)}
+                    className='cross'
+                  >
+                    X
+                  </p>
                 </div>
-
-                <p>₹{item.price * item.quantity}</p>
-                <p onClick={() => removeFromCart(cartKey)} className='cross'>X</p>
+                <hr />
               </div>
-              <hr />
-            </div>
-          )
-        })}
+            );
+          })}
+
+        {/* EMPTY CART MESSAGE */}
+        {isCartEmpty && (
+          <p className="empty-cart-text">
+            Your cart is empty
+          </p>
+        )}
       </div>
 
+      {/* CART BOTTOM */}
       <div className="cart-bottom">
+        {/* CART TOTALS */}
         <div className='cart-total'>
           <h2>Cart Totals</h2>
+
           <div>
             <div className="cart-total-details">
               <p>SubTotal</p>
               <p>₹{getTotalCartAmount()}</p>
             </div>
+
             <hr />
+
             <div className="cart-total-details">
               <p>Delivery Fee</p>
-              <p>₹{getTotalCartAmount() === 0 ? 0 : 2}</p>
+              <p>₹{isCartEmpty ? 0 : 2}</p>
             </div>
+
             <hr />
+
             <div className="cart-total-details">
               <p>Total</p>
-              <p>₹{getTotalCartAmount() === 0 ? 0 : getTotalCartAmount() + 2}</p>
+              <p>
+                ₹{isCartEmpty ? 0 : getTotalCartAmount() + 2}
+              </p>
             </div>
           </div>
-          <button onClick={() => navigate('/order')}>PROCEED TO CHECKOUT</button>
+
+          {/* ✅ SHOW BUTTON ONLY IF CART HAS ITEMS */}
+          {!isCartEmpty && (
+            <button onClick={() => navigate('/order')}>
+              PROCEED TO CHECKOUT
+            </button>
+          )}
+
           <hr />
         </div>
 
-        <div className="cart-promocode">
-          <div>
-            <p>If you have a promo code, please enter it here:</p>
-            <div className='cart-promocode-input'>
-              <input type="text" placeholder="Enter promo code" />
-              <button>APPLY</button>
+        {/* PROMO CODE */}
+        {!isCartEmpty && (
+          <div className="cart-promocode">
+            <div>
+              <p>If you have a promo code, please enter it here:</p>
+
+              <div className='cart-promocode-input'>
+                <input
+                  type="text"
+                  placeholder="Enter promo code"
+                />
+                <button>APPLY</button>
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
-}
+};
 
 export default Cart;
