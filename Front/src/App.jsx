@@ -14,7 +14,8 @@ import Product from './Pages/Product';
 import PrivacyPolicy from './Pages/PrivacyPolicy.jsx';
 import TermsAndConditions from './Pages/TermCondition.jsx';
 import ContactUs from './Components/ContactUs/ContactUs.jsx';
-import ScrollToTop from "./Components/Scrolltotop.jsx";
+// import ScrollToTop from "./Components/scroll.jsx";
+import Scroll from "./Components/scroll.jsx";
 
 
 const App = () => {
@@ -29,7 +30,7 @@ const App = () => {
         <Navbar setShowLogin={setShowLogin} />
         <SearchBar />
 
-        <ScrollToTop />
+        <Scroll />
 
         <Routes>
           <Route path='/' element={<Home />} />
