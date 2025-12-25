@@ -14,7 +14,7 @@ import Product from './Pages/Product';
 import PrivacyPolicy from './Pages/PrivacyPolicy.jsx';
 import TermsAndConditions from './Pages/TermCondition.jsx';
 import ContactUs from './Components/ContactUs/ContactUs.jsx';
-import ScrollToTop from "./components/ScrollToTop";
+import ScrollToTop from "./components/ScrollToTop.jsx";
 
 
 const App = () => {
