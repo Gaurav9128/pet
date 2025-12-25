@@ -19,7 +19,7 @@ const Footer = () => {
           <h4>Quick Links</h4>
           <ul>
            <li className="hover:text-blue-600 hover:underline cursor-pointer"><a href="/">Home</a></li>
-           <li className="hover:text-blue-600 hover:underline cursor-pointer"><a href="/contact">Contact Us</a></li>
+           <li><Link to="/contactus" className="hover:text-blue-600 hover:underline">Contact Us</Link></li>
             <li>
   <Link to="/privacypolicy" className="hover:text-blue-600 hover:underline">
     Privacy Policy
@@ -36,15 +36,15 @@ const Footer = () => {
 
         <div className="footer-contact">
           <h4>Contact Us</h4>
-          <p>Email: info@example.com</p>
-          <p>Phone: +91 98765 43210</p>
+          <p>Email: Rizwaanbhati.rb1004@gmail.com</p>
+          <p>Phone: +91 7014021793</p>
           <p>Address: Jaipur, Rajasthan, India</p>
         </div>
       </div>
 
       {/* Bottom Bar */}
       <div className="footer-bottom">
-        <p>© 2025 ADS Tech. All Rights Reserved.</p>
+        <p>© 2025 Belim Tails. All Rights Reserved.</p>
       </div>
     </footer>
   );

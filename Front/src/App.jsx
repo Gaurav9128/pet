@@ -13,6 +13,8 @@ import Collection from './Pages/Collection';
 import Product from './Pages/Product';
 import PrivacyPolicy from './Pages/PrivacyPolicy.jsx';
 import TermsAndConditions from './Pages/TermCondition.jsx';
+import ContactUs from './Components/ContactUs/ContactUs.jsx';
+import ScrollToTop from "./components/ScrollToTop";
 
 
 const App = () => {
@@ -27,6 +29,8 @@ const App = () => {
         <Navbar setShowLogin={setShowLogin} />
         <SearchBar />
 
+        <ScrollToTop />
+
         <Routes>
           <Route path='/' element={<Home />} />
           <Route path='/cart' element={<Cart />} />
@@ -36,6 +40,7 @@ const App = () => {
           <Route path="/product/:productId" element={<Product />} />
           <Route path="/privacypolicy" element={<PrivacyPolicy />} />
          <Route path='/termscondition' element={<TermsAndConditions />} />
+         <Route path='/contactus' element={<ContactUs />}/>
         </Routes>
       </div>
 
