@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { assets } from '../assets/assets';
 import Title from '../Components/Title.jsx';
 import ProductItem from '../Components/ProductItem.jsx';
@@ -8,22 +9,20 @@ const Collection = () => {
 
   const { products, search, showSearch } = useContext(StoreContext);
 
+  const [searchParams] = useSearchParams();
+  const brandFromURL = searchParams.get('brand');
+
   const [showFilter, setShowFilter] = useState(false);
   const [filterProducts, setFilterProducts] = useState([]);
 
-  // ✅ FINAL APPLIED FILTERS
   const [category, setCategory] = useState([]);
   const [subCategory, setSubCategory] = useState([]);
 
-  // ⏳ TEMP FILTERS
   const [tempCategory, setTempCategory] = useState([]);
   const [tempSubCategory, setTempSubCategory] = useState([]);
 
   const [sortType, setSortType] = useState('relavent');
 
-  /* =======================
-     TOGGLE TEMP CATEGORY
-     ======================= */
   const toggleCategory = (e) => {
     const value = e.target.value;
     setTempCategory(prev =>
@@ -42,13 +41,10 @@ const Collection = () => {
     );
   };
 
-  /* =======================
-     DONE BUTTON
-     ======================= */
   const handleDone = () => {
     setCategory(tempCategory);
     setSubCategory(tempSubCategory);
-    setShowFilter(false); // ✅ ONLY HERE FILTER CLOSES
+    setShowFilter(false);
   };
 
   /* =======================
@@ -57,24 +53,35 @@ const Collection = () => {
   const applyFilter = () => {
     let productsCopy = [...products];
 
+    // 🔍 SEARCH BAR FILTER
     if (showSearch && search) {
       productsCopy = productsCopy.filter(item =>
         item.name.toLowerCase().includes(search.toLowerCase())
       );
     }
 
+    // 🏷 BRAND FILTER FROM NAME (CASE INSENSITIVE)
+    if (brandFromURL) {
+      const brandLower = brandFromURL.toLowerCase();
+      productsCopy = productsCopy.filter(item =>
+        item.name.toLowerCase().includes(brandLower)
+      );
+    }
+
+    // 📦 CATEGORY
     if (category.length > 0) {
       productsCopy = productsCopy.filter(item =>
         category.some(cat =>
-          cat.toLowerCase().trim() === item.category.toLowerCase().trim()
+          cat.toLowerCase() === item.category.toLowerCase()
         )
       );
     }
 
+    // 🧩 SUB CATEGORY
     if (subCategory.length > 0) {
       productsCopy = productsCopy.filter(item =>
         subCategory.some(sub =>
-          sub.toLowerCase().trim() === item.subCategory.toLowerCase().trim()
+          sub.toLowerCase() === item.subCategory.toLowerCase()
         )
       );
     }
@@ -82,22 +89,16 @@ const Collection = () => {
     setFilterProducts(productsCopy);
   };
 
-  /* =======================
-     SORT PRODUCT
-     ======================= */
   const sortProduct = () => {
     let fpCopy = [...filterProducts];
 
-    switch (sortType) {
-      case 'low-high':
-        fpCopy.sort((a, b) => a.price - b.price);
-        break;
-      case 'high-low':
-        fpCopy.sort((a, b) => b.price - a.price);
-        break;
-      default:
-        applyFilter();
-        return;
+    if (sortType === 'low-high') {
+      fpCopy.sort((a, b) => a.price - b.price);
+    } else if (sortType === 'high-low') {
+      fpCopy.sort((a, b) => b.price - a.price);
+    } else {
+      applyFilter();
+      return;
     }
 
     setFilterProducts(fpCopy);
@@ -105,14 +106,14 @@ const Collection = () => {
 
   useEffect(() => {
     applyFilter();
-  }, [category, subCategory, search, showSearch, products]);
+  }, [category, subCategory, search, showSearch, products, brandFromURL]);
 
   useEffect(() => {
     sortProduct();
   }, [sortType]);
 
   return (
-    <div className="flex flex-col sm:flex-row gap-1 sm:gap-10 pt-10 border-t">
+    <div className="flex flex-col sm:flex-row gap-10 pt-10 border-t">
 
       {/* LEFT FILTER */}
       <div className="min-w-60">
@@ -128,13 +129,11 @@ const Collection = () => {
           />
         </p>
 
-        {/* CATEGORY */}
-        <div className={`border border-gray-300 pl-5 py-4 mt-6 ${showFilter ? '' : 'hidden'} sm:block`}>
+        <div className={`border pl-5 py-4 mt-6 ${showFilter ? '' : 'hidden'} sm:block`}>
           <p className="mb-4 font-semibold">CATEGORIES</p>
-
           {['Cat Food','Dog Food','Small Pets','Pet Parent','Henlo','Pharmacy','Consult a Vet']
             .map(item => (
-              <label key={item} className="flex items-center gap-3 mb-2 text-gray-700">
+              <label key={item} className="flex gap-3 mb-2">
                 <input
                   type="checkbox"
                   value={item}
@@ -146,55 +145,52 @@ const Collection = () => {
           ))}
         </div>
 
-        {/* SUB CATEGORY */}
-        <div className={`border border-gray-300 pl-5 py-4 my-5 ${showFilter ? '' : 'hidden'} sm:block`}>
+        <div className={`border pl-5 py-4 my-5 ${showFilter ? '' : 'hidden'} sm:block`}>
           <p className="mb-4 font-semibold">TYPE</p>
-
           {[
             'DryFood','WetFood','KittenFood','PremiumFood','CreamyTreats',
             'JerkyTreats','CrunchyTreats','PuppyFood','GrainFreeFood',
             'BakedDryFood','PremiumDogFood','Biscuits&Cookies','Bones&Chews',
             'SkinCare','JointCare','KidneyCare','LiverCare','CardiacCare','Eye&EarCare'
-          ].map(item => (
-            <label key={item} className="flex items-center gap-3 mb-2 text-gray-700">
-              <input
-                type="checkbox"
-                value={item}
-                onChange={toggleSubCategory}
-                checked={tempSubCategory.includes(item)}
-              />
-              {item.replace(/&/g, ' & ')}
-            </label>
+          ]
+            .map(item => (
+              <label key={item} className="flex gap-3 mb-2">
+                <input
+                  type="checkbox"
+                  value={item}
+                  onChange={toggleSubCategory}
+                  checked={tempSubCategory.includes(item)}
+                />
+                {item}
+              </label>
           ))}
-
-          {/* DONE BUTTON */}
-          <button
-            onClick={handleDone}
-            className="mt-4 w-full bg-black text-white py-2 rounded"
-          >
+          <button onClick={handleDone} className="mt-4 w-full bg-black text-white py-2">
             Done
           </button>
         </div>
       </div>
 
-      {/* RIGHT PRODUCTS */}
+      {/* RIGHT */}
       <div className="flex-1">
-        <div className="flex justify-between text-base sm:text-2xl mb-4">
-          <Title text1={'ALL'} text2={'COLLECTIONS'} />
-          <select
-            onChange={(e) => setSortType(e.target.value)}
-            className="border-2 border-gray-300 text-sm px-2"
-          >
-            <option value="relavent">Sort by: Relavent</option>
-            <option value="low-high">Sort by: Low to High</option>
-            <option value="high-low">Sort by: High to Low</option>
+        <div className="flex justify-between mb-4">
+          <Title text1="ALL" text2="COLLECTIONS" />
+          <select onChange={(e) => setSortType(e.target.value)}>
+            <option value="relavent">Relavent</option>
+            <option value="low-high">Low to High</option>
+            <option value="high-low">High to Low</option>
           </select>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 gap-y-6">
-          {filterProducts.map((item, index) => (
+        {brandFromURL && (
+          <p className="mb-4 text-sm">
+            Showing results for brand: <b>{brandFromURL}</b>
+          </p>
+        )}
+
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {filterProducts.map(item => (
             <ProductItem
-              key={index}
+              key={item._id}
               id={item._id}
               name={item.name}
               price={item.price}
@@ -203,7 +199,6 @@ const Collection = () => {
           ))}
         </div>
       </div>
-
     </div>
   );
 };
