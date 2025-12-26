@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { StoreContext } from '../context/StoreContext';
 
-const ProductItem = ({ id, image, name, price }) => {
+const ProductItem = ({ id, image, name, price, sizes = [] }) => {
   const { currency } = useContext(StoreContext);
 
   // 🔹 Hardcoded values (later DB se aayenge)
@@ -59,10 +59,34 @@ const ProductItem = ({ id, image, name, price }) => {
           </span>
         </div>
 
+        {sizes.length > 0 && (
+  <div className="mt-3 flex flex-wrap gap-2.5">
+    {sizes.map((size, index) => (
+      <button
+        key={index}
+        className="
+          px-3.5 py-1.5
+          text-[13px] font-semibold
+          border-2 border-gray-400
+          rounded-md
+          text-gray-800
+          min-w-[70px]
+          hover:border-red-500
+          hover:text-red-500
+          transition-all
+        "
+      >
+        {size}
+      </button>
+    ))}
+  </div>
+)}
+
         {/* 🚚 Delivery */}
         <p className="text-sm text-gray-700 mt-1">
           FREE delivery <span className="font-semibold">{deliveryDate}</span>
         </p>
+
 
         {/* Buy Now Button */}
         <Link
