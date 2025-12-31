@@ -245,3 +245,48 @@
     opacity: 1;
   }
 }
+
+
+.navbar-search-icon {
+  position: relative;
+}
+
+/* DESKTOP COUNT */
+.cart-badge {
+  position: absolute;
+  top: -8px;
+  right: -10px;
+  background: #ff3f6c;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  height: 18px;
+  min-width: 18px;
+  padding: 0 5px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* MOBILE DOT */
+.cart-dot {
+  display: none;
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  height: 10px;
+  width: 10px;
+  background: #ff3f6c;
+  border-radius: 50%;
+}
+
+@media (max-width: 768px) {
+  .cart-badge {
+    display: none;
+  }
+
+  .cart-dot {
+    display: block;
+  }
+}

@@ -1,151 +1,228 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { assets } from '../assets/assets';
-import { StoreContext } from '../context/StoreContext';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { assets } from '../assets/assets'
+import { StoreContext } from '../context/StoreContext'
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+
+/* 🔥 Cloudinary Image Optimizer */
+const getOptimizedImage = (url, type = "main") => {
+  if (!url || !url.includes("/upload/")) return url
+
+  if (type === "thumb") {
+    return url.replace(
+      "/upload/",
+      "/upload/f_auto,q_100,w_150/"
+    )
+  }
+
+  // MAIN IMAGE (High quality + responsive)
+  return url.replace(
+    "/upload/",
+    "/upload/f_auto,q_auto:best,w_600/"
+  )
+}
 
 const Product = () => {
+  const { productId } = useParams()
+  const { products, addToCart } = useContext(StoreContext)
 
-  const { productId } = useParams();
-  const { products, currency, addToCart } = useContext(StoreContext);
-  const [productData, setProductData] = useState(false);
-  const [image, setImage] = useState('');
-  const [size, setSize] = useState('');
-  const [price, setPrice] = useState(0); // selected size price
-  const [sizesWithPrice, setSizesWithPrice] = useState([]);
+  const [showDetails, setShowDetails] = useState(false)
+  const [productData, setProductData] = useState(null)
+  const [image, setImage] = useState('')
+  const [selectedSize, setSelectedSize] = useState('')
+  const [price, setPrice] = useState(0)
+  const [mrp, setMrp] = useState(0)
+  const [sizesWithPrice, setSizesWithPrice] = useState([])
 
-  const fetchProductData = async () => {
-    products.map((item) => {
-      if (item._id === productId) {
-        setProductData(item)
-        setImage(item.image[0])
-        // Hardcoded sizes with price
-        const sizesPrice = item.sizes.map((s, i) => {
-          let newPrice = item.price + i * 50; // Example: price increment per size
-          return { size: s, price: newPrice };
-        });
-        setSizesWithPrice(sizesPrice);
-        setPrice(item.price);
-        return null;
-      }
-    })
-  }
-
+  /* Fetch Product */
   useEffect(() => {
-    fetchProductData();
+    const product = products.find(item => item._id === productId)
+    if (product) {
+      setProductData(product)
+      setImage(product.image[0])
+      setSizesWithPrice(product.sizes)
+
+      if (product.sizes.length > 0) {
+        setSelectedSize(product.sizes[0].label)
+        setPrice(product.sizes[0].price)
+        setMrp(product.sizes[0].mrp)
+      }
+    }
   }, [productId, products])
 
-  const handleSizeSelect = (selected) => {
-    setSize(selected.size);
-    setPrice(selected.price);
+  /* Auto Image Slider */
+  useEffect(() => {
+    if (!productData || productData.image.length === 0) return
+
+    const interval = setInterval(() => {
+      const currentIndex = productData.image.indexOf(image)
+      const nextIndex = (currentIndex + 1) % productData.image.length
+      setImage(productData.image[nextIndex])
+    }, 3000)
+
+    return () => clearInterval(interval)
+  }, [image, productData])
+
+  const handleSizeSelect = (item) => {
+    setSelectedSize(item.label)
+    setPrice(item.price)
+    setMrp(item.mrp)
   }
 
+  const discountPercent =
+    mrp > price ? Math.round(((mrp - price) / mrp) * 100) : 0
+
   const handleAddToCart = () => {
-    if (!size) {
-      alert("Please select a size before adding to cart");
-      return;
+    if (!selectedSize) {
+      toast.error("Please select a size")
+      return
     }
-    addToCart(productData._id, size, price); // Add product with selected size & price
-    toast.success("Your product is added to your cart!"); // Show toast
+    addToCart(productData._id, selectedSize, price)
+    toast.success("Product added to cart")
   }
 
   return productData ? (
-    <div className='border-t-2 pt-10 transition-opacity ease-in duration-500 opacity-100'>
-      <div className='flex gap-12 sm:gap-12 flex-col sm:flex-row'>
-        {/* Product Images */}
-        <div className='flex-1 flex flex-col-reverse gap-3 sm:flex-row'>
-          <div className='flex sm:flex-col overflow-x-auto sm:overflow-y-scroll justify-between sm:justify-normal sm:w-[18.7%] w-full'>
-            {productData.image.map((item, index) => (
+    <div className="border-t-2 pt-10">
+
+      <div className="flex gap-12 flex-col sm:flex-row">
+
+        {/* IMAGE SECTION */}
+        <div className="flex-1 flex flex-col-reverse gap-3 sm:flex-row">
+
+          {/* THUMBNAILS */}
+          <div className="flex sm:flex-col overflow-x-auto sm:overflow-y-scroll sm:w-[18%] w-full gap-2">
+            {productData.image.map((img, index) => (
               <img
-                onClick={() => setImage(item)}
-                src={item}
                 key={index}
-                className='w-[24%] sm:w-full sm:mb-3 flex-shrink-0 cursor-pointer'
+                src={getOptimizedImage(img, "thumb")}
+                onClick={() => setImage(img)}
+                className={`w-[24%] sm:w-full cursor-pointer border object-contain
+                  ${image === img ? 'border-black' : 'border-gray-200'}`}
                 alt=""
               />
             ))}
           </div>
-          <div className='w-full sm:w-[80%]'>
-            <img className='w-full h-auto' src={image} alt="" />
+
+          {/* MAIN IMAGE WITH ZOOM */}
+          <div className="w-full sm:w-[80%] overflow-hidden rounded-lg border">
+            <img
+              src={getOptimizedImage(image, "main")}
+              className="w-full h-auto object-contain transition-transform duration-300 hover:scale-125 cursor-zoom-in"
+              alt=""
+            />
           </div>
+
         </div>
 
-        {/* Product Info */}
-        <div className='flex-1'>
-          <h1 className='font-medium text-2xl mt-2'>{productData.name}</h1>
-
-          <div className=' flex items-center gap-1 mt-2'>
-            <img src={assets.star_icon} alt="" className="w-3 5" />
-            <img src={assets.star_icon} alt="" className="w-3 5" />
-            <img src={assets.star_icon} alt="" className="w-3 5" />
-            <img src={assets.star_icon} alt="" className="w-3 5" />
-            <img src={assets.star_dull_icon} alt="" className="w-3 5" />
-            {/* <p className='pl-2'>(122)</p> */}
-          </div>
-
-          {/* Price display */}
-          <p className='mt-5 text-3xl font-medium'>₹{currency}{price}</p>
-          <p className='mt-5 text-gray-500 md:w-4/5'>{productData.description}</p>
-          <br />
-
-          {/* Size buttons */}
-          <div className="flex flex-wrap gap-3 mb-3">
-            {sizesWithPrice.map((item, index) => (
-              <button
-                key={index}
-                onClick={() => handleSizeSelect(item)}
-                className={`border px-4 py-2 rounded bg-white min-w-[60px] text-center text-sm shadow-sm transition hover:border-gray-500
-                  ${item.size === size ? 'border-black font-semibold' : 'border-gray-300'} `}
-              > {item.size} </button>
+        {/* PRODUCT INFO */}
+        <div className="flex-1">
+          <h1 className="font-medium text-2xl mt-2">{productData.name}</h1>
+         <br/>
+          {/* RATING */}
+          <div className="flex items-center gap-1 mt-2">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <img
+                key={i}
+                src={i < productData.rating ? assets.star_icon : assets.star_dull_icon}
+                className="w-3"
+                alt=""
+              />
             ))}
           </div>
-
-          {/* Add to Cart button */}
-          <br />
+          <br/>
+          {/* PRICE */}
+          <div className="mt-5 flex items-center gap-3">
+            <span className="text-3xl font-semibold">₹{price}</span>
+            {mrp > price && (
+              <>
+                <span className="text-lg text-gray-400 line-through">₹{mrp}</span>
+                <span className="text-green-600 font-medium">
+                  ({discountPercent}% off)
+                </span>
+              </>
+            )}
+          </div>
+          <br/>
+          {/* SIZES */}
+          <div className="flex flex-wrap gap-3 mt-4">
+            {sizesWithPrice.map(item => (
+              <button
+                key={item._id}
+                onClick={() => handleSizeSelect(item)}
+                className={`border px-4 py-2 rounded text-sm
+                  ${selectedSize === item.label
+                    ? 'border-black font-semibold'
+                    : 'border-gray-300'}`}
+              >
+                {item.label}
+              </button>
+            ))}
+          </div>
+           <br/>
+          {/* INFO */}
+          <div className="text-sm text-gray-500 mt-6 space-y-1">
+            <p>100% Original product.</p>
+            <p>Cash on delivery available.</p>
+            <p>7 days return policy.</p>
+          </div>
+          <br/>
+          <div className="mt-4 bg-gray-50 px-4 py-3 text-sm">
+            <p className="font-medium">COD available ₹700 – ₹5000</p>
+            <p>Free delivery above ₹599</p>
+          </div>
+          <br/>
+          <br/>
+          {/* ADD TO CART */}
           <button
             onClick={handleAddToCart}
-            className="
-    border border-orange-500
-    text-orange-500
-    bg-white
-    px-10 py-3.5
-    text-lg font-semibold
-    rounded-lg
-    hover:bg-orange-500 hover:text-white
-    transition-all duration-200
-  "
+            className="mt-6 border border-orange-500 text-orange-500 px-10 py-3.5 text-lg font-semibold rounded-lg
+              hover:bg-orange-500 hover:text-white transition"
           >
             Add to cart
           </button>
+          <br/>
+          <br/>
+          {/* DETAILS */}
+          <div className="mt-10 border rounded-lg">
+            <button
+              onClick={() => setShowDetails(!showDetails)}
+              className="w-full flex justify-between px-5 py-4"
+            >
+              <h2 className="font-semibold">Product Details</h2>
+              <img
+                src={assets.dropdown_icon}
+                className={`w-3 transition-transform ${showDetails ? "rotate-90" : ""}`}
+                alt=""
+              />
+            </button>
 
-          {/* Info */}
-          <div className='text-sm text-gray-500 mt-5 flex flex-col gap-1'>
-            <br />
-            <p>100% Original product.</p>
-            <p>Cash on delivery is available on this product.</p>
-            <p>Easy return and exchange policy within 7 days.</p>
+            {showDetails && (
+              <div className="border-t text-sm">
+                {productData.details?.map((d, i) => (
+                  <div key={i} className="flex justify-between px-5 py-3">
+                    <span className="font-medium">{d.label}</span>
+                    <span className="text-gray-600">{d.value}</span>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
+
         </div>
       </div>
-      <br />
-      <br />
-      {/* Description & Reviews */}
-      <div className='mt-20'>
-        <div className='flex gap-3'>
-          <b className='border px-5 py-3 text-sm'>Description</b>
-          <p className='border px-5 py-3 text-sm'>Reviews</p>
-        </div>
-        <br />
-        <div className='flex flex-col gap-4 border px-6 py-6 text-sm text-gray-500'>
-          <p>An e-commerce website is an online platform that facilitates the buying and selling of products or services over the internet...</p>
+      <br/>
+      {/* DESCRIPTION */}
+      <div className="mt-20">
+        <b className="border px-5 py-3 text-sm">Description</b><br/><br/>
+        <div className="border px-6 py-6 text-sm text-gray-500 mt-4">
+          {productData.description}
         </div>
       </div>
 
-      {/* Toast Container */}
       <ToastContainer position="top-right" autoClose={2000} />
     </div>
-  ) : <div className='opacity-0'></div>
+  ) : null
 }
 
-export default Product;
+export default Product

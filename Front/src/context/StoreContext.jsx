@@ -1,80 +1,162 @@
-import { createContext, useState } from "react";
-import { products } from "../assets/assets";
+import { createContext, useEffect, useState } from "react";
+import axios from 'axios';
+import { toast } from "react-toastify";
 
 export const StoreContext = createContext(null);
 
 const StoreContextProvider = (props) => {
+
+    const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
     const [cartItems, setCartItems] = useState({});
     const [search, setSearch] = useState('');
     const [showSearch, setShowSearch] = useState(false);
+    const [products, setProducts] = useState([]);
+    const [token, setToken] = useState('');
 
-    // Add to cart (with size and price)
-    const addToCart = (itemId, size, price) => {
-        const cartKey = `${itemId}-${size}`; // unique key for each size
+    /* ================= ADD TO CART ================= */
+    const addToCart = async (itemId, size, price) => {
+
+        const cartKey = `${itemId}-${size}`;
         const product = products.find(p => p._id === itemId);
+        if (!product || !price) return;
+
+        const item = {
+            quantity: 1,
+            price: Number(price),
+            size,
+            name: product.name,
+            image: product.image?.[0] || ''
+        };
 
         setCartItems(prev => ({
             ...prev,
-            [cartKey]: prev[cartKey] 
-                ? { ...prev[cartKey], quantity: prev[cartKey].quantity + 1 } 
-                : { 
-                    quantity: 1, 
-                    price: price, 
-                    size: size, 
-                    name: product.name,
-                    image: product.image[0]
-                }
+            [cartKey]: prev[cartKey]
+                ? { ...prev[cartKey], quantity: prev[cartKey].quantity + 1 }
+                : item
         }));
-    }
 
-    // Remove completely from cart
+        if (token) {
+            await axios.post(
+                `${backendUrl}/api/cart/add`,
+                { cartKey, item },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+        }
+    };
+
+    /* ================= REMOVE ================= */
     const removeFromCart = (cartKey) => {
         setCartItems(prev => {
-            const updatedCart = { ...prev };
-            delete updatedCart[cartKey];
-            return updatedCart;
+            const updated = { ...prev };
+            delete updated[cartKey];
+            return updated;
         });
-    }
+    };
 
-    // Increase quantity
+    /* ================= QTY ================= */
     const increaseQuantity = (cartKey) => {
         setCartItems(prev => ({
             ...prev,
-            [cartKey]: { 
-                ...prev[cartKey], 
-                quantity: prev[cartKey].quantity + 1 
+            [cartKey]: {
+                ...prev[cartKey],
+                quantity: prev[cartKey].quantity + 1
             }
         }));
-    }
+    };
 
-    // Decrease quantity
     const decreaseQuantity = (cartKey) => {
         setCartItems(prev => {
-            if(prev[cartKey].quantity === 1){
-                const updatedCart = { ...prev };
-                delete updatedCart[cartKey];
-                return updatedCart;
-            } else {
-                return {
-                    ...prev,
-                    [cartKey]: { 
-                        ...prev[cartKey], 
-                        quantity: prev[cartKey].quantity - 1 
-                    }
-                };
+            const item = prev[cartKey];
+            if (!item) return prev;
+
+            if (item.quantity <= 1) {
+                const updated = { ...prev };
+                delete updated[cartKey];
+                return updated;
             }
+
+            return {
+                ...prev,
+                [cartKey]: {
+                    ...item,
+                    quantity: item.quantity - 1
+                }
+            };
         });
-    }
+    };
 
-    // Total cart amount
+    /* ================= TOTAL ================= */
     const getTotalCartAmount = () => {
-        let totalAmount = 0;
-        for(const cartKey in cartItems){
-            totalAmount += cartItems[cartKey].price * cartItems[cartKey].quantity;
+        let total = 0;
+        for (const key in cartItems) {
+            const item = cartItems[key];
+            if (item && item.quantity > 0) {
+                total += item.price * item.quantity;
+            }
         }
-        return totalAmount;
-    }
+        return total;
+    };
 
+    /* ================= PRODUCTS ================= */
+    const getProductsData = async () => {
+        try {
+            const res = await axios.get(`${backendUrl}/api/product/list`);
+            if (res.data.success) {
+                setProducts(res.data.products.reverse());
+            }
+        } catch (err) {
+            toast.error(err.message);
+        }
+    };
+
+    /* ================= USER CART (FIXED) ================= */
+    const getUserCart = async (jwtToken) => {
+        try {
+            const res = await axios.post(
+                `${backendUrl}/api/cart/get`,
+                {},
+                {
+                    headers: {
+                        Authorization: `Bearer ${jwtToken}`
+                    }
+                }
+            );
+
+            if (res.data.success) {
+                setCartItems(res.data.cartData || {});
+            }
+
+        } catch (err) {
+            console.log(err);
+            toast.error("Please login again");
+        }
+    };
+
+    /* ================= EFFECTS ================= */
+    useEffect(() => {
+        getProductsData();
+    }, []);
+
+    useEffect(() => {
+        const savedToken = localStorage.getItem('token');
+
+        if (savedToken && !token) {
+            setToken(savedToken);
+            getUserCart(savedToken);
+        }
+
+        if (token) {
+            getUserCart(token);
+        }
+
+    }, [token]);
+
+    /* ================= CONTEXT ================= */
     const contextValue = {
         products,
         cartItems,
@@ -83,7 +165,13 @@ const StoreContextProvider = (props) => {
         increaseQuantity,
         decreaseQuantity,
         getTotalCartAmount,
-        search, setSearch, showSearch, setShowSearch,
+        search,
+        setSearch,
+        showSearch,
+        setShowSearch,
+        backendUrl,
+        token,
+        setToken
     };
 
     return (
@@ -91,6 +179,6 @@ const StoreContextProvider = (props) => {
             {props.children}
         </StoreContext.Provider>
     );
-}
+};
 
 export default StoreContextProvider;

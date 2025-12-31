@@ -8,7 +8,7 @@ const Navbar = ({ setShowLogin }) => {
   const [openCategories, setOpenCategories] = useState(false);
   const [openCat, setOpenCat] = useState(null);
 
-  const { setShowSearch, getTotalCartAmount } = useContext(StoreContext);
+  const { setShowSearch, getTotalCartAmount, token, setToken } = useContext(StoreContext);
 
   const dropdownRef = useRef(null);
   const buttonRef = useRef(null);
@@ -43,7 +43,7 @@ const Navbar = ({ setShowLogin }) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  /* ✅ AUTO CLOSE ON SCROLL (ALL DEVICES) */
+  /* AUTO CLOSE ON SCROLL */
   useEffect(() => {
     const handleScroll = () => {
       setOpenCategories(false);
@@ -53,6 +53,12 @@ const Navbar = ({ setShowLogin }) => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  /* LOGOUT HANDLER */
+  const logoutHandler = () => {
+    localStorage.removeItem("token");
+    setToken("");
+  };
 
   return (
     <div className="navbar">
@@ -124,7 +130,12 @@ const Navbar = ({ setShowLogin }) => {
           <div className={getTotalCartAmount() === 0 ? "" : "dot"}></div>
         </div>
 
-        <button onClick={() => setShowLogin(true)}>sign in</button>
+        {/* SIGN IN / LOGOUT */}
+        {!token ? (
+          <button onClick={() => setShowLogin(true)}>sign in</button>
+        ) : (
+          <button onClick={logoutHandler}>logout</button>
+        )}
       </div>
     </div>
   );
