@@ -2,21 +2,21 @@ import React, { useContext, useState } from 'react'
 import './PlaceOrder.css'
 import { StoreContext } from '../../context/StoreContext'
 import Title from '../../Components/Title'
-import { assets } from '../../assets/assets'
 import axios from 'axios'
 import { toast } from 'react-toastify'
+import { useNavigate } from 'react-router-dom'
 
 const PlaceOrder = () => {
 
   const {
-    navigate,
     backendUrl,
     token,
     cartItems,
-    setCartItems,
-    getTotalCartAmount,
-    products
+    clearCart,
+    getTotalCartAmount
   } = useContext(StoreContext)
+
+  const navigate = useNavigate()
 
   const DELIVERY_FEE = 40
   const [method, setMethod] = useState('cod')
@@ -40,65 +40,36 @@ const PlaceOrder = () => {
     }))
   }
 
-  // ✅ RAZORPAY INIT
-  const initPay = (order) => {
-    const options = {
-      key: import.meta.env.VITE_RAZORPAY_KEY_ID,
-      amount: order.amount,
-      currency: order.currency,
-      name: 'Order Payment',
-      description: 'Order Payment',
-      order_id: order.id,
-      handler: async (response) => {
-        try {
-          const { data } = await axios.post(
-            backendUrl + '/api/order/verifyRazorpay',
-            response,
-            {
-              headers: {
-                Authorization: `Bearer ${token}`
-              }
-            }
-          )
-
-          if (data.success) {
-            setCartItems({})
-            navigate('/payment')
-          }
-        } catch (error) {
-          toast.error('Payment verification failed')
-        }
-      }
-    }
-
-    new window.Razorpay(options).open()
-  }
-
   const onSubmitHandler = async (e) => {
     e.preventDefault()
 
-    // ✅ LOGIN CHECK
     if (!token) {
       toast.error('Please login first')
       return
     }
 
     try {
-      let orderItems = []
+      const orderItems = Object.keys(cartItems)
+        .map(cartKey => {
+          const item = cartItems[cartKey]
+          if (!item || item.quantity <= 0) return null
 
-      for (const productId in cartItems) {
-        for (const size in cartItems[productId]) {
-          if (cartItems[productId][size] > 0) {
-            const product = products.find(p => p._id === productId)
-            if (product) {
-              orderItems.push({
-                ...structuredClone(product),
-                size,
-                quantity: cartItems[productId][size]
-              })
-            }
+          const productId = cartKey.split('-')[0]
+
+          return {
+            productId,
+            name: item.name,
+            price: item.price,
+            size: item.size,
+            quantity: item.quantity,
+            image: item.image
           }
-        }
+        })
+        .filter(Boolean)
+
+      if (orderItems.length === 0) {
+        toast.error('Cart is empty')
+        return
       }
 
       const subtotal = getTotalCartAmount()
@@ -107,55 +78,48 @@ const PlaceOrder = () => {
       const orderData = {
         address: formData,
         items: orderItems,
-        amount: totalAmount
+        amount: totalAmount,
+        paymentMethod: method.toUpperCase()
       }
 
-      // ✅ COMMON HEADERS
-      const config = {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      }
-
-      // ✅ COD
+      // ================= COD =================
       if (method === 'cod') {
         const res = await axios.post(
-          backendUrl + '/api/order/place',
+          `${backendUrl}/api/order/place`,
           orderData,
-          config
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          }
         )
 
         if (res.data.success) {
-          setCartItems({})
+          toast.success('Order placed successfully')
+          clearCart()
           navigate('/payment')
         } else {
           toast.error(res.data.message)
         }
       }
 
-      // ✅ STRIPE
-      if (method === 'stripe') {
+      // ================= PHONEPE =================
+      if (method === 'phonepe') {
         const res = await axios.post(
-          backendUrl + '/api/order/stripe',
+          `${backendUrl}/api/payment/phonepe`,
           orderData,
-          config
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          }
         )
 
         if (res.data.success) {
-          window.location.replace(res.data.session_url)
-        }
-      }
-
-      // ✅ RAZORPAY
-      if (method === 'razorpay') {
-        const res = await axios.post(
-          backendUrl + '/api/order/razorpay',
-          orderData,
-          config
-        )
-
-        if (res.data.success) {
-          initPay(res.data.order)
+          // PhonePe redirect URL
+          window.location.href = res.data.redirectUrl
+        } else {
+          toast.error(res.data.message)
         }
       }
 
@@ -170,8 +134,6 @@ const PlaceOrder = () => {
 
   return (
     <form onSubmit={onSubmitHandler} className="place-order">
-
-      {/* LEFT */}
       <div className="place-order-left">
         <p className="title">Delivery Information</p>
 
@@ -196,9 +158,7 @@ const PlaceOrder = () => {
         <input name="phone" value={formData.phone} onChange={onChangeHandler} required placeholder="Phone" />
       </div>
 
-      {/* RIGHT */}
       <div className="place-order-right">
-
         <div className="cart-total">
           <h2>Cart Totals</h2>
 
@@ -222,14 +182,8 @@ const PlaceOrder = () => {
           <Title text1="PAYMENT" text2="METHOD" />
 
           <div className="payment-options">
-            <div
-              className={`payment-box ${method === 'stripe' ? 'active' : ''}`}
-              onClick={() => setMethod('stripe')}
-            >
-              <span className="radio"></span>
-              <img src={assets.stripe_logo} alt="stripe" />
-            </div>
 
+            {/* COD */}
             <div
               className={`payment-box ${method === 'cod' ? 'active' : ''}`}
               onClick={() => setMethod('cod')}
@@ -237,10 +191,22 @@ const PlaceOrder = () => {
               <span className="radio"></span>
               <p>CASH ON DELIVERY</p>
             </div>
+
+            {/* PHONEPE */}
+            <div
+              className={`payment-box ${method === 'phonepe' ? 'active' : ''}`}
+              onClick={() => setMethod('phonepe')}
+            >
+              <span className="radio"></span>
+              <p>PHONEPE</p>
+            </div>
+
           </div>
         </div>
 
-        <button className="order-btn">PLACE ORDER</button>
+        <button className="order-btn">
+          {method === 'phonepe' ? 'PAY WITH PHONEPE' : 'PLACE ORDER'}
+        </button>
       </div>
     </form>
   )

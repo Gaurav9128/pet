@@ -1,14 +1,22 @@
 import React, { useContext, useState, useEffect, useRef } from "react";
 import "./Navbar.css";
 import { assets } from "../../assets/assets";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { StoreContext } from "../../context/StoreContext";
 
 const Navbar = ({ setShowLogin }) => {
   const [openCategories, setOpenCategories] = useState(false);
   const [openCat, setOpenCat] = useState(null);
+  const [showUserMenu, setShowUserMenu] = useState(false);
 
-  const { setShowSearch, getTotalCartAmount, token, setToken } = useContext(StoreContext);
+  const {
+    setShowSearch,
+    getTotalCartAmount,
+    token,
+    setToken
+  } = useContext(StoreContext);
+
+  const navigate = useNavigate();
 
   const dropdownRef = useRef(null);
   const buttonRef = useRef(null);
@@ -48,16 +56,19 @@ const Navbar = ({ setShowLogin }) => {
     const handleScroll = () => {
       setOpenCategories(false);
       setOpenCat(null);
+      setShowUserMenu(false);
     };
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  /* LOGOUT HANDLER */
+  /* LOGOUT */
   const logoutHandler = () => {
     localStorage.removeItem("token");
     setToken("");
+    setShowUserMenu(false);
+    // navigate("/login");
   };
 
   return (
@@ -81,10 +92,17 @@ const Navbar = ({ setShowLogin }) => {
           <div className="category-dropdown" ref={dropdownRef}>
             <div className="category-row">
               <div className="category-title">
-                <Link to="/cats" className="cat-link" onClick={handleCategoryClick}>
+                <Link
+                  to="/cats"
+                  className="cat-link"
+                  onClick={handleCategoryClick}
+                >
                   CAT FOOD
                 </Link>
-                <span className="toggle-btn" onClick={() => toggleCategory(1)}>
+                <span
+                  className="toggle-btn"
+                  onClick={() => toggleCategory(1)}
+                >
                   {openCat === 1 ? "−" : "+"}
                 </span>
               </div>
@@ -130,11 +148,33 @@ const Navbar = ({ setShowLogin }) => {
           <div className={getTotalCartAmount() === 0 ? "" : "dot"}></div>
         </div>
 
-        {/* SIGN IN / LOGOUT */}
+        {/* USER MENU */}
         {!token ? (
           <button onClick={() => setShowLogin(true)}>sign in</button>
         ) : (
-          <button onClick={logoutHandler}>logout</button>
+          <div
+            className="user-menu"
+            onMouseEnter={() => setShowUserMenu(true)}
+            onMouseLeave={() => setShowUserMenu(false)}
+          >
+            <button className="user-btn">Account ▾</button>
+
+            {showUserMenu && (
+              <div className="user-dropdown">
+                <Link to="/payment" onClick={() => setShowUserMenu(false)}>
+                  My Orders
+                </Link>
+
+                <Link to="/admin" onClick={() => setShowUserMenu(false)}>
+                  Admin Panel
+                </Link>
+
+                <button onClick={logoutHandler} className="logout-btn">
+                  Logout
+                </button>
+              </div>
+            )}
+          </div>
         )}
       </div>
     </div>

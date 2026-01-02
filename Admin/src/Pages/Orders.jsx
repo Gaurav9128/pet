@@ -9,7 +9,6 @@ const Orders = ({ token }) => {
   const [filteredOrders, setFilteredOrders] = useState([]);
   const [filterDate, setFilterDate] = useState('');
 
-  // Retrieve removed orders from local storage
   const getRemovedOrders = () => {
     const removed = localStorage.getItem('removedOrders');
     return removed ? JSON.parse(removed) : [];
@@ -18,9 +17,7 @@ const Orders = ({ token }) => {
   const [removedOrders, setRemovedOrders] = useState(getRemovedOrders());
 
   const fetchAllOrders = async () => {
-    if (!token) {
-      return null;
-    }
+    if (!token) return;
 
     try {
       const response = await axios.post(
@@ -28,14 +25,14 @@ const Orders = ({ token }) => {
         {},
         { headers: { token } }
       );
+
       if (response.data.success) {
         const ordersData = response.data.orders.reverse();
-        // Filter out removed orders
         const visibleOrders = ordersData.filter(
           (order) => !removedOrders.includes(order._id)
         );
         setOrders(ordersData);
-        setFilteredOrders(visibleOrders); // Initialize with visible orders
+        setFilteredOrders(visibleOrders);
       } else {
         toast.error(response.data.message);
       }
@@ -51,39 +48,43 @@ const Orders = ({ token }) => {
         { orderId, status: event.target.value },
         { headers: { token } }
       );
-      if (response.data.success) {
-        await fetchAllOrders();
-      }
+      if (response.data.success) fetchAllOrders();
     } catch (error) {
-      console.log(error);
       toast.error(error.message);
     }
   };
 
   const handleFilter = () => {
     if (!filterDate) {
-      setFilteredOrders(orders.filter((order) => !removedOrders.includes(order._id)));
+      setFilteredOrders(
+        orders.filter((order) => !removedOrders.includes(order._id))
+      );
       return;
     }
 
     const selectedDate = new Date(filterDate).toDateString();
     const filtered = orders.filter((order) => {
       const orderDate = new Date(order.date).toDateString();
-      return orderDate === selectedDate && !removedOrders.includes(order._id);
+      return (
+        orderDate === selectedDate &&
+        !removedOrders.includes(order._id)
+      );
     });
 
     setFilteredOrders(filtered);
   };
 
   const handleRemoveOrder = (orderId) => {
-    // Add the removed order ID to the state and local storage
     const updatedRemovedOrders = [...removedOrders, orderId];
     setRemovedOrders(updatedRemovedOrders);
-    localStorage.setItem('removedOrders', JSON.stringify(updatedRemovedOrders));
+    localStorage.setItem(
+      'removedOrders',
+      JSON.stringify(updatedRemovedOrders)
+    );
 
-    // Update the filtered orders
-    const updatedOrders = filteredOrders.filter((order) => order._id !== orderId);
-    setFilteredOrders(updatedOrders);
+    setFilteredOrders(
+      filteredOrders.filter((order) => order._id !== orderId)
+    );
   };
 
   useEffect(() => {
@@ -92,90 +93,144 @@ const Orders = ({ token }) => {
 
   return (
     <div>
-      <h3>Order Page</h3>
+      <h3 className="text-lg font-semibold mb-5">Order Page</h3>
 
-      {/* Date Filter Section */}
-      <div className="mb-5">
+      {/* Filter */}
+      <div className="mb-6 flex gap-3">
         <input
           type="date"
           value={filterDate}
           onChange={(e) => setFilterDate(e.target.value)}
-          className="border border-gray-300 p-2 rounded mr-2"
+          className="border border-gray-300 p-2 rounded"
         />
         <button
           onClick={handleFilter}
-          className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
+          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
         >
           Filter
         </button>
       </div>
 
-      <div>
-        {filteredOrders.map((order, index) => (
-          <div
-            className="grid grid-cols-1 sm:grid-cols-[0.5fr_2fr_1fr] lg:grid-cols-[0.5fr_2fr_1fr_1fr_1fr] gap-3 items-start border-2 border-gray-200 p-5 md:p-8 my-3 md:my-4 text-xs sm:text-sm text-gray-700 relative"
-            key={index}
-          >
-            <img className="w-12" src={assets.parcel_icon} alt="" />
-            <div>
-              <div>
-                {order.items.map((item, index) => (
-                  <p className="py-0.5" key={index}>
-                    {item.name} x {item.quantity} <span>{item.size}</span>
-                    {index !== order.items.length - 1 && ','}
+      {/* Orders */}
+      {filteredOrders.map((order, index) => (
+        <div
+          key={index}
+          className="
+            grid grid-cols-1 
+            lg:grid-cols-[60px_3fr_1.5fr_1fr_1fr]
+            gap-6
+            border border-gray-200
+            rounded-lg
+            p-6
+            mb-6
+            bg-white
+            relative
+          "
+        >
+          {/* Icon */}
+          <img
+            src={assets.parcel_icon}
+            alt="parcel"
+            className="w-12 h-12 object-contain"
+          />
+
+          {/* Items + Address */}
+          <div>
+            {/* Items Table */}
+            <div className="bg-gray-50 p-4 rounded-md">
+              <div className="grid grid-cols-[3fr_1fr_2fr] text-xs font-semibold text-gray-500 border-b pb-2 mb-3">
+                <span>Product</span>
+                <span>Qty</span>
+                <span>Size</span>
+              </div>
+
+              {order.items.map((item, i) => (
+                <div
+                  key={i}
+                  className="grid grid-cols-[3fr_1fr_2fr] gap-2 text-sm mb-2"
+                >
+                  <p className="text-gray-800 leading-snug">
+                    {item.name}
                   </p>
-                ))}
-              </div>
-              <p className="mt-3 mb-2 font-medium">
-                {order.address.firstName + ' ' + order.address.lastName}
-              </p>
-              <div>
-                <p>{order.address.street + ','}</p>
-                <p>
-                  {order.address.city +
-                    ', ' +
-                    order.address.state +
-                    ', ' +
-                    order.address.country +
-                    ', ' +
-                    order.address.zipcode}
-                </p>
-              </div>
-              <p>{order.address.phone}</p>
+                  <p className="font-medium">{item.quantity}</p>
+                  <p className="text-gray-600">
+                    {item.size || '-'}
+                  </p>
+                </div>
+              ))}
             </div>
-            <div>
-              <p className="text-sm sm:text-[15px]">
-                Items : {order.items.length}
-              </p>
-              <p className="mt-3">Method : {order.paymentMethod}</p>
-              <p>Payment : {order.payment ? 'Done' : 'Pending'}</p>
-              <p>Date : {new Date(order.date).toLocaleDateString()}</p>
-            </div>
-            <p className="text-sm sm:text-[15px]">
-              {currency}
-              {order.amount}
+
+            {/* Address */}
+            <p className="mt-4 font-medium text-gray-900">
+              {order.address.firstName} {order.address.lastName}
             </p>
-            <select
-              onChange={(event) => statusHandler(event, order._id)}
-              value={order.status}
-              className="p-2 font-semibold"
-            >
-              <option value="Order Placed">Order Placed</option>
-              <option value="Packing">Packing</option>
-              <option value="Shipped">Shipped</option>
-              <option value="Out for delivery">Out for delivery</option>
-              <option value="Delivered">Delivered</option>
-            </select>
-            {/* Cross Icon for Removing Order */}
-            <button
-              onClick={() => handleRemoveOrder(order._id)}
-              className="absolute top-2 right-2 text-red-500 hover:text-red-700"
-            >
-              &times;
-            </button>
+            <p>{order.address.street}</p>
+            <p>
+              {order.address.city}, {order.address.state},{' '}
+              {order.address.country} - {order.address.zipcode}
+            </p>
+            <p className="mt-1">{order.address.phone}</p>
           </div>
-        ))}
-      </div>
+
+          {/* Order Info */}
+          <div className="text-sm space-y-1">
+            <p className="font-medium">
+              Items : {order.items.length}
+            </p>
+            <p>Method : {order.paymentMethod}</p>
+            <p>
+              Payment : {order.payment ? 'Done' : 'Pending'}
+            </p>
+            <p>
+              Date :{' '}
+              {new Date(order.date).toLocaleDateString()}
+            </p>
+          </div>
+
+          {/* Amount */}
+          <p className="text-lg font-semibold text-gray-900">
+            {currency}
+            {order.amount}
+          </p>
+
+          {/* STATUS BUTTON (FIXED) */}
+          <select
+            value={order.status}
+            onChange={(e) => statusHandler(e, order._id)}
+            className={`
+              w-40 h-10 px-3 rounded-full text-sm font-semibold cursor-pointer
+              border focus:outline-none
+              ${
+                order.status === 'Order Placed'
+                  ? 'bg-blue-50 text-blue-700 border-blue-300'
+                  : order.status === 'Packing'
+                  ? 'bg-yellow-50 text-yellow-700 border-yellow-300'
+                  : order.status === 'Shipped'
+                  ? 'bg-purple-50 text-purple-700 border-purple-300'
+                  : order.status === 'Out for delivery'
+                  ? 'bg-orange-50 text-orange-700 border-orange-300'
+                  : 'bg-green-50 text-green-700 border-green-300'
+              }
+            `}
+          >
+            <option value="Order Placed">Order Placed</option>
+            <option value="Packing">Packing</option>
+            <option value="Shipped">Shipped</option>
+            <option value="Out for delivery">
+              Out for delivery
+            </option>
+            <option value="Delivered">Delivered</option>
+          </select>
+
+          {/* Remove */}
+          <button
+            onClick={() => handleRemoveOrder(order._id)}
+            className="absolute top-2 right-2 text-gray-400 hover:text-red-600 text-lg"
+          >
+            &times;
+          </button>
+        </div>
+      ))}
     </div>
   );
 };

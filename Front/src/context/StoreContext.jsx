@@ -90,6 +90,11 @@ const StoreContextProvider = (props) => {
         });
     };
 
+    /* ================= CLEAR CART (IMPORTANT) ================= */
+    const clearCart = () => {
+        setCartItems({});
+    };
+
     /* ================= TOTAL ================= */
     const getTotalCartAmount = () => {
         let total = 0;
@@ -114,7 +119,7 @@ const StoreContextProvider = (props) => {
         }
     };
 
-    /* ================= USER CART (FIXED) ================= */
+    /* ================= USER CART ================= */
     const getUserCart = async (jwtToken) => {
         try {
             const res = await axios.post(
@@ -130,14 +135,11 @@ const StoreContextProvider = (props) => {
             if (res.data.success) {
                 setCartItems(res.data.cartData || {});
             }
-
         } catch (err) {
-            console.log(err);
             toast.error("Please login again");
         }
     };
 
-    /* ================= EFFECTS ================= */
     useEffect(() => {
         getProductsData();
     }, []);
@@ -149,14 +151,8 @@ const StoreContextProvider = (props) => {
             setToken(savedToken);
             getUserCart(savedToken);
         }
-
-        if (token) {
-            getUserCart(token);
-        }
-
     }, [token]);
 
-    /* ================= CONTEXT ================= */
     const contextValue = {
         products,
         cartItems,
@@ -164,6 +160,7 @@ const StoreContextProvider = (props) => {
         removeFromCart,
         increaseQuantity,
         decreaseQuantity,
+        clearCart,               // ✅ PROVIDED
         getTotalCartAmount,
         search,
         setSearch,
