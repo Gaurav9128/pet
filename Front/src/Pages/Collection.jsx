@@ -6,23 +6,24 @@ import ProductItem from '../Components/ProductItem.jsx';
 import { StoreContext } from '../context/StoreContext';
 
 const Collection = () => {
-  const { products = [], search = '', showSearch = false } = useContext(StoreContext);
+
+  const { products = [], search = '' } = useContext(StoreContext);
   const [searchParams] = useSearchParams();
   const brandFromURL = searchParams.get('brand');
 
   const [showFilter, setShowFilter] = useState(false);
 
-  // TEMP STATES (checkbox select ke liye)
+  // TEMP STATES
   const [tempCategory, setTempCategory] = useState([]);
   const [tempSubCategory, setTempSubCategory] = useState([]);
 
-  // APPLIED STATES (Done button ke baad)
+  // APPLIED STATES
   const [category, setCategory] = useState([]);
   const [subCategory, setSubCategory] = useState([]);
 
   const [sortType, setSortType] = useState('relavent');
 
-  /* ---------- TOGGLE CATEGORY (TEMP) ---------- */
+  /* ---------- TOGGLE CATEGORY ---------- */
   const toggleCategory = (e) => {
     const value = e.target.value;
     setTempCategory(prev =>
@@ -32,7 +33,7 @@ const Collection = () => {
     );
   };
 
-  /* ---------- TOGGLE SUB CATEGORY (TEMP) ---------- */
+  /* ---------- TOGGLE SUB CATEGORY ---------- */
   const toggleSubCategory = (e) => {
     const value = e.target.value;
     setTempSubCategory(prev =>
@@ -42,12 +43,11 @@ const Collection = () => {
     );
   };
 
-  /* ---------- APPLY FILTER (DONE BUTTON) ---------- */
+  /* ---------- APPLY FILTER ---------- */
   const applyFilters = () => {
     setCategory(tempCategory);
     setSubCategory(tempSubCategory);
 
-    // ✅ Close filter section on mobile after clicking Done
     if (window.innerWidth < 640) {
       setShowFilter(false);
     }
@@ -59,19 +59,19 @@ const Collection = () => {
     return Math.min(...product.sizes.map(s => Number(s.price) || 0));
   };
 
-  /* ---------- FILTER + SORT ---------- */
+  /* ---------- FILTER + SORT (FIXED SEARCH) ---------- */
   const filteredProducts = useMemo(() => {
     let result = [...products];
 
-    // SEARCH
-    if (showSearch && search) {
+    // ✅ SEARCH (FIXED)
+    if (search) {
       const searchLower = search.toLowerCase();
       result = result.filter(item =>
         (item.name || '').toLowerCase().includes(searchLower)
       );
     }
 
-    // BRAND
+    // BRAND FROM URL
     if (brandFromURL) {
       const brandLower = brandFromURL.toLowerCase();
       result = result.filter(item =>
@@ -79,7 +79,7 @@ const Collection = () => {
       );
     }
 
-    // CATEGORY (APPLIED)
+    // CATEGORY
     if (category.length > 0) {
       result = result.filter(item =>
         category.some(cat =>
@@ -88,7 +88,7 @@ const Collection = () => {
       );
     }
 
-    // SUB CATEGORY (APPLIED)
+    // SUB CATEGORY
     if (subCategory.length > 0) {
       result = result.filter(item =>
         subCategory.some(sub =>
@@ -105,7 +105,7 @@ const Collection = () => {
     }
 
     return result;
-  }, [products, search, showSearch, brandFromURL, category, subCategory, sortType]);
+  }, [products, search, brandFromURL, category, subCategory, sortType]);
 
   return (
     <div className="flex flex-col sm:flex-row gap-10 pt-10 border-t">
@@ -120,7 +120,7 @@ const Collection = () => {
           <img
             className={`h-3 sm:hidden transition-transform ${showFilter ? 'rotate-90' : ''}`}
             src={assets.dropdown_icon}
-            alt="dropdown"
+            alt=""
           />
         </p>
 
@@ -141,8 +141,8 @@ const Collection = () => {
               <input
                 type="checkbox"
                 value={item.value}
-                onChange={toggleCategory}
                 checked={tempCategory.includes(item.value)}
+                onChange={toggleCategory}
               />
               {item.label}
             </label>
@@ -168,14 +168,13 @@ const Collection = () => {
               <input
                 type="checkbox"
                 value={item.value}
-                onChange={toggleSubCategory}
                 checked={tempSubCategory.includes(item.value)}
+                onChange={toggleSubCategory}
               />
               {item.label}
             </label>
           ))}
 
-          {/* ✅ DONE BUTTON */}
           <button
             onClick={applyFilters}
             className="w-full bg-black text-white py-2 mt-4 rounded hover:bg-gray-800"

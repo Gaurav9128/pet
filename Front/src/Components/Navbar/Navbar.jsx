@@ -134,12 +134,7 @@ const Navbar = ({ setShowLogin }) => {
 
       {/* RIGHT */}
       <div className="navbar-right">
-        <img
-          onClick={() => setShowSearch(true)}
-          src={assets.search_icon}
-          className="nav-icon"
-          alt="Search"
-        />
+        <img onClick={()=> { setShowSearch(true); navigate('/cats') }} src={assets.search_icon} className='w-5 cursor-pointer' alt="" />
 
         <div className="navbar-search-icon">
           <Link to="/cart">
