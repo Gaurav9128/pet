@@ -14,21 +14,16 @@ const LoginPopUp = ({ setShowLogin }) => {
   const [password, setPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
 
-  /* ================= LOGIN / SIGNUP ================= */
+  /* ================= LOGIN / SIGNUP / FORGOT ================= */
   const onSubmitHandler = async (event) => {
     event.preventDefault();
-
     try {
       let response;
 
       if (currentState === 'Sign Up') {
         response = await axios.post(`${backendUrl}/api/user/register`, { name, email, password });
       } else if (currentState === 'Forgot Password') {
-        // Forgot password API call
-        response = await axios.post(`${backendUrl}/api/user/forgot-password`, {
-          email,
-          newPassword,
-        });
+        response = await axios.post(`${backendUrl}/api/user/forgot-password`, { email, newPassword });
       } else {
         response = await axios.post(`${backendUrl}/api/user/login`, { email, password });
       }
@@ -42,6 +37,7 @@ const LoginPopUp = ({ setShowLogin }) => {
           toast.success('Password updated successfully ✅');
         }
 
+        // Reset inputs
         setName('');
         setEmail('');
         setPassword('');
@@ -124,9 +120,9 @@ const LoginPopUp = ({ setShowLogin }) => {
               )}
             </div>
 
-            <button type="submit">
+            <button type="submit" className="main-btn">
               {currentState === 'Sign Up'
-                ? 'Create account'
+                ? 'Create Account'
                 : currentState === 'Forgot Password'
                 ? 'Update Password'
                 : 'Login'}
@@ -139,32 +135,41 @@ const LoginPopUp = ({ setShowLogin }) => {
               </div>
             )}
 
+            {/* LINKS */}
             {currentState === 'Login' && (
-              <>
-                <p>
-                  Forgot password?{' '}
-                  <span onClick={() => setCurrentState('Forgot Password')}>
-                    Click Here
-                  </span>
-                </p>
-                <p>
-                  Create a new account?{' '}
-                  <span onClick={() => setCurrentState('Sign Up')}>Click Here</span>
-                </p>
-              </>
+              <div className="login-popup-links">
+                <button
+                  type="button"
+                  className="link-btn forgot-btn"
+                  onClick={() => setCurrentState('Forgot Password')}
+                >
+                  Forgot Password?
+                </button>
+                <button
+                  type="button"
+                  className="link-btn signup-btn"
+                  onClick={() => setCurrentState('Sign Up')}
+                >
+                  Create a New Account
+                </button>
+              </div>
             )}
 
             {currentState === 'Sign Up' && (
-              <p>
+              <p className="login-popup-links">
                 Already have an account?{' '}
-                <span onClick={() => setCurrentState('Login')}>Login Here</span>
+                <span className="link-btn" onClick={() => setCurrentState('Login')}>
+                  Login Here
+                </span>
               </p>
             )}
 
             {currentState === 'Forgot Password' && (
-              <p>
+              <p className="login-popup-links">
                 Remembered your password?{' '}
-                <span onClick={() => setCurrentState('Login')}>Login Here</span>
+                <span className="link-btn" onClick={() => setCurrentState('Login')}>
+                  Login Here
+                </span>
               </p>
             )}
           </form>
