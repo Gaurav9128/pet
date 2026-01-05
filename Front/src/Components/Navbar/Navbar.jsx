@@ -160,9 +160,14 @@ const Navbar = ({ setShowLogin }) => {
                   My Orders
                 </Link>
 
-                <Link to="/admin" onClick={() => setShowUserMenu(false)}>
-                  Admin Panel
-                </Link>
+                <a
+  href="https://pet-admin-two.vercel.app/"
+  target="_blank"
+  rel="noopener noreferrer"
+  onClick={() => setShowUserMenu(false)}
+>
+  Admin Panel
+</a>
 
                 <button onClick={logoutHandler} className="logout-btn">
                   Logout
