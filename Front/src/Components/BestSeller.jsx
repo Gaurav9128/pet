@@ -18,21 +18,17 @@ const BestSeller = () => {
   return (
     <div className="my-10 px-6 sm:px-8 lg:px-12 max-w-7xl mx-auto">
 
-      {/* ===== TITLE ===== */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 items-center gap-4 mb-4">
-        <div className="hidden sm:block"></div>
-
-        <div className="flex flex-col items-center text-center">
-          <h2 className="text-2xl md:text-3xl font-semibold text-gray-800">
-            BEST SELLERS
-          </h2>
-          <p className="mt-2 text-sm md:text-base text-gray-600 max-w-md">
-            Explore our top picks, trusted by customers for their unmatched quality and popularity.
-          </p>
-        </div>
+      {/* TITLE */}
+      <div className="flex flex-col items-center text-center mb-6">
+        <h2 className="text-2xl md:text-3xl font-semibold text-gray-800">
+          BEST SELLERS
+        </h2>
+        <p className="mt-2 text-sm md:text-base text-gray-600 max-w-md">
+          Explore our top picks, trusted by customers for their unmatched quality and popularity.
+        </p>
       </div>
 
-      {/* ===== VIEW ALL (DESKTOP) ===== */}
+      {/* VIEW ALL */}
       <div className="hidden sm:flex justify-end mb-4">
         <button
           onClick={() => setShowAll(!showAll)}
@@ -42,20 +38,20 @@ const BestSeller = () => {
         </button>
       </div>
 
-      {/* ===== PRODUCTS ===== */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5 gap-y-7">
+      {/* PRODUCTS */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5 gap-y-7 items-stretch">
         {visibleProducts.map(item => (
           <ProductItem
             key={item._id}
             id={item._id}
             name={item.name}
             image={item.image}
-            sizes={item.sizes}   
+            sizes={item.sizes}
           />
         ))}
       </div>
 
-      {/* ===== VIEW ALL (MOBILE) ===== */}
+      {/* VIEW ALL MOBILE */}
       <div className="flex sm:hidden justify-center mt-6">
         <button
           onClick={() => setShowAll(!showAll)}

@@ -4,25 +4,17 @@ import { StoreContext } from "../context/StoreContext";
 
 const ProductItem = ({ id, image = [], name, sizes = [] }) => {
   const { currency } = useContext(StoreContext);
-
-  /* ✅ SELECTED SIZE STATE */
   const [selectedSize, setSelectedSize] = useState(null);
 
-  /* ✅ PRICE DATA (SELECTED SIZE FIRST, ELSE LOWEST PRICE) */
   const getPriceData = () => {
-    if (!Array.isArray(sizes) || sizes.length === 0) {
-      return { price: 0, mrp: 0, discount: 0 };
-    }
+    if (!sizes.length) return { price: 0, mrp: 0, discount: 0 };
 
     const validSizes = sizes.filter(
       s => Number(s.price) > 0 && Number(s.mrp) > 0
     );
 
-    if (!validSizes.length) {
-      return { price: 0, mrp: 0, discount: 0 };
-    }
+    if (!validSizes.length) return { price: 0, mrp: 0, discount: 0 };
 
-    // 👉 agar size selected hai
     const activeSize =
       selectedSize ||
       validSizes.reduce((min, curr) =>
@@ -31,7 +23,6 @@ const ProductItem = ({ id, image = [], name, sizes = [] }) => {
 
     const price = Number(activeSize.price);
     const mrp = Number(activeSize.mrp);
-
     const discount =
       mrp > price ? Math.round(((mrp - price) / mrp) * 100) : 0;
 
@@ -41,31 +32,32 @@ const ProductItem = ({ id, image = [], name, sizes = [] }) => {
   const { price, mrp, discount } = getPriceData();
 
   return (
-    <div className="bg-white shadow-md rounded-md hover:shadow-lg transition-shadow duration-300">
+    <div className="bg-white shadow-md rounded-md hover:shadow-lg 
+                    transition-shadow flex flex-col h-full">
 
-      {/* 🖼 Product Image */}
+      {/* IMAGE */}
       <Link
         to={`/product/${id}`}
-        className="w-full h-48 bg-gray-100 rounded-t-md overflow-hidden block"
+        className="w-full h-48 bg-gray-100 rounded-t-md overflow-hidden"
       >
         <img
           src={image?.[0]}
           alt={name}
-          className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+          className="w-full h-full object-cover hover:scale-105 transition-transform"
         />
       </Link>
 
-      {/* 📦 Product Info */}
-      <div className="px-5 pt-4 pb-5 flex flex-col">
+      {/* CONTENT */}
+      <div className="px-4 pt-4 flex flex-col flex-1">
 
         <p className="text-sm font-semibold line-clamp-2 text-gray-800">
           <Link to={`/product/${id}`}>{name}</Link>
         </p>
 
-        {/* 💰 PRICE */}
+        {/* PRICE */}
         {price > 0 ? (
           <div className="flex items-center gap-2 mt-2 flex-wrap">
-            <span className="text-xl font-bold text-black">
+            <span className="text-lg font-bold">
               ₹{currency}{price}
             </span>
 
@@ -85,9 +77,9 @@ const ProductItem = ({ id, image = [], name, sizes = [] }) => {
           <p className="text-red-500 text-sm mt-1">Price not available</p>
         )}
 
-        {/* 📏 Sizes */}
+        {/* SIZES */}
         {sizes.length > 0 && (
-          <div className="mt-3 flex flex-wrap gap-2.5">
+          <div className="mt-3 flex flex-wrap gap-2">
             {sizes.map((size, index) => {
               const isActive = selectedSize?.label === size.label;
 
@@ -96,16 +88,12 @@ const ProductItem = ({ id, image = [], name, sizes = [] }) => {
                   key={index}
                   onClick={() => setSelectedSize(size)}
                   className={`
-                    px-3.5 py-1.5
-                    text-[13px] font-semibold
-                    border-2 rounded-md
-                    min-w-[70px]
+                    px-3 py-1 text-xs font-semibold
+                    border rounded-md min-w-[60px]
                     transition-all
-                    ${
-                      isActive
-                        ? "border-red-500 text-red-500 bg-red-50"
-                        : "border-gray-400 text-gray-800 hover:border-red-500 hover:text-red-500"
-                    }
+                    ${isActive
+                      ? "border-red-500 text-red-500 bg-red-50"
+                      : "border-gray-400 hover:border-red-500 hover:text-red-500"}
                   `}
                 >
                   {size.label}
@@ -115,26 +103,23 @@ const ProductItem = ({ id, image = [], name, sizes = [] }) => {
           </div>
         )}
 
-        {/* 🛒 Buy Now */}
-        <Link
-          to={`/product/${id}`}
-          className="
-            mt-4
-            border border-red-500
-            text-red-500
-            bg-white
-            py-3
-            text-lg font-semibold
-            rounded-lg
-            text-center
-            hover:bg-red-500 hover:text-white
-            transition-all
-          "
-        >
-          BUY NOW
-        </Link>
-
       </div>
+
+      {/* BUY NOW (NO EXTRA SPACE BELOW) */}
+      <Link
+        to={`/product/${id}`}
+        className="mx-4 mb-4
+                   border border-red-500
+                   text-red-500
+                   py-2.5
+                   text-base font-semibold
+                   rounded-lg text-center
+                   hover:bg-red-500 hover:text-white
+                   transition-all"
+      >
+        BUY NOW
+      </Link>
+
     </div>
   );
 };
