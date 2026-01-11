@@ -18,7 +18,7 @@ const PlaceOrder = () => {
 
   const navigate = useNavigate()
 
-  const DELIVERY_FEE = 40
+  const DELIVERY_FEE = 50
   const [method, setMethod] = useState('cod')
 
   const [formData, setFormData] = useState({

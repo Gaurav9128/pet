@@ -1,6 +1,12 @@
 import mongoose from 'mongoose'
 
 const orderSchema = new mongoose.Schema({
+  orderUniqueId: {
+    type: String,
+    required: true,
+    unique: true
+  },
+
   userId: { type: String, required: true },
 
   items: [
@@ -8,9 +14,9 @@ const orderSchema = new mongoose.Schema({
       productId: { type: String, required: true },
       name: { type: String },
       price: { type: Number },
-       size: { type: String, required: true }, 
+      size: { type: String, required: true },
       quantity: { type: Number, required: true },
-      image: { type: String } 
+      image: { type: String }
     }
   ],
 

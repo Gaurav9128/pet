@@ -2,7 +2,7 @@ import React, { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import { StoreContext } from "../context/StoreContext";
 
-const ProductItem = ({ id, image = [], name, sizes = [] }) => {
+const ProductItem = ({ id, image = [], name, sizes = [], isAvailable = true }) => {
   const { currency } = useContext(StoreContext);
   const [selectedSize, setSelectedSize] = useState(null);
 
@@ -105,20 +105,36 @@ const ProductItem = ({ id, image = [], name, sizes = [] }) => {
 
       </div>
 
-      {/* BUY NOW (NO EXTRA SPACE BELOW) */}
-      <Link
-        to={`/product/${id}`}
-        className="mx-4 mb-4
-                   border border-red-500
-                   text-red-500
-                   py-2.5
-                   text-base font-semibold
-                   rounded-lg text-center
-                   hover:bg-red-500 hover:text-white
-                   transition-all"
-      >
-        BUY NOW
-      </Link>
+      {/* BUY NOW / UNAVAILABLE BUTTON */}
+      {isAvailable ? (
+        <Link
+          to={`/product/${id}`}
+          className="mx-4 mb-4
+                     border border-red-500
+                     text-red-500
+                     py-2.5
+                     text-base font-semibold
+                     rounded-lg text-center
+                     hover:bg-red-500 hover:text-white
+                     transition-all"
+        >
+          BUY NOW
+        </Link>
+      ) : (
+        <button
+          disabled
+          className="mx-4 mb-4
+                     border border-gray-400
+                     bg-gray-400
+                     text-white
+                     py-2.5
+                     text-base font-semibold
+                     rounded-lg text-center
+                     cursor-not-allowed"
+        >
+          UNAVAILABLE
+        </button>
+      )}
 
     </div>
   );

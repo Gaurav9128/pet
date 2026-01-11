@@ -63,7 +63,9 @@ const productSchema = new mongoose.Schema({
   date: {
     type: Number,
     default: Date.now
-  }
+  },
+  // ✅ NEW FIELD: Availability
+  isAvailable: { type: Boolean, default: true }
 });
 
 const productModel =

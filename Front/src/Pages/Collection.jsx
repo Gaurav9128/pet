@@ -63,6 +63,9 @@ const Collection = () => {
   const filteredProducts = useMemo(() => {
     let result = [...products];
 
+    // ✅ Show only available products
+  result = result.filter(p => p.isAvailable); // ← ye line add ki
+
     // ✅ SEARCH (FIXED)
     if (search) {
       const searchLower = search.toLowerCase();

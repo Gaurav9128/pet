@@ -18,3 +18,28 @@ select,input,textarea{
     border-color: #C586A5;
 }
 
+
+.dashboard {
+  padding: 20px;
+  background: #0f172a;
+  color: white;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.card {
+  background: #1e293b;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.graphs {
+  margin-top: 40px;
+  display: flex;
+  gap: 40px;
+}
+

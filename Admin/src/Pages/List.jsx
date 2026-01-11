@@ -26,9 +26,27 @@ const List = ({ token }) => {
         { id },
         { headers: { token } }
       )
-
       if (response.data.success) {
         toast.success(response.data.message)
+        fetchList()
+      } else {
+        toast.error(response.data.message)
+      }
+    } catch (error) {
+      toast.error(error.message)
+    }
+  }
+
+  // ---------- New Function: Toggle Availability ----------
+  const toggleAvailability = async (id, currentStatus) => {
+    try {
+      const response = await axios.post(
+        backendUrl + '/api/product/toggleAvailability',
+        { id, isAvailable: !currentStatus },
+        { headers: { token } }
+      )
+      if (response.data.success) {
+        toast.success(`Product marked ${!currentStatus ? 'Available' : 'Unavailable'}`)
         fetchList()
       } else {
         toast.error(response.data.message)
@@ -47,12 +65,13 @@ const List = ({ token }) => {
       <p className="mb-3 font-medium">All Products List</p>
 
       {/* ---------- DESKTOP TABLE HEADER ---------- */}
-      <div className="hidden md:grid grid-cols-[1fr_3fr_1fr_2fr_1fr] items-center py-2 px-3 border bg-gray-100 text-sm font-medium">
+      <div className="hidden md:grid grid-cols-[1fr_3fr_1fr_2fr_1fr_1fr] items-center py-2 px-3 border bg-gray-100 text-sm font-medium">
         <span>Image</span>
         <span>Name</span>
         <span>Category</span>
         <span>Price Details</span>
         <span className="text-center">Action</span>
+        <span>Availability</span>
       </div>
 
       {/* ---------- PRODUCT LIST ---------- */}
@@ -69,7 +88,7 @@ const List = ({ token }) => {
               className="
                 border rounded-lg p-3
                 flex flex-col gap-3
-                md:grid md:grid-cols-[1fr_3fr_1fr_2fr_1fr]
+                md:grid md:grid-cols-[1fr_3fr_1fr_2fr_1fr_1fr]
                 md:items-center md:gap-2
               "
             >
@@ -81,22 +100,20 @@ const List = ({ token }) => {
               />
 
               {/* NAME */}
-              <p className="font-medium text-sm md:text-base">
-                {item.name}
-              </p>
+              <p className="font-medium text-sm md:text-base">{item.name}</p>
 
               {/* CATEGORY */}
-              <p className="text-xs md:text-sm text-gray-500">
-                {item.category}
-              </p>
+              <p className="text-xs md:text-sm text-gray-500">{item.category}</p>
 
               {/* PRICE DETAILS */}
               <div className="text-sm md:text-base flex flex-col gap-1">
                 <span>
-                  <strong>MRP:</strong> {currency}{mrp}
+                  <strong>MRP:</strong> {currency}
+                  {mrp}
                 </span>
                 <span>
-                  <strong>Price:</strong> {currency}{sellingPrice}
+                  <strong>Price:</strong> {currency}
+                  {sellingPrice}
                 </span>
                 {discount > 0 && (
                   <span className="text-green-600">
@@ -105,15 +122,22 @@ const List = ({ token }) => {
                 )}
               </div>
 
-              {/* ACTION */}
+              {/* ACTION: Remove Product */}
               <button
                 onClick={() => removeProduct(item._id)}
-                className="
-                  text-red-600 font-bold
-                  self-end md:self-auto
-                "
+                className="text-red-600 font-bold self-end md:self-auto"
               >
                 ✕
+              </button>
+
+              {/* ---------- AVAILABILITY TOGGLE ---------- */}
+              <button
+                onClick={() => toggleAvailability(item._id, item.isAvailable)}
+                className={`px-3 py-1 rounded ${
+                  item.isAvailable ? 'bg-green-500 text-white' : 'bg-gray-400 text-white'
+                }`}
+              >
+                {item.isAvailable ? 'Available' : 'Unavailable'}
               </button>
             </div>
           )

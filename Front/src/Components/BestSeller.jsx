@@ -9,7 +9,8 @@ const BestSeller = () => {
   const [showAll, setShowAll] = useState(false)
 
   useEffect(() => {
-    const bestProduct = products.filter(item => item.bestseller)
+    // ✅ Only bestsellers that are available
+    const bestProduct = products.filter(item => item.bestseller && item.isAvailable)
     setBestSeller(bestProduct)
   }, [products])
 

@@ -22,8 +22,8 @@ const Cart = () => {
   const isCartEmpty = validItems.length === 0;
 
   const subTotal = isCartEmpty ? 0 : getTotalCartAmount() || 0;
-  const deliveryFee = isCartEmpty ? 0 : 2;
-  const total = subTotal + deliveryFee;
+  // const deliveryFee = isCartEmpty ? 0 : 2;
+  const total = subTotal;
 
   return (
     <div className='cart'>
@@ -96,12 +96,10 @@ const Cart = () => {
             <p>₹{subTotal}</p>
           </div>
 
-          <hr />
-
-          <div className="cart-total-details">
+          {/* <div className="cart-total-details">
             <p>Delivery Fee</p>
             <p>₹{deliveryFee}</p>
-          </div>
+          </div> */}
 
           <hr />
 

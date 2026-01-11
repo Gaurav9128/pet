@@ -8,12 +8,13 @@ const Orders = ({ token }) => {
   const [orders, setOrders] = useState([]);
   const [filteredOrders, setFilteredOrders] = useState([]);
   const [filterDate, setFilterDate] = useState('');
+  const [filterStatus, setFilterStatus] = useState('');
+  const [filterOrderId, setFilterOrderId] = useState('');
 
   const getRemovedOrders = () => {
     const removed = localStorage.getItem('removedOrders');
     return removed ? JSON.parse(removed) : [];
   };
-
   const [removedOrders, setRemovedOrders] = useState(getRemovedOrders());
 
   const fetchAllOrders = async () => {
@@ -55,21 +56,27 @@ const Orders = ({ token }) => {
   };
 
   const handleFilter = () => {
-    if (!filterDate) {
-      setFilteredOrders(
-        orders.filter((order) => !removedOrders.includes(order._id))
+    let filtered = orders.filter(order => !removedOrders.includes(order._id));
+
+    // Filter by date
+    if (filterDate) {
+      const selectedDate = new Date(filterDate).toDateString();
+      filtered = filtered.filter(
+        order => new Date(order.date).toDateString() === selectedDate
       );
-      return;
     }
 
-    const selectedDate = new Date(filterDate).toDateString();
-    const filtered = orders.filter((order) => {
-      const orderDate = new Date(order.date).toDateString();
-      return (
-        orderDate === selectedDate &&
-        !removedOrders.includes(order._id)
+    // Filter by status
+    if (filterStatus) {
+      filtered = filtered.filter(order => order.status === filterStatus);
+    }
+
+    // Filter by Order ID safely
+    if (filterOrderId) {
+      filtered = filtered.filter(order =>
+        order.orderUniqueId?.toLowerCase().includes(filterOrderId.toLowerCase())
       );
-    });
+    }
 
     setFilteredOrders(filtered);
   };
@@ -77,10 +84,7 @@ const Orders = ({ token }) => {
   const handleRemoveOrder = (orderId) => {
     const updatedRemovedOrders = [...removedOrders, orderId];
     setRemovedOrders(updatedRemovedOrders);
-    localStorage.setItem(
-      'removedOrders',
-      JSON.stringify(updatedRemovedOrders)
-    );
+    localStorage.setItem('removedOrders', JSON.stringify(updatedRemovedOrders));
 
     setFilteredOrders(
       filteredOrders.filter((order) => order._id !== orderId)
@@ -96,13 +100,35 @@ const Orders = ({ token }) => {
       <h3 className="text-lg font-semibold mb-5">Order Page</h3>
 
       {/* Filter */}
-      <div className="mb-6 flex gap-3">
+      <div className="mb-6 flex gap-3 flex-wrap">
         <input
           type="date"
           value={filterDate}
           onChange={(e) => setFilterDate(e.target.value)}
           className="border border-gray-300 p-2 rounded"
         />
+
+        <select
+          value={filterStatus}
+          onChange={(e) => setFilterStatus(e.target.value)}
+          className="border border-gray-300 p-2 rounded"
+        >
+          <option value="">All Status</option>
+          <option value="Order Placed">Order Placed</option>
+          <option value="Packing">Packing</option>
+          <option value="Shipped">Shipped</option>
+          <option value="Out for delivery">Out for delivery</option>
+          <option value="Delivered">Delivered</option>
+        </select>
+
+        <input
+          type="text"
+          placeholder="Search by Order ID"
+          value={filterOrderId}
+          onChange={(e) => setFilterOrderId(e.target.value)}
+          className="border border-gray-300 p-2 rounded"
+        />
+
         <button
           onClick={handleFilter}
           className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
@@ -149,13 +175,9 @@ const Orders = ({ token }) => {
                   key={i}
                   className="grid grid-cols-[3fr_1fr_2fr] gap-2 text-sm mb-2"
                 >
-                  <p className="text-gray-800 leading-snug">
-                    {item.name}
-                  </p>
+                  <p className="text-gray-800 leading-snug">{item.name}</p>
                   <p className="font-medium">{item.quantity}</p>
-                  <p className="text-gray-600">
-                    {item.size || '-'}
-                  </p>
+                  <p className="text-gray-600">{item.size || '-'}</p>
                 </div>
               ))}
             </div>
@@ -174,17 +196,14 @@ const Orders = ({ token }) => {
 
           {/* Order Info */}
           <div className="text-sm space-y-1">
-            <p className="font-medium">
-              Items : {order.items.length}
+            <p className="font-semibold text-gray-800">
+              Order ID :
+              <span className="ml-1 text-blue-600">{order.orderUniqueId}</span>
             </p>
+            <p className="font-medium">Items : {order.items.length}</p>
             <p>Method : {order.paymentMethod}</p>
-            <p>
-              Payment : {order.payment ? 'Done' : 'Pending'}
-            </p>
-            <p>
-              Date :{' '}
-              {new Date(order.date).toLocaleDateString()}
-            </p>
+            <p>Payment : {order.payment ? 'Done' : 'Pending'}</p>
+            <p>Date : {new Date(order.date).toLocaleDateString()}</p>
           </div>
 
           {/* Amount */}
@@ -193,7 +212,7 @@ const Orders = ({ token }) => {
             {order.amount}
           </p>
 
-          {/* STATUS BUTTON (FIXED) */}
+          {/* STATUS BUTTON */}
           <select
             value={order.status}
             onChange={(e) => statusHandler(e, order._id)}
@@ -216,9 +235,7 @@ const Orders = ({ token }) => {
             <option value="Order Placed">Order Placed</option>
             <option value="Packing">Packing</option>
             <option value="Shipped">Shipped</option>
-            <option value="Out for delivery">
-              Out for delivery
-            </option>
+            <option value="Out for delivery">Out for delivery</option>
             <option value="Delivered">Delivered</option>
           </select>
 
