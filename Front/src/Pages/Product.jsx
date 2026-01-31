@@ -10,17 +10,10 @@ const getOptimizedImage = (url, type = "main") => {
   if (!url || !url.includes("/upload/")) return url
 
   if (type === "thumb") {
-    return url.replace(
-      "/upload/",
-      "/upload/f_auto,q_100,w_150/"
-    )
+    return url.replace("/upload/", "/upload/f_auto,q_100,w_150/")
   }
 
-  // MAIN IMAGE (High quality + responsive)
-  return url.replace(
-    "/upload/",
-    "/upload/f_auto,q_auto:best,w_600/"
-  )
+  return url.replace("/upload/", "/upload/f_auto,q_auto:best,w_600/")
 }
 
 const Product = () => {
@@ -35,7 +28,7 @@ const Product = () => {
   const [mrp, setMrp] = useState(0)
   const [sizesWithPrice, setSizesWithPrice] = useState([])
 
-  /* Fetch Product */
+  /* FETCH PRODUCT */
   useEffect(() => {
     const product = products.find(item => item._id === productId)
     if (product) {
@@ -51,7 +44,7 @@ const Product = () => {
     }
   }, [productId, products])
 
-  /* Auto Image Slider */
+  /* AUTO IMAGE SLIDER */
   useEffect(() => {
     if (!productData || productData.image.length === 0) return
 
@@ -88,7 +81,7 @@ const Product = () => {
       <div className="flex gap-12 flex-col sm:flex-row">
 
         {/* IMAGE SECTION */}
-        <div className="flex-1 flex flex-col-reverse gap-3 sm:flex-row">
+        <div className="flex-1 self-start flex flex-col-reverse gap-3 sm:flex-row">
 
           {/* THUMBNAILS */}
           <div className="flex sm:flex-col overflow-x-auto sm:overflow-y-scroll sm:w-[18%] w-full gap-2">
@@ -104,11 +97,11 @@ const Product = () => {
             ))}
           </div>
 
-          {/* MAIN IMAGE WITH ZOOM */}
-          <div className="w-full sm:w-[80%] overflow-hidden rounded-lg border">
+          {/* MAIN IMAGE */}
+          <div className="w-full sm:w-[80%] h-fit overflow-hidden rounded-lg border">
             <img
               src={getOptimizedImage(image, "main")}
-              className="w-full h-auto object-contain transition-transform duration-300 hover:scale-125 cursor-zoom-in"
+              className="w-full h-auto object-contain transition-transform duration-300 hover:scale-110 cursor-zoom-in"
               alt=""
             />
           </div>
@@ -118,9 +111,9 @@ const Product = () => {
         {/* PRODUCT INFO */}
         <div className="flex-1">
           <h1 className="font-medium text-2xl mt-2">{productData.name}</h1>
-         <br/>
+  <br/>  <br/>
           {/* RATING */}
-          <div className="flex items-center gap-1 mt-2">
+          <div className="flex items-center gap-1 mt-3">
             {Array.from({ length: 5 }).map((_, i) => (
               <img
                 key={i}
@@ -130,7 +123,7 @@ const Product = () => {
               />
             ))}
           </div>
-          <br/>
+  <br/>  <br/>
           {/* PRICE */}
           <div className="mt-5 flex items-center gap-3">
             <span className="text-3xl font-semibold">₹{price}</span>
@@ -143,7 +136,7 @@ const Product = () => {
               </>
             )}
           </div>
-          <br/>
+  <br/>  <br/>
           {/* SIZES */}
           <div className="flex flex-wrap gap-3 mt-4">
             {sizesWithPrice.map(item => (
@@ -159,20 +152,19 @@ const Product = () => {
               </button>
             ))}
           </div>
-           <br/>
+  <br/>  <br/>
           {/* INFO */}
           <div className="text-sm text-gray-500 mt-6 space-y-1">
             <p>100% Original product.</p>
             <p>Cash on delivery available.</p>
             <p>7 days return policy.</p>
           </div>
-          <br/>
+  <br/>  <br/>
           <div className="mt-4 bg-gray-50 px-4 py-3 text-sm">
             <p className="font-medium">COD available ₹700 – ₹5000</p>
             <p>Free delivery above ₹599</p>
           </div>
-          <br/>
-          <br/>
+  <br/>  <br/>
           {/* ADD TO CART */}
           <button
             onClick={handleAddToCart}
@@ -181,9 +173,8 @@ const Product = () => {
           >
             Add to cart
           </button>
-          <br/>
-          <br/>
-          {/* DETAILS */}
+         <br/>  <br/>
+          {/* PRODUCT DETAILS */}
           <div className="mt-10 border rounded-lg">
             <button
               onClick={() => setShowDetails(!showDetails)}
@@ -211,15 +202,15 @@ const Product = () => {
 
         </div>
       </div>
-      <br/>
+
       {/* DESCRIPTION */}
       <div className="mt-20">
-        <b className="border px-5 py-3 text-sm">Description</b><br/><br/>
+        <b className="border px-5 py-3 text-sm">Description</b>  <br/>  <br/>
         <div className="border px-6 py-6 text-sm text-gray-500 mt-4">
           {productData.description}
         </div>
       </div>
-
+  <br/>  <br/>
       <ToastContainer position="top-right" autoClose={2000} />
     </div>
   ) : null

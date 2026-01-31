@@ -14,7 +14,7 @@ const BestSeller = () => {
     setBestSeller(bestProduct)
   }, [products])
 
-  const visibleProducts = showAll ? bestSeller : bestSeller.slice(0, 6)
+  const visibleProducts = showAll ? bestSeller : bestSeller.slice(0, 10)
 
   return (
     <div className="my-10 px-6 sm:px-8 lg:px-12 max-w-7xl mx-auto">

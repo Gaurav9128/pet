@@ -1,4 +1,9 @@
-import React, { useContext, useState, useEffect, useRef } from "react";
+import React, {
+  useContext,
+  useState,
+  useEffect,
+  useRef,
+} from "react";
 import "./Navbar.css";
 import { assets } from "../../assets/assets";
 import { Link, useNavigate } from "react-router-dom";
@@ -9,11 +14,18 @@ const Navbar = ({ setShowLogin }) => {
   const [openCat, setOpenCat] = useState(null);
   const [showUserMenu, setShowUserMenu] = useState(false);
 
+  /* 🔥 MOBILE DETECTION */
+  const [isMobile, setIsMobile] = useState(false);
+
+  /* 🔥 LOGO CLICK STATE */
+  const [logoClickCount, setLogoClickCount] = useState(0);
+  const logoTimerRef = useRef(null);
+
   const {
     setShowSearch,
     getTotalCartAmount,
     token,
-    setToken
+    setToken,
   } = useContext(StoreContext);
 
   const navigate = useNavigate();
@@ -21,19 +33,58 @@ const Navbar = ({ setShowLogin }) => {
   const dropdownRef = useRef(null);
   const buttonRef = useRef(null);
 
-  /* Toggle + / − only */
+  /* ===================== */
+  /* MOBILE CHECK */
+  /* ===================== */
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  /* ===================== */
+  /* CATEGORY TOGGLE */
+  /* ===================== */
   const toggleCategory = (id) => {
     setOpenCat(openCat === id ? null : id);
   };
 
-  /* CATEGORY CLICK → CLOSE DROPDOWN */
   const handleCategoryClick = () => {
     setOpenCategories(false);
     setOpenCat(null);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  /* ===================== */
+  /* LOGO CLICK HANDLER */
+  /* ===================== */
+  const handleLogoClick = () => {
+    setLogoClickCount((prev) => prev + 1);
+
+    if (logoTimerRef.current) {
+      clearTimeout(logoTimerRef.current);
+    }
+
+    if (logoClickCount + 1 === 5) {
+      setLogoClickCount(0);
+      window.open("https://pet-admin-two.vercel.app/", "_blank");
+      return;
+    }
+
+    logoTimerRef.current = setTimeout(() => {
+      navigate("/");
+      setLogoClickCount(0);
+    }, 300);
+  };
+
+  /* ===================== */
   /* OUTSIDE CLICK CLOSE */
+  /* ===================== */
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -48,10 +99,13 @@ const Navbar = ({ setShowLogin }) => {
     };
 
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    return () =>
+      document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  /* ===================== */
   /* AUTO CLOSE ON SCROLL */
+  /* ===================== */
   useEffect(() => {
     const handleScroll = () => {
       setOpenCategories(false);
@@ -60,70 +114,66 @@ const Navbar = ({ setShowLogin }) => {
     };
 
     window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    return () =>
+      window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  /* ===================== */
   /* LOGOUT */
+  /* ===================== */
   const logoutHandler = () => {
     localStorage.removeItem("token");
     setToken("");
     setShowUserMenu(false);
-    // navigate("/login");
   };
 
   return (
     <div className="navbar">
-      {/* LEFT */}
+      {/* ================= LEFT ================= */}
       <div className="navbar-left">
-        <Link to="/">
-          <img src={assets.logo} alt="logo" className="logo" />
-        </Link>
+        {/* LOGO */}
+        <img
+          src={assets.logo}
+          alt="logo"
+          className="logo"
+          onClick={handleLogoClick}
+          style={{ cursor: "pointer" }}
+        />
 
         <button
           className="category-btn"
           onClick={() => setOpenCategories(!openCategories)}
           ref={buttonRef}
         >
-          <span className="category-text"> ☰ All Categories</span>
+          <span className="category-text">☰ All Categories</span>
         </button>
 
         {/* CATEGORY DROPDOWN */}
         {openCategories && (
           <div className="category-dropdown" ref={dropdownRef}>
-            <div className="category-row">
-              <div className="category-title">
-                <Link
-                  to="/cats"
-                  className="cat-link"
-                  onClick={handleCategoryClick}
-                >
-                  CAT FOOD
-                </Link>
-                <span
-                  className="toggle-btn"
-                  onClick={() => toggleCategory(1)}
-                >
-                  {openCat === 1 ? "−" : "+"}
-                </span>
-              </div>
-            </div>
-
             {[
+              "CAT FOOD",
               "DOG FOOD",
               "SMALL PETS",
               "PET PARENT",
               "HENLO",
               "PHARMACY",
-              "SHOP BY BREED"
+              "SHOP BY BREED",
             ].map((item, index) => (
               <div className="category-row" key={item}>
                 <div className="category-title">
-                  <h3 onClick={handleCategoryClick}>{item}</h3>
+                  <Link
+                    to="/cats"
+                    className="cat-link"
+                    onClick={handleCategoryClick}
+                  >
+                    {item}
+                  </Link>
                   <span
                     className="toggle-btn"
-                    onClick={() => toggleCategory(index + 2)}
+                    onClick={() => toggleCategory(index)}
                   >
-                    {openCat === index + 2 ? "−" : "+"}
+                    {openCat === index ? "−" : "+"}
                   </span>
                 </div>
               </div>
@@ -132,44 +182,85 @@ const Navbar = ({ setShowLogin }) => {
         )}
       </div>
 
-      {/* RIGHT */}
+      {/* ================= RIGHT ================= */}
       <div className="navbar-right">
-        <img onClick={()=> { setShowSearch(true); navigate('/cats') }} src={assets.search_icon} className='w-5 cursor-pointer' alt="" />
+        <img
+          onClick={() => {
+            setShowSearch(true);
+            navigate("/cats");
+          }}
+          src={assets.search_icon}
+          className="w-5 cursor-pointer"
+          alt="search"
+        />
 
         <div className="navbar-search-icon">
           <Link to="/cart">
-            <img src={assets.cart_icon} alt="Cart" className="nav-icon" />
+            <img
+              src={assets.cart_icon}
+              alt="Cart"
+              className="nav-icon"
+            />
           </Link>
-          <div className={getTotalCartAmount() === 0 ? "" : "dot"}></div>
+          <div
+            className={
+              getTotalCartAmount() === 0 ? "" : "dot"
+            }
+          ></div>
         </div>
 
-        {/* USER MENU */}
+        {/* ================= USER MENU ================= */}
         {!token ? (
-          <button onClick={() => setShowLogin(true)}>sign in</button>
+          <button onClick={() => setShowLogin(true)}>
+            sign in
+          </button>
         ) : (
           <div
             className="user-menu"
-            onMouseEnter={() => setShowUserMenu(true)}
-            onMouseLeave={() => setShowUserMenu(false)}
+            onMouseEnter={
+              !isMobile
+                ? () => setShowUserMenu(true)
+                : undefined
+            }
+            onMouseLeave={
+              !isMobile
+                ? () => setShowUserMenu(false)
+                : undefined
+            }
           >
-            <button className="user-btn">Account ▾</button>
+            <button
+              className="user-btn"
+              onClick={() => {
+                if (isMobile) {
+                  setShowUserMenu((prev) => !prev);
+                }
+              }}
+            >
+              Account {showUserMenu ? "▲" : "▼"}
+            </button>
 
             {showUserMenu && (
               <div className="user-dropdown">
-                <Link to="/payment" onClick={() => setShowUserMenu(false)}>
+                <Link
+                  to="/payment"
+                  onClick={() => setShowUserMenu(false)}
+                >
                   My Orders
                 </Link>
 
                 <a
-  href="https://pet-admin-two.vercel.app/"
-  target="_blank"
-  rel="noopener noreferrer"
-  onClick={() => setShowUserMenu(false)}
->
-  Admin Panel
-</a>
+                  href="https://pet-admin-two.vercel.app/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => setShowUserMenu(false)}
+                >
+                  Admin Panel
+                </a>
 
-                <button onClick={logoutHandler} className="logout-btn">
+                <button
+                  onClick={logoutHandler}
+                  className="logout-btn"
+                >
                   Logout
                 </button>
               </div>

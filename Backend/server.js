@@ -8,7 +8,9 @@ import productRouter from './routes/productRoute.js'
 import cartRouter from './routes/cartRoute.js'
 import orderRouter from './routes/orderRoute.js'
 import adminDashboardRoutes from "./routes/adminDashboard.js"
-
+import adminOrderRoutes from "./routes/adminOrderRoutes.js";
+import couponRoutes from "./routes/couponRoutes.js";
+import couponRoute from "./routes/couponRoute.js";
 // App Config
 const app = express()
 const port = process.env.PORT || 4000
@@ -25,6 +27,9 @@ app.use('/api/product',productRouter)
 app.use('/api/cart',cartRouter)
 app.use('/api/order',orderRouter)
 app.use("/api/admin/dashboard", adminDashboardRoutes);
+app.use("/api/admin", adminOrderRoutes);
+app.use("/api/coupon", couponRoutes);
+app.use("/api/admin/coupon", couponRoute);
 
 app.get('/',(req,res)=>{
     res.send("API Working")

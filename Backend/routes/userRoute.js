@@ -1,18 +1,33 @@
 import express from 'express';
-import { loginUser, registerUser, adminLogin, forgotPassword } from '../controllers/userController.js';
+import {
+  loginUser,
+  verifyOtp,
+  registerUser,
+  adminLogin,
+  forgotPassword,
+  resetPassword
+} from '../controllers/userController.js';
 
 const userRouter = express.Router();
+
+/* ================= USER AUTH ROUTES ================= */
 
 // User registration
 userRouter.post('/register', registerUser);
 
-// User login
+// Login → email + password (OTP send hoga)
 userRouter.post('/login', loginUser);
 
-// Admin login
+// OTP verify → JWT token milega
+userRouter.post('/verify-otp', verifyOtp);
+
+// Admin login (same as before)
 userRouter.post('/admin', adminLogin);
 
-// Forgot password (update password)
-userRouter.post('/forgot-password', forgotPassword); // ✅ New route
+// Forgot password → OTP send
+userRouter.post('/forgot-password', forgotPassword);
+
+// Reset password → OTP verify + new password
+userRouter.post('/reset-password', resetPassword);
 
 export default userRouter;

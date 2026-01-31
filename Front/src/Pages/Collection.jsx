@@ -1,34 +1,65 @@
-import React, { useContext, useState, useMemo } from 'react';
+import React, { useContext, useState, useMemo, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { assets } from '../assets/assets';
 import Title from '../Components/Title.jsx';
 import ProductItem from '../Components/ProductItem.jsx';
 import { StoreContext } from '../context/StoreContext';
 
-const Collection = () => {
+const CATEGORY_OPTIONS = [
+  { label: 'Cat Food', value: 'cats' },
+  { label: 'Dog Food', value: 'dogs' },
+  { label: 'Small Pets', value: 'small-pets' },
+  { label: 'Pet Parent', value: 'pet-parent' },
+  { label: 'Henlo', value: 'henlo' },
+  { label: 'Pharmacy', value: 'pharmacy' },
+  { label: 'Consult a Vet', value: 'vet' },
+];
 
+const SUBCATEGORY_OPTIONS = [
+  { label: 'Dry Food', value: 'dry-food' },
+  { label: 'Wet Food', value: 'wet-food' },
+  { label: 'Kitten Food', value: 'kitten-food' },
+  { label: 'Premium Food', value: 'premium-food' },
+  { label: 'Creamy Treats', value: 'creamy-treats' },
+  { label: 'Jerky Treats', value: 'jerky-treats' },
+  { label: 'Crunchy Treats', value: 'crunchy-treats' },
+  { label: 'Puppy Food', value: 'puppy-food' },
+  { label: 'Grain Free Food', value: 'grain-free' },
+];
+
+const Collection = () => {
   const { products = [], search = '' } = useContext(StoreContext);
   const [searchParams] = useSearchParams();
-  const brandFromURL = searchParams.get('brand');
+
+  // ✅ URL category = DB VALUE
+  const categoryFromURL = searchParams.get('category');
 
   const [showFilter, setShowFilter] = useState(false);
 
-  // TEMP STATES
+  // TEMP
   const [tempCategory, setTempCategory] = useState([]);
   const [tempSubCategory, setTempSubCategory] = useState([]);
 
-  // APPLIED STATES
+  // APPLIED
   const [category, setCategory] = useState([]);
   const [subCategory, setSubCategory] = useState([]);
 
   const [sortType, setSortType] = useState('relavent');
+
+  // ✅ AUTO APPLY URL CATEGORY
+  useEffect(() => {
+    if (categoryFromURL) {
+      setCategory([categoryFromURL]);
+      setTempCategory([categoryFromURL]);
+    }
+  }, [categoryFromURL]);
 
   /* ---------- TOGGLE CATEGORY ---------- */
   const toggleCategory = (e) => {
     const value = e.target.value;
     setTempCategory(prev =>
       prev.includes(value)
-        ? prev.filter(item => item !== value)
+        ? prev.filter(i => i !== value)
         : [...prev, value]
     );
   };
@@ -38,7 +69,7 @@ const Collection = () => {
     const value = e.target.value;
     setTempSubCategory(prev =>
       prev.includes(value)
-        ? prev.filter(item => item !== value)
+        ? prev.filter(i => i !== value)
         : [...prev, value]
     );
   };
@@ -59,44 +90,32 @@ const Collection = () => {
     return Math.min(...product.sizes.map(s => Number(s.price) || 0));
   };
 
-  /* ---------- FILTER + SORT (FIXED SEARCH) ---------- */
+  /* ---------- FILTER + SORT ---------- */
   const filteredProducts = useMemo(() => {
     let result = [...products];
 
-    // ✅ Show only available products
-  result = result.filter(p => p.isAvailable); // ← ye line add ki
+    // AVAILABLE
+    result = result.filter(p => p.isAvailable);
 
-    // ✅ SEARCH (FIXED)
+    // SEARCH
     if (search) {
       const searchLower = search.toLowerCase();
-      result = result.filter(item =>
-        (item.name || '').toLowerCase().includes(searchLower)
+      result = result.filter(p =>
+        (p.name || '').toLowerCase().includes(searchLower)
       );
     }
 
-    // BRAND FROM URL
-    if (brandFromURL) {
-      const brandLower = brandFromURL.toLowerCase();
-      result = result.filter(item =>
-        (item.name || '').toLowerCase().includes(brandLower)
-      );
-    }
-
-    // CATEGORY
+    // ✅ CATEGORY FILTER (EXACT MATCH)
     if (category.length > 0) {
-      result = result.filter(item =>
-        category.some(cat =>
-          (item.category || '').toLowerCase() === cat.toLowerCase()
-        )
+      result = result.filter(p =>
+        category.includes(p.category)
       );
     }
 
-    // SUB CATEGORY
+    // ✅ SUB CATEGORY FILTER (EXACT MATCH)
     if (subCategory.length > 0) {
-      result = result.filter(item =>
-        subCategory.some(sub =>
-          (item.subCategory || '').toLowerCase() === sub.toLowerCase()
-        )
+      result = result.filter(p =>
+        subCategory.includes(p.subCategory)
       );
     }
 
@@ -108,7 +127,7 @@ const Collection = () => {
     }
 
     return result;
-  }, [products, search, brandFromURL, category, subCategory, sortType]);
+  }, [products, search, category, subCategory, sortType]);
 
   return (
     <div className="flex flex-col sm:flex-row gap-10 pt-10 border-t">
@@ -131,23 +150,15 @@ const Collection = () => {
         <div className={`border pl-5 py-4 mt-6 ${showFilter ? '' : 'hidden'} sm:block`}>
           <p className="mb-4 font-semibold">CATEGORIES</p>
 
-          {[
-            { label: 'Cat Food', value: 'cats' },
-            { label: 'Dog Food', value: 'dogs' },
-            { label: 'Small Pets', value: 'small-pets' },
-            { label: 'Pet Parent', value: 'pet-parent' },
-            { label: 'Henlo', value: 'henlo' },
-            { label: 'Pharmacy', value: 'pharmacy' },
-            { label: 'Consult a Vet', value: 'consult-vet' },
-          ].map(item => (
-            <label key={item.value} className="flex gap-3 mb-2">
+          {CATEGORY_OPTIONS.map(cat => (
+            <label key={cat.value} className="flex gap-3 mb-2">
               <input
                 type="checkbox"
-                value={item.value}
-                checked={tempCategory.includes(item.value)}
+                value={cat.value}
+                checked={tempCategory.includes(cat.value)}
                 onChange={toggleCategory}
               />
-              {item.label}
+              {cat.label}
             </label>
           ))}
         </div>
@@ -156,25 +167,15 @@ const Collection = () => {
         <div className={`border pl-5 py-4 my-5 ${showFilter ? '' : 'hidden'} sm:block`}>
           <p className="mb-4 font-semibold">TYPE</p>
 
-          {[
-            { label: 'Dry Food', value: 'dry-food' },
-            { label: 'Wet Food', value: 'wet-food' },
-            { label: 'Kitten Food', value: 'kitten-food' },
-            { label: 'Premium Food', value: 'premium-food' },
-            { label: 'Creamy Treats', value: 'creamy-treats' },
-            { label: 'Jerky Treats', value: 'jerky-treats' },
-            { label: 'Crunchy Treats', value: 'crunchy-treats' },
-            { label: 'Puppy Food', value: 'puppy-food' },
-            { label: 'Grain Free Food', value: 'grain-free-food' },
-          ].map(item => (
-            <label key={item.value} className="flex gap-3 mb-2">
+          {SUBCATEGORY_OPTIONS.map(sub => (
+            <label key={sub.value} className="flex gap-3 mb-2">
               <input
                 type="checkbox"
-                value={item.value}
-                checked={tempSubCategory.includes(item.value)}
+                value={sub.value}
+                checked={tempSubCategory.includes(sub.value)}
                 onChange={toggleSubCategory}
               />
-              {item.label}
+              {sub.label}
             </label>
           ))}
 

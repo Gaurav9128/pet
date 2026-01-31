@@ -1,13 +1,15 @@
 import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema({
-    name: { type: String, required: true },
-    email: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
-    cartData: { type: Object, default: {} },
-    // Optional fields for future secure password reset
-    resetPasswordToken: { type: String },
-    resetPasswordExpires: { type: Date }
+  name: { type: String, required: true },
+  email: { type: String, required: true, unique: true },
+  password: { type: String, required: true },
+  cartData: { type: Object, default: {} },
+
+  // 🔐 OTP Security
+  otp: { type: String },
+  otpExpire: { type: Date },
+
 }, { minimize: false });
 
 const userModel = mongoose.models.user || mongoose.model('user', userSchema);

@@ -1,139 +1,165 @@
-import React, { useContext, useState } from 'react'
-import './PlaceOrder.css'
-import { StoreContext } from '../../context/StoreContext'
-import Title from '../../Components/Title'
-import axios from 'axios'
-import { toast } from 'react-toastify'
-import { useNavigate } from 'react-router-dom'
+import React, { useContext, useState, useEffect } from "react";
+import "./PlaceOrder.css";
+import { StoreContext } from "../../context/StoreContext";
+import Title from "../../Components/Title";
+import axios from "axios";
+import { toast } from "react-toastify";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const PlaceOrder = () => {
+  const { backendUrl, token, cartItems, clearCart, getTotalCartAmount } =
+    useContext(StoreContext);
 
-  const {
-    backendUrl,
-    token,
-    cartItems,
-    clearCart,
-    getTotalCartAmount
-  } = useContext(StoreContext)
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  const navigate = useNavigate()
+  // 👇 CART PAGE SE AAYA DATA
+  const couponCode = location.state?.couponCode || null;
+  const discount = location.state?.discount || 0;
+  const couponUsed = location.state?.couponUsed || false; // optional flag from Cart page
 
-  const DELIVERY_FEE = 50
-  const [method, setMethod] = useState('cod')
+  const DELIVERY_FEE = 50;
+  const MIN_COD_AMOUNT = 700;
+
+  const [method, setMethod] = useState("cod");
+  const [showLoginMsg, setShowLoginMsg] = useState(false);
 
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    street: '',
-    city: '',
-    state: '',
-    zipCode: '',
-    country: '',
-    phone: ''
-  })
+    firstName: "",
+    lastName: "",
+    email: "",
+    street: "",
+    city: "",
+    state: "",
+    zipCode: "",
+    country: "",
+    phone: ""
+  });
 
+  /* ================= LOGIN CHECK ================= */
+  useEffect(() => {
+    setShowLoginMsg(!token);
+  }, [token]);
+
+  /* ================= FORM HANDLER ================= */
   const onChangeHandler = (e) => {
     setFormData(prev => ({
       ...prev,
       [e.target.name]: e.target.value
-    }))
-  }
+    }));
+  };
 
+  /* ================= TOTAL CALCULATION ================= */
+  const cartSubtotal = getTotalCartAmount();
+  const appliedDiscount = couponUsed ? 0 : discount;
+  const discountedSubtotal = Math.max(cartSubtotal - appliedDiscount, 0);
+  const deliveryFee = discountedSubtotal === 0 ? 0 : DELIVERY_FEE;
+  const total = discountedSubtotal + deliveryFee;
+
+  /* ================= SUBMIT ================= */
   const onSubmitHandler = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
 
     if (!token) {
-      toast.error('Please login first')
-      return
+      toast.error("Please login first");
+      return;
     }
 
+    if (method === "cod" && total < MIN_COD_AMOUNT) {
+      toast.error("COD available only above ₹700");
+      return;
+    }
+
+    const orderItems = Object.keys(cartItems)
+      .map(key => {
+        const item = cartItems[key];
+        if (!item || item.quantity <= 0) return null;
+
+        return {
+          productId: key.split("-")[0],
+          name: item.name,
+          price: item.price,
+          size: item.size,
+          quantity: item.quantity,
+          image: item.image
+        };
+      })
+      .filter(Boolean);
+
+    if (orderItems.length === 0) {
+      toast.error("Cart is empty");
+      return;
+    }
+
+    const orderData = {
+  address: formData,
+  items: orderItems,
+
+  // 👇 ADD THESE
+  subTotal: cartSubtotal,
+  discountAmount: appliedDiscount,
+  deliveryFee: deliveryFee,
+
+  amount: total,
+  couponCode: couponUsed ? null : couponCode,
+  paymentMethod: method.toUpperCase()
+};
+
+
     try {
-      const orderItems = Object.keys(cartItems)
-        .map(cartKey => {
-          const item = cartItems[cartKey]
-          if (!item || item.quantity <= 0) return null
-
-          const productId = cartKey.split('-')[0]
-
-          return {
-            productId,
-            name: item.name,
-            price: item.price,
-            size: item.size,
-            quantity: item.quantity,
-            image: item.image
-          }
-        })
-        .filter(Boolean)
-
-      if (orderItems.length === 0) {
-        toast.error('Cart is empty')
-        return
-      }
-
-      const subtotal = getTotalCartAmount()
-      const totalAmount = subtotal === 0 ? 0 : subtotal + DELIVERY_FEE
-
-      const orderData = {
-        address: formData,
-        items: orderItems,
-        amount: totalAmount,
-        paymentMethod: method.toUpperCase()
-      }
-
-      // ================= COD =================
-      if (method === 'cod') {
+      if (method === "cod") {
         const res = await axios.post(
           `${backendUrl}/api/order/place`,
           orderData,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
-          }
-        )
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
 
         if (res.data.success) {
-          toast.success('Order placed successfully')
-          clearCart()
-          navigate('/payment')
+          toast.success("Order placed successfully");
+          clearCart();
+          navigate("/payment");
         } else {
-          toast.error(res.data.message)
+          toast.error(res.data.message);
         }
       }
 
-      // ================= PHONEPE =================
-      if (method === 'phonepe') {
+      if (method === "phonepe") {
         const res = await axios.post(
           `${backendUrl}/api/payment/phonepe`,
           orderData,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
-          }
-        )
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
 
         if (res.data.success) {
-          // PhonePe redirect URL
-          window.location.href = res.data.redirectUrl
+          window.location.href = res.data.redirectUrl;
         } else {
-          toast.error(res.data.message)
+          toast.error(res.data.message);
         }
       }
-
     } catch (err) {
-      toast.error(err.response?.data?.message || err.message)
+      const msg = err.response?.data?.message || err.message;
+      toast.error(msg === "Coupon already used" ? "Coupon already used" : msg);
     }
+  };
+
+  /* ================= LOGIN REQUIRED SCREEN ================= */
+  if (!token && showLoginMsg) {
+    return (
+      <div className="login-required">
+        <h2>Please Login</h2>
+        <p>Firstly you can login, then order it</p>
+        <button
+          className="order-btn"
+          onClick={() => navigate("/")}
+        >
+          GO TO LOGIN
+        </button>
+      </div>
+    );
   }
 
-  const subtotal = getTotalCartAmount()
-  const deliveryFee = subtotal === 0 ? 0 : DELIVERY_FEE
-  const total = subtotal === 0 ? 0 : subtotal + DELIVERY_FEE
-
   return (
-    <form onSubmit={onSubmitHandler} className="place-order">
+    <form className="place-order" onSubmit={onSubmitHandler}>
       <div className="place-order-left">
         <p className="title">Delivery Information</p>
 
@@ -164,8 +190,15 @@ const PlaceOrder = () => {
 
           <div className="cart-total-details">
             <p>Subtotal</p>
-            <p>₹{subtotal}</p>
+            <p>₹{cartSubtotal}</p>
           </div>
+
+          {appliedDiscount > 0 && (
+            <div className="cart-total-details text-green">
+              <p>Coupon ({couponCode})</p>
+              <p>-₹{appliedDiscount}</p>
+            </div>
+          )}
 
           <div className="cart-total-details">
             <p>Delivery Fee</p>
@@ -182,14 +215,26 @@ const PlaceOrder = () => {
           <Title text1="PAYMENT" text2="METHOD" />
 
           <div className="payment-options">
-
             {/* COD */}
             <div
-              className={`payment-box ${method === 'cod' ? 'active' : ''}`}
-              onClick={() => setMethod('cod')}
+              className={`payment-box ${method === 'cod' ? 'active' : ''} ${total < MIN_COD_AMOUNT ? 'disabled' : ''}`}
+              onClick={() => {
+                if (total < MIN_COD_AMOUNT) {
+                  toast.error('COD available only on orders above ₹700');
+                  return;
+                }
+                setMethod('cod');
+              }}
             >
               <span className="radio"></span>
-              <p>CASH ON DELIVERY</p>
+              <p>
+                CASH ON DELIVERY
+                {total < MIN_COD_AMOUNT && (
+                  <small style={{ color: 'red', display: 'block' }}>
+                    (Available above ₹700)
+                  </small>
+                )}
+              </p>
             </div>
 
             {/* PHONEPE */}
@@ -200,7 +245,6 @@ const PlaceOrder = () => {
               <span className="radio"></span>
               <p>PHONEPE</p>
             </div>
-
           </div>
         </div>
 
@@ -209,7 +253,7 @@ const PlaceOrder = () => {
         </button>
       </div>
     </form>
-  )
-}
+  );
+};
 
-export default PlaceOrder
+export default PlaceOrder;

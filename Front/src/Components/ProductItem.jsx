@@ -32,23 +32,30 @@ const ProductItem = ({ id, image = [], name, sizes = [], isAvailable = true }) =
   const { price, mrp, discount } = getPriceData();
 
   return (
-    <div className="bg-white shadow-md rounded-md hover:shadow-lg 
-                    transition-shadow flex flex-col h-full">
+    <div
+      className="bg-pink-50 border border-pink-200 rounded-2xl
+                 hover:shadow-lg hover:-translate-y-1
+                 transition-all duration-300
+                 flex flex-col h-full"
+    >
 
       {/* IMAGE */}
       <Link
         to={`/product/${id}`}
-        className="w-full h-48 bg-gray-100 rounded-t-md overflow-hidden"
+        className="bg-white rounded-xl m-3 h-44
+                   flex items-center justify-center
+                   overflow-hidden"
       >
         <img
           src={image?.[0]}
           alt={name}
-          className="w-full h-full object-cover hover:scale-105 transition-transform"
+          className="w-full h-full object-contain
+                     hover:scale-105 transition-transform"
         />
       </Link>
 
       {/* CONTENT */}
-      <div className="px-4 pt-4 flex flex-col flex-1">
+      <div className="px-4 pt-2 flex flex-col flex-1">
 
         <p className="text-sm font-semibold line-clamp-2 text-gray-800">
           <Link to={`/product/${id}`}>{name}</Link>
@@ -57,7 +64,7 @@ const ProductItem = ({ id, image = [], name, sizes = [], isAvailable = true }) =
         {/* PRICE */}
         {price > 0 ? (
           <div className="flex items-center gap-2 mt-2 flex-wrap">
-            <span className="text-lg font-bold">
+            <span className="text-lg font-bold text-gray-900">
               ₹{currency}{price}
             </span>
 
@@ -74,7 +81,9 @@ const ProductItem = ({ id, image = [], name, sizes = [], isAvailable = true }) =
             )}
           </div>
         ) : (
-          <p className="text-red-500 text-sm mt-1">Price not available</p>
+          <p className="text-red-500 text-sm mt-1">
+            Price not available
+          </p>
         )}
 
         {/* SIZES */}
@@ -87,14 +96,13 @@ const ProductItem = ({ id, image = [], name, sizes = [], isAvailable = true }) =
                 <button
                   key={index}
                   onClick={() => setSelectedSize(size)}
-                  className={`
-                    px-3 py-1 text-xs font-semibold
+                  className={`px-3 py-1 text-xs font-semibold
                     border rounded-md min-w-[60px]
                     transition-all
                     ${isActive
                       ? "border-red-500 text-red-500 bg-red-50"
-                      : "border-gray-400 hover:border-red-500 hover:text-red-500"}
-                  `}
+                      : "border-gray-400 hover:border-red-500 hover:text-red-500"
+                    }`}
                 >
                   {size.label}
                 </button>
@@ -102,20 +110,16 @@ const ProductItem = ({ id, image = [], name, sizes = [], isAvailable = true }) =
             })}
           </div>
         )}
-
       </div>
 
-      {/* BUY NOW / UNAVAILABLE BUTTON */}
+      {/* BUY NOW / UNAVAILABLE */}
       {isAvailable ? (
         <Link
           to={`/product/${id}`}
-          className="mx-4 mb-4
-                     border border-red-500
-                     text-red-500
-                     py-2.5
-                     text-base font-semibold
-                     rounded-lg text-center
-                     hover:bg-red-500 hover:text-white
+          className="mx-4 mb-4 border border-red-500
+                     text-red-500 py-2.5
+                     text-base font-semibold rounded-lg
+                     text-center hover:bg-red-500 hover:text-white
                      transition-all"
         >
           BUY NOW
@@ -123,19 +127,14 @@ const ProductItem = ({ id, image = [], name, sizes = [], isAvailable = true }) =
       ) : (
         <button
           disabled
-          className="mx-4 mb-4
-                     border border-gray-400
-                     bg-gray-400
-                     text-white
-                     py-2.5
-                     text-base font-semibold
-                     rounded-lg text-center
+          className="mx-4 mb-4 border border-gray-400 bg-gray-400
+                     text-white py-2.5
+                     text-base font-semibold rounded-lg
                      cursor-not-allowed"
         >
           UNAVAILABLE
         </button>
       )}
-
     </div>
   );
 };

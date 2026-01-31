@@ -1,9 +1,11 @@
 import React, { useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./ExploreMenu.css";
 import { menu_list } from "../../assets/assets";
 
 const ExploreMenu = ({ category, setCategory }) => {
   const menuRef = useRef(null);
+  const navigate = useNavigate();
   const [showArrow, setShowArrow] = useState(true);
 
   const handleScroll = () => {
@@ -13,6 +15,11 @@ const ExploreMenu = ({ category, setCategory }) => {
     } else {
       setShowArrow(true);
     }
+  };
+
+  const handleCategoryClick = (menuName) => {
+    setCategory(menuName);
+    navigate(`/cats?category=${menuName}`);
   };
 
   return (
@@ -27,7 +34,7 @@ const ExploreMenu = ({ category, setCategory }) => {
         >
           {menu_list.map((item) => {
             const isActive =
-              category.toLowerCase().trim() ===
+              category?.toLowerCase().trim() ===
               item.menu_name.toLowerCase().trim();
 
             return (
@@ -36,11 +43,7 @@ const ExploreMenu = ({ category, setCategory }) => {
                 className={`explore-menu-list-item ${
                   isActive ? "active" : ""
                 }`}
-                onClick={() =>
-                  setCategory((prev) =>
-                    prev === item.menu_name ? "All" : item.menu_name
-                  )
-                }
+                onClick={() => handleCategoryClick(item.menu_name)}
               >
                 <img src={item.menu_image} alt={item.menu_name} />
                 <p>{item.menu_name}</p>

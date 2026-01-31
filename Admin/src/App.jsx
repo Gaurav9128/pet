@@ -9,6 +9,9 @@ import Login from './components/Login.jsx'
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Dashboard from './Pages/Dashboard.jsx';
+import UpdateProduct from './Pages/UpdateProduct.jsx';
+import AdminReturnRequests from './Pages/AdminReturnRequests.jsx';
+import AdminCoupons from './Pages/AdminCoupons.jsx';
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const backendUrl = import.meta.env.VITE_BACKEND_URL
@@ -16,11 +19,11 @@ export const currency = '₹'
 
 const App = () => {
 
-  const [token, setToken] = useState(localStorage.getItem('token')?localStorage.getItem('token'):'');
+  const [token, setToken] = useState(localStorage.getItem('token') ? localStorage.getItem('token') : '');
 
-  useEffect(()=>{
-    localStorage.setItem('token',token)
-  },[token])
+  useEffect(() => {
+    localStorage.setItem('token', token)
+  }, [token])
 
   return (
     <div className='bg-gray-50 min-h-screen'>
@@ -38,6 +41,25 @@ const App = () => {
                 <Route path='/add' element={<Add token={token} />} />
                 <Route path='/list' element={<List token={token} />} />
                 <Route path='/orders' element={<Orders token={token} />} />
+                <Route path="/update-product/:id" element={<UpdateProduct token={token} />} />
+                <Route
+                  path="/admin/returns"
+                  element={
+                    <AdminReturnRequests
+                      backendUrl={backendUrl}
+                      adminToken={token}
+                    />
+                  }
+                />
+                <Route
+                  path="/admin/coupons"
+                  element={
+                    <AdminCoupons
+                      backendUrl={backendUrl}
+                      adminToken={token}
+                    />
+                  }
+                />
               </Routes>
             </div>
           </div>
