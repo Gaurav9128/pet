@@ -1,10 +1,13 @@
 import nodemailer from "nodemailer";
 
+/* ===========================
+   SMTP TRANSPORTER (LIVE FIX)
+=========================== */
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS
+    user: "jaingaurav212000@gmail.com",          // 👈 apni Gmail ID
+    pass: "cqszoxooastxcgti"       // 👈 Gmail App Password
   }
 });
 
@@ -12,16 +15,23 @@ const transporter = nodemailer.createTransport({
    GENERIC EMAIL SENDER
 =========================== */
 export const sendEmail = async ({ to, subject, html }) => {
-  await transporter.sendMail({
-    from: `"Belim Tails" <${process.env.EMAIL_USER}>`,
-    to,
-    subject,
-    html
-  });
+  try {
+    await transporter.sendMail({
+      from: `"Belim Tails" <yourgmail@gmail.com>`,
+      to,
+      subject,
+      html
+    });
+
+    console.log("✅ Email sent successfully");
+  } catch (error) {
+    console.error("❌ Email sending failed:", error);
+    throw error;
+  }
 };
 
 /* ===========================
-   OTP EMAIL (EXISTING FEATURE)
+   OTP EMAIL
 =========================== */
 export const sendOTPEmail = async (to, otp) => {
   await sendEmail({
