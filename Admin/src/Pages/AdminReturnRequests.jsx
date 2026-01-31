@@ -64,8 +64,10 @@ const AdminReturnRequests = ({ backendUrl, adminToken }) => {
   }, []);
 
   return (
-    <div className="p-6">
-      <h2 className="text-2xl font-bold mb-4">Return Requests</h2>
+    <div className="p-4 sm:p-6">
+      <h2 className="text-2xl font-bold mb-4 text-center sm:text-left">
+        Return Requests
+      </h2>
 
       {returns.map((req) => {
         const isProcessing =
@@ -74,25 +76,25 @@ const AdminReturnRequests = ({ backendUrl, adminToken }) => {
         return (
           <div
             key={`${req.orderId}-${req.item.productId}`}
-            className="border rounded-lg p-4 mb-4 flex gap-4"
+            className="border rounded-lg p-4 mb-4 flex flex-col sm:flex-row gap-4 sm:gap-6 items-center sm:items-start"
           >
             <img
               src={req.item.image[0]}
               alt={req.item.name}
-              className="w-24 h-24 object-cover rounded"
+              className="w-32 h-32 sm:w-24 sm:h-24 object-cover rounded"
             />
 
-            <div className="flex-1">
+            <div className="flex-1 w-full">
               <p className="font-bold text-lg">{req.item.name}</p>
-              <p>Order ID: {req.orderUniqueId}</p>
-              <p>Price: ₹{req.item.price}</p>
-              <p>
+              <p className="text-sm sm:text-base">Order ID: {req.orderUniqueId}</p>
+              <p className="text-sm sm:text-base">Price: ₹{req.item.price}</p>
+              <p className="text-sm sm:text-base">
                 Status:{" "}
                 <b className="capitalize">{req.item.returnStatus}</b>
               </p>
 
               {req.item.returnStatus === "Pending" && (
-                <div className="mt-3 flex gap-3">
+                <div className="mt-3 flex flex-col sm:flex-row gap-3">
                   <button
                     disabled={isProcessing}
                     onClick={() =>
@@ -102,7 +104,7 @@ const AdminReturnRequests = ({ backendUrl, adminToken }) => {
                         "Approved"
                       )
                     }
-                    className="bg-green-600 text-white px-4 py-2 rounded"
+                    className="bg-green-600 text-white px-4 py-2 rounded w-full sm:w-auto"
                   >
                     Approve
                   </button>
@@ -112,7 +114,7 @@ const AdminReturnRequests = ({ backendUrl, adminToken }) => {
                     onClick={() =>
                       handleReject(req.orderId, req.item.productId)
                     }
-                    className="bg-red-600 text-white px-4 py-2 rounded"
+                    className="bg-red-600 text-white px-4 py-2 rounded w-full sm:w-auto"
                   >
                     Reject
                   </button>

@@ -1,6 +1,7 @@
 .coupon-container {
   padding: 20px;
   max-width: 1000px;
+  margin: 0 auto;
 }
 
 .page-title {
@@ -74,6 +75,7 @@
 .actions {
   display: flex;
   gap: 10px;
+  flex-wrap: wrap;
 }
 
 .btn-enable {
@@ -105,4 +107,48 @@
 
 .btn-delete:hover {
   background: #b91c1c;
+}
+
+/* ===== MOBILE RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .coupon-form {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .coupon-form input,
+  .btn-primary {
+    width: 100%;
+  }
+
+  .coupon-header,
+  .coupon-row {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
+    gap: 6px;
+    padding: 10px;
+  }
+
+  .coupon-row .actions {
+    justify-content: center;
+  }
+
+  .coupon-header span {
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-title {
+    font-size: 20px;
+  }
+
+  .coupon-row span {
+    font-size: 14px;
+  }
+
+  .coupon-row button {
+    padding: 5px 8px;
+    font-size: 12px;
+  }
 }
