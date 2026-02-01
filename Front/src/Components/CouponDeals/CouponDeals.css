@@ -1,0 +1,79 @@
+.coupon-section {
+  padding: 40px 20px;
+}
+
+.coupon-title {
+  font-size: 26px;
+  font-weight: 700;
+  margin-bottom: 25px;
+}
+
+/* GRID */
+.coupon-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 20px;
+}
+
+/* CARD */
+.coupon-card {
+  padding: 18px;
+  border-radius: 14px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.coupon-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.2);
+}
+
+/* TOP */
+.coupon-top h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.coupon-top p {
+  margin-top: 6px;
+  font-size: 14px;
+  color: #333;
+}
+
+/* BOTTOM */
+.coupon-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 14px;
+}
+
+.coupon-code {
+  background: #fff;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+/* BUTTON */
+.coupon-bottom button {
+  border: none;
+  background: #000;
+  color: #fff;
+  padding: 6px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.coupon-bottom button:hover {
+  opacity: 0.85;
+}
+
+/* COPIED STATE */
+.copied-btn {
+  background: #28a745 !important;
+  color: #fff;
+}
