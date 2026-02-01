@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./CouponDeals.css";
-
+import { useContext } from "react";
+import { StoreContext } from "../../context/StoreContext";
 const CouponDeals = () => {
   const [coupons, setCoupons] = useState([]);
   const [copiedCode, setCopiedCode] = useState(null);
+   const { backendUrl } =useContext(StoreContext);
 
   // 🎨 Multiple gradients
   const gradients = [
@@ -19,7 +21,7 @@ const CouponDeals = () => {
   useEffect(() => {
     const fetchCoupons = async () => {
       try {
-        const res = await axios.get("http://localhost:4000/api/coupons");
+        const res = await axios.get(`${backendUrl}/api/coupons`);
         if (res.data.success) {
           setCoupons(res.data.coupons);
         }
