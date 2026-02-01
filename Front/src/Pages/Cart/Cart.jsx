@@ -12,12 +12,13 @@ const Cart = () => {
     removeFromCart,
     increaseQuantity,
     decreaseQuantity,
+    backendUrl,
     getTotalCartAmount
   } = useContext(StoreContext);
 
   const navigate = useNavigate();
 
-  const backendUrl = "http://localhost:4000";
+  
   const DELIVERY_FEE = 50;
 
   /* ================= COUPON STATES ================= */
