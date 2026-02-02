@@ -19,7 +19,7 @@ const ExploreMenu = ({ category, setCategory }) => {
 
   const handleCategoryClick = (menuName) => {
     setCategory(menuName);
-    navigate(`/cats?category=${menuName}`);
+    navigate(`/cats`);
   };
 
   return (
