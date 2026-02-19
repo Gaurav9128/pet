@@ -26,8 +26,9 @@ const LoginPopUp = ({ setShowLogin }) => {
     try {
       let response;
 
-      /* ===== SIGN UP ===== */
-      if (currentState === 'Sign Up') {
+      /* ===== SIGN UP (SEND OTP) ===== */
+      if (currentState === 'Sign Up' && !otpStep) {
+
         response = await axios.post(`${backendUrl}/api/user/register`, {
           name,
           email,
@@ -35,13 +36,29 @@ const LoginPopUp = ({ setShowLogin }) => {
         });
 
         if (response.data.success) {
-          toast.success('Account created. Please login.');
-          setCurrentState('Login');
+          setOtpStep(true);
+          toast.info('OTP sent to your email for verification');
+          return;
+        }
+
+      /* ===== VERIFY SIGNUP OTP ===== */
+      } else if (currentState === 'Sign Up' && otpStep) {
+
+        response = await axios.post(`${backendUrl}/api/user/verify-register-otp`, {
+          email,
+          otp
+        });
+
+        if (response.data.success) {
+          toast.success('Account verified successfully 🎉 Please login');
           resetAll();
+          setCurrentState('Login');
+          return;
         }
 
       /* ===== LOGIN ===== */
       } else if (currentState === 'Login' && !otpStep) {
+
         response = await axios.post(`${backendUrl}/api/user/login`, {
           email,
           password
@@ -53,8 +70,9 @@ const LoginPopUp = ({ setShowLogin }) => {
           return;
         }
 
-      /* ===== VERIFY OTP ===== */
+      /* ===== VERIFY LOGIN OTP ===== */
       } else if (currentState === 'Login' && otpStep) {
+
         response = await axios.post(`${backendUrl}/api/user/verify-otp`, {
           email,
           otp
@@ -67,10 +85,12 @@ const LoginPopUp = ({ setShowLogin }) => {
           resetAll();
           setShowLogin(false);
           navigate('/');
+          return;
         }
 
       /* ===== FORGOT PASSWORD (SEND OTP) ===== */
       } else if (currentState === 'Forgot Password' && !otpStep) {
+
         response = await axios.post(`${backendUrl}/api/user/forgot-password`, {
           email
         });
@@ -78,10 +98,12 @@ const LoginPopUp = ({ setShowLogin }) => {
         if (response.data.success) {
           setOtpStep(true);
           toast.info('OTP sent to your email');
+          return;
         }
 
       /* ===== RESET PASSWORD ===== */
       } else if (currentState === 'Forgot Password' && otpStep) {
+
         response = await axios.post(`${backendUrl}/api/user/reset-password`, {
           email,
           otp,
@@ -92,6 +114,7 @@ const LoginPopUp = ({ setShowLogin }) => {
           toast.success('Password reset successful');
           resetAll();
           setCurrentState('Login');
+          return;
         }
       }
 
@@ -121,7 +144,6 @@ const LoginPopUp = ({ setShowLogin }) => {
     resetAll();
     setCurrentState('Login');
     toast.success('Logged out 👋');
-
     setShowLogin(true);
     navigate('/');
   };
@@ -151,7 +173,7 @@ const LoginPopUp = ({ setShowLogin }) => {
           <form onSubmit={onSubmitHandler}>
             <div className="login-popup-inputs">
 
-              {currentState === 'Sign Up' && (
+              {currentState === 'Sign Up' && !otpStep && (
                 <input
                   type="text"
                   placeholder="Full Name"
@@ -202,19 +224,33 @@ const LoginPopUp = ({ setShowLogin }) => {
             </div>
 
             <button type="submit" className="main-btn">
-              {otpStep ? 'Verify OTP' : currentState}
+              {otpStep && currentState === 'Sign Up'
+                ? 'Verify & Create Account'
+                : otpStep && currentState === 'Forgot Password'
+                ? 'Reset Password'
+                : otpStep
+                ? 'Verify OTP'
+                : currentState}
             </button>
 
             {!otpStep && currentState === 'Login' && (
               <div className="login-popup-links">
-                <button type="button" onClick={() => setCurrentState('Forgot Password')}>
+                <button type="button" onClick={() => {
+                  resetAll();
+                  setCurrentState('Forgot Password');
+                }}>
                   Forgot Password?
                 </button>
-                <button type="button" onClick={() => setCurrentState('Sign Up')}>
+
+                <button type="button" onClick={() => {
+                  resetAll();
+                  setCurrentState('Sign Up');
+                }}>
                   Create Account
                 </button>
               </div>
             )}
+
           </form>
         )}
 
