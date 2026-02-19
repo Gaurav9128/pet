@@ -1,0 +1,164 @@
+.admin-banner-container {
+  padding: 40px;
+  background-color: #f5f7fa;
+  min-height: 100vh;
+}
+
+.page-title {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 25px;
+  color: #333;
+}
+
+/* Upload Section */
+.upload-form {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+}
+
+.upload-form input[type="file"] {
+  padding: 6px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #fff;
+}
+
+/* Highlight Upload Button */
+.upload-btn {
+  background: linear-gradient(135deg, #4f46e5, #6366f1);
+  color: white;
+  padding: 10px 22px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.upload-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(79, 70, 229, 0.3);
+}
+
+.upload-btn:disabled {
+  background: #999;
+  cursor: not-allowed;
+}
+
+/* Banner Grid */
+.banner-grid {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+/* Banner Card */
+.banner-card {
+  width: 260px;
+  background: white;
+  border-radius: 12px;
+  padding: 15px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  transition: 0.3s;
+}
+
+.banner-card:hover {
+  transform: translateY(-5px);
+}
+
+/* Image */
+.banner-image {
+  width: 100%;
+  height: 130px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+/* Status */
+.status {
+  margin-top: 10px;
+  font-weight: 500;
+  color: #444;
+}
+
+/* Delete Button */
+.delete-btn {
+  margin-top: 12px;
+  padding: 8px 16px;
+  background-color: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.delete-btn:hover {
+  background-color: #dc2626;
+}
+
+
+/* ============================= */
+/* 🔥 MOBILE RESPONSIVE SECTION */
+/* ============================= */
+
+@media (max-width: 768px) {
+
+  .admin-banner-container {
+    padding: 20px;
+  }
+
+  .page-title {
+    font-size: 20px;
+  }
+
+  .upload-form {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .upload-btn {
+    width: 100%;
+    padding: 12px;
+  }
+
+  .banner-grid {
+    justify-content: center;
+  }
+
+  .banner-card {
+    width: 100%;
+    max-width: 340px;
+  }
+
+  .banner-image {
+    height: 160px;
+  }
+
+  .delete-btn {
+    width: 100%;
+  }
+}
+
+
+/* Extra Small Devices */
+@media (max-width: 480px) {
+
+  .admin-banner-container {
+    padding: 15px;
+  }
+
+  .page-title {
+    font-size: 18px;
+  }
+
+  .banner-image {
+    height: 140px;
+  }
+
+}

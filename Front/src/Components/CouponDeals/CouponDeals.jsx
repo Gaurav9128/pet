@@ -1,21 +1,18 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import "./CouponDeals.css";
-import { useContext } from "react";
 import { StoreContext } from "../../context/StoreContext";
+
 const CouponDeals = () => {
   const [coupons, setCoupons] = useState([]);
   const [copiedCode, setCopiedCode] = useState(null);
-   const { backendUrl } =useContext(StoreContext);
+  const { backendUrl } = useContext(StoreContext);
 
-  // 🎨 Multiple gradients
   const gradients = [
-    "linear-gradient(135deg, #ff9a9e, #fad0c4)", // pink
-    "linear-gradient(135deg, #a18cd1, #fbc2eb)", // purple
-    "linear-gradient(135deg, #fbc2eb, #a6c1ee)", // blue
-    "linear-gradient(135deg, #84fab0, #8fd3f4)", // green-blue
-    "linear-gradient(135deg, #ffecd2, #fcb69f)", // orange
-    "linear-gradient(135deg, #cfd9df, #e2ebf0)", // gray
+    "linear-gradient(135deg, #b3e5fc, #81d4fa)",
+    "linear-gradient(135deg, #ffe0b2, #ffcc80)",
+    "linear-gradient(135deg, #e1bee7, #ce93d8)",
+    "linear-gradient(135deg, #f8bbd0, #f48fb1)"
   ];
 
   useEffect(() => {
@@ -31,7 +28,7 @@ const CouponDeals = () => {
     };
 
     fetchCoupons();
-  }, []);
+  }, [backendUrl]);
 
   const handleCopy = (code) => {
     navigator.clipboard.writeText(code);
@@ -44,50 +41,55 @@ const CouponDeals = () => {
 
   return (
     <div className="coupon-section">
-      <h2 className="coupon-title">Tail-Wagging Deals 🐶 🐾</h2>
+      <h2 className="coupon-title">Tail-Wagging Deals 🐾</h2>
 
-      {coupons.length === 0 ? (
-        <p>No coupons available</p>
-      ) : (
-        <div className="coupon-grid">
-          {coupons.map((coupon, index) => {
-            const isPercentage = coupon.discountType === "percentage";
-            const isCopied = copiedCode === coupon.code;
+      <div className="coupon-grid">
+        {coupons.map((coupon, index) => {
+          const isPercentage = coupon.discountType === "percentage";
+          const isCopied = copiedCode === coupon.code;
 
-            return (
-              <div
-                className="coupon-card"
-                key={coupon._id}
-                style={{
-                  background: gradients[index % gradients.length],
-                }}
-              >
-                <div className="coupon-top">
-                  <h3>
-                    Extra{" "}
-                    {isPercentage
-                      ? `${coupon.discountValue}%`
-                      : `₹${coupon.discountValue}`}{" "}
-                    OFF
-                  </h3>
-                  <p>on orders above ₹{coupon.minCartValue}</p>
-                </div>
+          return (
+            <div
+              className="coupon-card"
+              key={coupon._id}
+              style={{ background: gradients[index % gradients.length] }}
+            >
+              <div className="dashed-border">
+                <div className="coupon-content">
 
-                <div className="coupon-bottom">
-                  <span className="coupon-code">{coupon.code}</span>
+                  {/* TOP */}
+                  <div className="coupon-top">
+                    <div className="paw-circle">🐾</div>
+                    <div>
+                      <h3>
+                        Extra{" "}
+                        {isPercentage
+                          ? `${coupon.discountValue}%`
+                          : `₹${coupon.discountValue}`}{" "}
+                        OFF
+                      </h3>
+                      <p>on orders over ₹{coupon.minCartValue}</p>
+                    </div>
+                  </div>
 
-                  <button
-                    className={isCopied ? "copied-btn" : ""}
-                    onClick={() => handleCopy(coupon.code)}
-                  >
-                    {isCopied ? "Copied ✓" : "Copy"}
-                  </button>
+                  {/* STRIP */}
+                  <div className="coupon-strip">
+                    <span className="coupon-code">{coupon.code}</span>
+
+                    <button
+                      className={`copy-btn ${isCopied ? "copied" : ""}`}
+                      onClick={() => handleCopy(coupon.code)}
+                    >
+                      {isCopied ? "✓ Copied" : "Copy"}
+                    </button>
+                  </div>
+
                 </div>
               </div>
-            );
-          })}
-        </div>
-      )}
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 };

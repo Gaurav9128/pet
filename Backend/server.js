@@ -12,6 +12,8 @@ import adminOrderRoutes from "./routes/adminOrderRoutes.js";
 import couponRoutes from "./routes/couponRoutes.js";
 import couponRoute from "./routes/couponRoute.js";
 import couponPublicRoutes from "./routes/couponPublicRoutes.js";
+import bannerRoutes from "./routes/bannerRoutes.js";
+
 
 // App Config
 const app = express()
@@ -33,6 +35,8 @@ app.use("/api/admin", adminOrderRoutes);
 app.use("/api/coupon", couponRoutes);
 app.use("/api/admin/coupon", couponRoute);
 app.use("/api/coupons", couponPublicRoutes);
+app.use("/api/banners",bannerRoutes );
+
 
 app.get('/',(req,res)=>{
     res.send("API Working")

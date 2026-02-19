@@ -12,6 +12,7 @@ import Dashboard from './Pages/Dashboard.jsx';
 import UpdateProduct from './Pages/UpdateProduct.jsx';
 import AdminReturnRequests from './Pages/AdminReturnRequests.jsx';
 import AdminCoupons from './Pages/AdminCoupons.jsx';
+import AdminBanner from './Pages/AdminBanner.jsx';
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const backendUrl = import.meta.env.VITE_BACKEND_URL
@@ -60,6 +61,7 @@ const App = () => {
                     />
                   }
                 />
+                <Route path="/admin/banners" element={<AdminBanner />} />
               </Routes>
             </div>
           </div>
