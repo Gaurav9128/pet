@@ -15,7 +15,7 @@ router.get("/", async (req, res) => {
       ]
     });
 
-    console.log("PUBLIC COUPONS 👉", coupons); // 🔥 DEBUG
+    
 
     res.json({ success: true, coupons });
   } catch (error) {

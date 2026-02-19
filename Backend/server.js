@@ -40,7 +40,7 @@ app.get('/',(req,res)=>{
 
 // 🔥 IMPORTANT PART
 
-if (process.env.NODE_ENV !== "production") {
+if (process.env.VERCEL !== "1") {
   const port = 4000
   app.listen(port, () => {
     console.log("Server started on PORT: " + port)
