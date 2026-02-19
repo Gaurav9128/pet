@@ -8,7 +8,10 @@ import {
 
 const router = express.Router();
 
-const upload = multer({ dest: "uploads/" });
+// ✅ Vercel safe storage
+const upload = multer({
+  storage: multer.memoryStorage()
+});
 
 // Routes
 router.post("/upload", upload.single("image"), uploadBanner);

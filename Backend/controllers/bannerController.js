@@ -1,26 +1,33 @@
 import Banner from "../models/Banner.js";
 import { v2 as cloudinary } from "cloudinary";
-import fs from "fs";
+
 
 // ✅ Upload Banner
+// ✅ Upload Banner (Vercel Safe)
 export const uploadBanner = async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ message: "No file uploaded" });
     }
 
-    const result = await cloudinary.uploader.upload(req.file.path, {
-      folder: "banners",
-    });
+    // 🔥 Upload from memory buffer
+    const uploadStream = cloudinary.uploader.upload_stream(
+      { folder: "banners" },
+      async (error, result) => {
+        if (error) {
+          return res.status(500).json({ message: error.message });
+        }
 
-    const banner = await Banner.create({
-      imageUrl: result.secure_url,
-      public_id: result.public_id,
-    });
+        const banner = await Banner.create({
+          imageUrl: result.secure_url,
+          public_id: result.public_id,
+        });
 
-    fs.unlinkSync(req.file.path);
+        res.status(200).json(banner);
+      }
+    );
 
-    res.status(200).json(banner);
+    uploadStream.end(req.file.buffer);
 
   } catch (error) {
     res.status(500).json({ message: error.message });
