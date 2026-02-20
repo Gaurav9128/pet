@@ -41,10 +41,11 @@ const LoginPopUp = ({ setShowLogin }) => {
           return;
         }
 
-      /* ===== VERIFY SIGNUP OTP ===== */
+        /* ===== VERIFY SIGNUP OTP ===== */
       } else if (currentState === 'Sign Up' && otpStep) {
 
-        response = await axios.post(`${backendUrl}/api/user/verify-register-otp`, {
+        // ✅ FIXED ROUTE HERE
+        response = await axios.post(`${backendUrl}/api/user/verify-otp`, {
           email,
           otp
         });
@@ -56,7 +57,7 @@ const LoginPopUp = ({ setShowLogin }) => {
           return;
         }
 
-      /* ===== LOGIN ===== */
+        /* ===== LOGIN ===== */
       } else if (currentState === 'Login' && !otpStep) {
 
         response = await axios.post(`${backendUrl}/api/user/login`, {
@@ -70,7 +71,7 @@ const LoginPopUp = ({ setShowLogin }) => {
           return;
         }
 
-      /* ===== VERIFY LOGIN OTP ===== */
+        /* ===== VERIFY LOGIN OTP ===== */
       } else if (currentState === 'Login' && otpStep) {
 
         response = await axios.post(`${backendUrl}/api/user/verify-otp`, {
@@ -81,14 +82,16 @@ const LoginPopUp = ({ setShowLogin }) => {
         if (response.data.success) {
           localStorage.setItem('token', response.data.token);
           setToken(response.data.token);
-          toast.success('Login successful 🔐');
-          resetAll();
-          setShowLogin(false);
-          navigate('/');
-          return;
+          toast.success("Login successful 🔐");
+
+          setTimeout(() => {
+            resetAll();
+            setShowLogin(false);
+            navigate("/");
+          }, 800);
         }
 
-      /* ===== FORGOT PASSWORD (SEND OTP) ===== */
+        /* ===== FORGOT PASSWORD (SEND OTP) ===== */
       } else if (currentState === 'Forgot Password' && !otpStep) {
 
         response = await axios.post(`${backendUrl}/api/user/forgot-password`, {
@@ -101,7 +104,7 @@ const LoginPopUp = ({ setShowLogin }) => {
           return;
         }
 
-      /* ===== RESET PASSWORD ===== */
+        /* ===== RESET PASSWORD ===== */
       } else if (currentState === 'Forgot Password' && otpStep) {
 
         response = await axios.post(`${backendUrl}/api/user/reset-password`, {
@@ -227,10 +230,10 @@ const LoginPopUp = ({ setShowLogin }) => {
               {otpStep && currentState === 'Sign Up'
                 ? 'Verify & Create Account'
                 : otpStep && currentState === 'Forgot Password'
-                ? 'Reset Password'
-                : otpStep
-                ? 'Verify OTP'
-                : currentState}
+                  ? 'Reset Password'
+                  : otpStep
+                    ? 'Verify OTP'
+                    : currentState}
             </button>
 
             {!otpStep && currentState === 'Login' && (

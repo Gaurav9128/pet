@@ -16,6 +16,8 @@ import TermsAndConditions from './Pages/TermCondition.jsx';
 import ContactUs from './Components/ContactUs/ContactUs.jsx';
 // import ScrollToTop from "./Components/scroll.jsx";
 import Scroll from "./Components/scroll.jsx";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 
 const App = () => {
@@ -24,6 +26,16 @@ const App = () => {
 
   return (
     <StoreContextProvider>
+      {/* ✅ ADD THIS HERE */}
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        newestOnTop
+        closeOnClick
+        pauseOnHover
+        draggable
+        theme="colored"
+      />
       {showLogin && <LoginPopUp setShowLogin={setShowLogin} />}
 
       <div className='app'>

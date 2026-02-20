@@ -104,7 +104,7 @@ const verifyOtp = async (req, res) => {
   }
 };
 
-/* ==================== USER REGISTER ==================== */
+/* ==================== USER REGISTER (WITH OTP) ==================== */
 const registerUser = async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -117,6 +117,7 @@ const registerUser = async (req, res) => {
     if (!validator.isEmail(email)) {
       return res.json({ success: false, message: "Please enter a valid email" });
     }
+
     if (password.length < 8) {
       return res.json({ success: false, message: "Please enter a strong password" });
     }
@@ -124,21 +125,40 @@ const registerUser = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
+    // 🔐 Generate OTP
+    const otp = generateOTP();
+
     const newUser = new userModel({
       name,
       email,
-      password: hashedPassword
+      password: hashedPassword,
+      otp: otp,
+      otpExpire: Date.now() + 5 * 60 * 1000 // 5 min
     });
 
     await newUser.save();
 
-    res.json({ success: true, message: "Registration successful. Please login." });
+    // 📧 Send OTP Email
+    await sendEmail(
+      email,
+      "Belim Tails Account Verification OTP",
+      `<h2>Account Verification</h2>
+       <p>Your OTP is:</p>
+       <h1>${otp}</h1>
+       <p>Valid for 5 minutes.</p>`
+    );
+
+    res.json({
+      success: true,
+      message: "OTP sent to your email"
+    });
 
   } catch (error) {
     console.log(error);
     res.json({ success: false, message: error.message });
   }
 };
+
 
 /* ==================== ADMIN LOGIN (UNCHANGED) ==================== */
 const adminLogin = async (req, res) => {
