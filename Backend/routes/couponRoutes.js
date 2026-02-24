@@ -47,9 +47,10 @@ router.post("/apply", async (req, res) => {
 
     return res.json({
       success: true,
-      discount: Math.round(discount),
-      finalAmount: cartAmount - Math.round(discount),
+      discount,
+      finalAmount: cartAmount - discount,
       couponCode: coupon.code,
+      minCartValue: coupon.minCartValue   // 👈 VERY IMPORTANT
     });
   } catch (error) {
     res.status(500).json({ success: false, message: "Server Error" });

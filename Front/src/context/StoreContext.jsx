@@ -19,35 +19,47 @@ const StoreContextProvider = (props) => {
   const [couponCode, setCouponCode] = useState(null);
   const [discountAmount, setDiscountAmount] = useState(0);
 
+  
   // ================= ADD TO CART =================
-  const addToCart = async (itemId, size, price) => {
-    const cartKey = `${itemId}-${size}`;
-    const product = products.find((p) => p._id === itemId);
-    if (!product || !price) return;
+const addToCart = async (itemId, size, price, qty = 1) => {
+  const cartKey = `${itemId}-${size}`;
+  const product = products.find((p) => p._id === itemId);
+  if (!product || !price) return;
 
-    const item = {
-      quantity: 1,
-      price: Number(price),
-      size,
-      name: product.name,
-      image: product.image?.[0] || "",
-    };
+  const item = {
+    quantity: qty,
+    price: Number(price),
+    size,
+    name: product.name,
+    image: product.image?.[0] || "",
+  };
 
-    setCartItems((prev) => ({
+  setCartItems((prev) => {
+    const updatedCart = {
       ...prev,
       [cartKey]: prev[cartKey]
-        ? { ...prev[cartKey], quantity: prev[cartKey].quantity + 1 }
+        ? {
+            ...prev[cartKey],
+            quantity: prev[cartKey].quantity + qty,
+          }
         : item,
-    }));
+    };
 
-    if (token) {
-      await axios.post(
-        `${backendUrl}/api/cart/add`,
-        { cartKey, item },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-    }
-  };
+    return updatedCart;
+  });
+
+  // Backend sync
+  if (token) {
+    await axios.post(
+      `${backendUrl}/api/cart/add`,
+      {
+        cartKey,
+        quantity: qty,
+      },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+  }
+};
 
   // ================= REMOVE =================
   const removeFromCart = (cartKey) => {

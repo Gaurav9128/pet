@@ -5,6 +5,7 @@ import {
   updateCoupon,
   toggleCoupon,
   deleteCoupon,
+  applyCoupon,
 } from "../controllers/couponController.js";
 import adminAuth from "../middleware/adminAuth.js";
 
@@ -15,5 +16,6 @@ router.get("/all", adminAuth, getAllCoupons);
 router.put("/update/:id", adminAuth, updateCoupon);
 router.put("/toggle/:id", adminAuth, toggleCoupon);
 router.delete("/delete/:id", adminAuth, deleteCoupon);
+router.post("/apply", applyCoupon);
 
 export default router;

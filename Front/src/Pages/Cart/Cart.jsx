@@ -18,13 +18,13 @@ const Cart = () => {
 
   const navigate = useNavigate();
 
-  
   const DELIVERY_FEE = 50;
 
   /* ================= COUPON STATES ================= */
   const [couponCode, setCouponCode] = useState("");
   const [discount, setDiscount] = useState(0);
   const [appliedCoupon, setAppliedCoupon] = useState(null);
+  const [minAmount, setMinAmount] = useState(null);   // 👈 NEW STATE
 
   /* ================= CART CALCULATION ================= */
   const validItems = Object.values(cartItems || {}).filter(
@@ -56,10 +56,12 @@ const Cart = () => {
       if (data.success) {
         setDiscount(data.discount);
         setAppliedCoupon(data.couponCode);
+        setMinAmount(data.minCartValue);  // 👈 IMPORTANT
         toast.success("Coupon Applied 🎉");
       } else {
         toast.error(data.message);
       }
+
     } catch (error) {
       toast.error("Failed to apply coupon");
     }
@@ -70,15 +72,30 @@ const Cart = () => {
     setDiscount(0);
     setCouponCode("");
     setAppliedCoupon(null);
+    setMinAmount(null);   // 👈 RESET
     toast.info("Coupon Removed");
   };
 
   /* ================= AUTO REMOVE ================= */
   useEffect(() => {
-    if (appliedCoupon && subTotal === 0) {
+
+    if (!appliedCoupon) return;
+
+    // Cart empty
+    if (subTotal === 0) {
+      removeCoupon();
+      return;
+    }
+
+    // Below minimum cart value
+    if (minAmount && subTotal < minAmount) {
+      toast.warning(
+        `Minimum cart value ₹${minAmount} required. Coupon removed.`
+      );
       removeCoupon();
     }
-  }, [subTotal]);
+
+  }, [subTotal]);   // 👈 ONLY subTotal dependency
 
   /* ================= UI ================= */
   return (

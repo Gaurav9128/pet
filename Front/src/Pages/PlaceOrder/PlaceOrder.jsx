@@ -181,7 +181,18 @@ const PlaceOrder = () => {
           <input name="country" value={formData.country} onChange={onChangeHandler} required placeholder="Country" />
         </div>
 
-        <input name="phone" value={formData.phone} onChange={onChangeHandler} required placeholder="Phone" />
+        <input
+  type="tel"
+  name="phone"
+  value={formData.phone}
+  onChange={(e) => {
+    const value = e.target.value.replace(/\D/g, "");
+    setFormData({ ...formData, phone: value });
+  }}
+  required
+  placeholder="Phone"
+  maxLength={10}
+/>
       </div>
 
       <div className="place-order-right">

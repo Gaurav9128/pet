@@ -13,6 +13,7 @@ const Home = () => {
   return (
     <div>
         <Header />
+        <br/>
         <ExploreMenu category={category} setCategory={setCategory} />
         {/* <FoodDisplay category={category} /> */}
         <BestSeller />
