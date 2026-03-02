@@ -10,6 +10,7 @@ const Orders = () => {
   const [showReturnModal, setShowReturnModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [returnReason, setReturnReason] = useState('');
+  const [returnQuantity, setReturnQuantity] = useState(1);
 
   // LOAD ORDERS
   const loadOrderData = async () => {
@@ -163,48 +164,98 @@ const Orders = () => {
       </div>
 
       {/* RETURN MODAL */}
-      {showReturnModal && selectedItem && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 md:p-8 w-[90%] md:w-[450px] rounded-2xl shadow-lg border border-gray-200">
-            <h2 className="text-xl font-bold mb-5 text-center text-gray-800">Return Product</h2>
+{showReturnModal && selectedItem && (
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div className="bg-white p-6 md:p-8 w-[90%] md:w-[450px] rounded-2xl shadow-lg border border-gray-200">
+      <h2 className="text-xl font-bold mb-5 text-center text-gray-800">
+        Return Product
+      </h2>
 
-            <div className="text-sm text-gray-700 mb-5 space-y-1">
+      {(() => {
+        const totalPaid = Number(selectedItem.finalPrice || 0);
+        const totalQty = Number(selectedItem.quantity || 1);
+        const perUnitFinalPrice = totalQty > 0 ? totalPaid / totalQty : 0;
+        const refundAmount = returnQuantity * perUnitFinalPrice;
+
+        return (
+          <>
+            {/* Product Info */}
+            <div className="text-sm text-gray-700 mb-4 space-y-1 bg-gray-50 p-3 rounded-lg">
               <p><span className="font-medium">Product:</span> {selectedItem.name}</p>
-              <p><span className="font-medium">Qty:</span> {selectedItem.quantity}</p>
               <p><span className="font-medium">Order ID:</span> {selectedItem.uniqueOrderId}</p>
+              <p><span className="font-medium">Size:</span> {selectedItem.size || "N/A"}</p>
+
+              {/* ✅ Show Final Paid Amount */}
+              <p className="font-semibold text-green-600">
+                Total Paid: ₹{totalPaid.toFixed(2)}
+              </p>
+
+              <p>
+                <span className="font-medium">Available Qty:</span> {totalQty}
+              </p>
             </div>
 
-            <select
-              value={returnReason}
-              onChange={(e) => setReturnReason(e.target.value)}
-              className="w-full border border-gray-300 p-3 rounded-lg mb-5 focus:outline-none focus:ring-2 focus:ring-blue-400"
-            >
-              <option value="">Select Return Reason</option>
-              <option value="Damaged Product">Damaged Product</option>
-              <option value="Wrong Item Received">Wrong Item Received</option>
-              <option value="Size Issue">Size Issue</option>
-              <option value="Quality Not Good">Quality Not Good</option>
-              <option value="Other">Other</option>
-            </select>
-
-            <div className="flex justify-end gap-4">
-              <button
-                onClick={() => setShowReturnModal(false)}
-                className="px-5 py-2 rounded-lg border border-gray-300 hover:bg-gray-100 transition"
-              >
-                Cancel
-              </button>
-
-              <button
-                onClick={submitReturnRequest}
-                className="px-5 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition"
-              >
-                Submit
-              </button>
+            {/* Return Quantity */}
+            <div className="mb-4">
+              <label className="block text-sm font-medium mb-1">
+                Return Quantity
+              </label>
+              <input
+                type="number"
+                min="1"
+                max={totalQty}
+                value={returnQuantity}
+                onChange={(e) => {
+                  const value = Number(e.target.value);
+                  if (value > 0 && value <= totalQty) {
+                    setReturnQuantity(value);
+                  }
+                }}
+                className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+              />
             </div>
-          </div>
-        </div>
-      )}
+
+            {/* ✅ Correct Refund Calculation */}
+            <div className="mb-4 text-sm font-semibold text-red-600">
+              Refund Amount: ₹{refundAmount.toFixed(2)}
+            </div>
+          </>
+        );
+      })()}
+
+      {/* Reason Dropdown */}
+      <select
+        value={returnReason}
+        onChange={(e) => setReturnReason(e.target.value)}
+        className="w-full border border-gray-300 p-3 rounded-lg mb-5 focus:outline-none focus:ring-2 focus:ring-blue-400"
+      >
+        <option value="">Select Return Reason</option>
+        <option value="Damaged Product">Damaged Product</option>
+        <option value="Wrong Item Received">Wrong Item Received</option>
+        <option value="Size Issue">Size Issue</option>
+        <option value="Quality Not Good">Quality Not Good</option>
+        <option value="Other">Other</option>
+      </select>
+
+      {/* Buttons */}
+      <div className="flex justify-end gap-4">
+        <button
+          onClick={() => setShowReturnModal(false)}
+          className="px-5 py-2 rounded-lg border border-gray-300 hover:bg-gray-100 transition"
+        >
+          Cancel
+        </button>
+
+        <button
+          onClick={submitReturnRequest}
+          className="px-5 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition"
+        >
+          Submit
+        </button>
+      </div>
+    </div>
+  </div>
+)}
     </div>
   );
 };

@@ -1,17 +1,20 @@
+/* =========================
+   GLOBAL RESET
+========================= */
 *,
 *::before,
 *::after {
   box-sizing: border-box;
 }
 
+/* =========================
+   MAIN CONTAINER
+========================= */
 .explore-menu {
   display: flex;
   flex-direction: column;
   gap: 20px;
-}
-
-h1 {
-  font-weight: bold;
+  width: 100%;
 }
 
 .explore-menu h1 {
@@ -20,23 +23,52 @@ h1 {
   text-align: center;
 }
 
-/* Outer list */
-.explore-menu-list {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  gap: 20px;
-  overflow-x: scroll;
-  padding-bottom: 10px;
+/* =========================
+   WRAPPER
+========================= */
+.menu-wrapper {
+  position: relative;
+  width: 100%;
 }
 
-/* Card container */
-.explore-menu-list-item {
-  flex: 0 0 180px;
-  width: 180px;
-  max-width: 180px;
-  min-width: 180px;
+/* =========================
+   HORIZONTAL SCROLL CONTAINER
+========================= */
+.explore-menu-list {
+  display: flex;
+  gap: 20px;
 
+  overflow-x: auto;       /* 🔥 Desktop fix */
+  overflow-y: hidden;
+
+  scroll-behavior: smooth;
+  white-space: nowrap;
+
+  padding-bottom: 10px;
+  width: 100%;
+}
+
+/* Desktop Scrollbar Visible */
+.explore-menu-list::-webkit-scrollbar {
+  height: 6px;
+}
+
+.explore-menu-list::-webkit-scrollbar-thumb {
+  background: #ff4d6d;
+  border-radius: 10px;
+}
+
+.explore-menu-list::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* =========================
+   CARD CONTAINER
+========================= */
+.explore-menu-list-item {
+  flex: 0 0 auto;     /* 🔥 Important */
+  width: 180px;
+  min-width: 180px;
   height: 200px;
 
   padding: 14px;
@@ -53,7 +85,9 @@ h1 {
   transition: all 0.3s ease;
 }
 
-/* Image */
+/* =========================
+   IMAGE
+========================= */
 .explore-menu-list-item img {
   width: 100%;
   height: 150px;
@@ -64,7 +98,9 @@ h1 {
   transition: all 0.3s ease;
 }
 
-/* Text */
+/* =========================
+   TEXT
+========================= */
 .explore-menu-list-item p {
   margin-top: 10px;
   font-size: 16px;
@@ -73,7 +109,9 @@ h1 {
   transition: color 0.3s ease;
 }
 
-/* 🔥 ACTIVE CATEGORY */
+/* =========================
+   ACTIVE CATEGORY
+========================= */
 .explore-menu-list-item.active {
   border: 2px solid #ff4d6d;
   background: #fff0f4;
@@ -81,100 +119,35 @@ h1 {
   transform: translateY(-4px);
 }
 
-/* Active image */
 .explore-menu-list-item.active img {
   background: #ffe1e8;
   border: 2px solid #ff4d6d;
 }
 
-/* Active text */
 .explore-menu-list-item.active p {
   color: #ff4d6d;
 }
 
-/* Hover effect (optional but nice) */
+/* =========================
+   HOVER EFFECT
+========================= */
 .explore-menu-list-item:hover {
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
 }
 
-/* Scrollbar hide */
-.explore-menu-list::-webkit-scrollbar {
-  display: none;
-}
-
-.explore-menu hr {
-  margin: 10px 0px;
-  height: 2px;
-  border: none;
-  background-color: #e2e2e2;
-}
-
-/* Responsive */
-@media (max-width: 1050px) {
-  .explore-menu {
-    max-width: 100%;
-    font-size: 14px;
-  }
-
-  .explore-menu-list-item {
-    width: 140px;
-    min-width: 120px;
-    padding: 8px;
-  }
-
-  .explore-menu-list-item img {
-    height: 130px;
-  }
-}
-@media (max-width: 600px) {
-  .explore-menu-list-item {
-    width: 120px;
-    min-width: 100px;
-    padding: 6px;
-  }
-
-  .explore-menu-list-item img {
-    height: 100px;
-  }
-}
-
-.menu-wrapper {
-  position: relative;
-}
-
-/* Horizontal scroll */
-.explore-menu-list {
-  display: flex;
-  gap: 16px;
-  overflow-x: auto;
-  scroll-behavior: smooth;
-  padding-bottom: 10px;
-}
-
-.explore-menu-list::-webkit-scrollbar {
-  display: none;
-}
-
-/* Menu item
-.explore-menu-list-item {
-  min-width: 140px;
-  background: #fff2f2;
-  border-radius: 14px;
-  padding: 12px;
-  text-align: center;
-} */
-
-/* 🔥 Swipe arrow */
+/* =========================
+   SWIPE ARROW (Mobile Only)
+========================= */
 .swipe-arrow {
   position: absolute;
   right: 4px;
   top: 55%;
   transform: translateY(-50%);
-  font-size: 34px;          /* 🔥 size bada */
+  font-size: 34px;
   font-weight: 700;
   color: #ff4d6d;
   background: linear-gradient(to right, rgba(255,255,255,0), #fff);
-  padding-left: 14px;       /* zyada space */
+  padding-left: 14px;
   pointer-events: none;
   animation: swipeHint 1.4s infinite;
   text-shadow: 0 4px 10px rgba(255, 77, 109, 0.4);
@@ -187,11 +160,36 @@ h1 {
   100% { transform: translateY(-50%) translateX(0); opacity: 0.4; }
 }
 
-/* ❌ Desktop me arrow hide */
+/* Desktop pe arrow hide */
 @media (min-width: 768px) {
   .swipe-arrow {
     display: none;
   }
 }
 
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 1050px) {
+  .explore-menu-list-item {
+    width: 140px;
+    min-width: 140px;
+    padding: 8px;
+  }
 
+  .explore-menu-list-item img {
+    height: 130px;
+  }
+}
+
+@media (max-width: 600px) {
+  .explore-menu-list-item {
+    width: 120px;
+    min-width: 120px;
+    padding: 6px;
+  }
+
+  .explore-menu-list-item img {
+    height: 100px;
+  }
+}

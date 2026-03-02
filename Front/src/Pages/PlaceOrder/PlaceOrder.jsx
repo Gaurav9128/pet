@@ -92,18 +92,18 @@ const PlaceOrder = () => {
     }
 
     const orderData = {
-  address: formData,
-  items: orderItems,
+      address: formData,
+      items: orderItems,
 
-  // 👇 ADD THESE
-  subTotal: cartSubtotal,
-  discountAmount: appliedDiscount,
-  deliveryFee: deliveryFee,
+      // 👇 ADD THESE
+      subTotal: cartSubtotal,
+      discountAmount: appliedDiscount,
+      deliveryFee: deliveryFee,
 
-  amount: total,
-  couponCode: couponUsed ? null : couponCode,
-  paymentMethod: method.toUpperCase()
-};
+      amount: total,
+      couponCode: couponUsed ? null : couponCode,
+      paymentMethod: method.toUpperCase()
+    };
 
 
     try {
@@ -116,8 +116,10 @@ const PlaceOrder = () => {
 
         if (res.data.success) {
           toast.success("Order placed successfully");
-          clearCart();
-          navigate("/payment");
+          setTimeout(() => {
+            clearCart();
+            navigate("/payment");
+          }, 500);
         } else {
           toast.error(res.data.message);
         }
@@ -182,17 +184,17 @@ const PlaceOrder = () => {
         </div>
 
         <input
-  type="tel"
-  name="phone"
-  value={formData.phone}
-  onChange={(e) => {
-    const value = e.target.value.replace(/\D/g, "");
-    setFormData({ ...formData, phone: value });
-  }}
-  required
-  placeholder="Phone"
-  maxLength={10}
-/>
+          type="tel"
+          name="phone"
+          value={formData.phone}
+          onChange={(e) => {
+            const value = e.target.value.replace(/\D/g, "");
+            setFormData({ ...formData, phone: value });
+          }}
+          required
+          placeholder="Phone"
+          maxLength={10}
+        />
       </div>
 
       <div className="place-order-right">

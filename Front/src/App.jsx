@@ -26,13 +26,14 @@ const App = () => {
 
   return (
     <StoreContextProvider>
-      {/* ✅ ADD THIS HERE */}
+      {/* Your Routes / Layout */}
+      
       <ToastContainer
         position="top-right"
-        autoClose={3000}
+        autoClose={2000}
         newestOnTop
         closeOnClick
-        pauseOnHover
+        pauseOnHover={false}
         draggable
         theme="colored"
       />

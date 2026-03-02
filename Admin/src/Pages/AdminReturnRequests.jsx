@@ -52,7 +52,6 @@ const AdminReturnRequests = ({ backendUrl, adminToken }) => {
     }
   };
 
-  // REJECT HANDLER
   const handleReject = (orderId, productId) => {
     const reason = prompt("Enter rejection reason");
     if (!reason) return toast.error("Rejection reason required");
@@ -65,7 +64,7 @@ const AdminReturnRequests = ({ backendUrl, adminToken }) => {
 
   return (
     <div className="p-4 sm:p-6">
-      <h2 className="text-2xl font-bold mb-4 text-center sm:text-left">
+      <h2 className="text-2xl font-bold mb-6 text-center sm:text-left">
         Return Requests
       </h2>
 
@@ -73,53 +72,118 @@ const AdminReturnRequests = ({ backendUrl, adminToken }) => {
         const isProcessing =
           loadingAction === `${req.orderId}-${req.item.productId}`;
 
+        const quantity = req.item.returnQuantity || req.item.quantity;
+        const price = req.item.price;
+        const returnAmount = quantity * price;
+
         return (
           <div
             key={`${req.orderId}-${req.item.productId}`}
-            className="border rounded-lg p-4 mb-4 flex flex-col sm:flex-row gap-4 sm:gap-6 items-center sm:items-start"
+            className="border rounded-lg p-5 mb-6 shadow-sm bg-white"
           >
-            <img
-              src={req.item.image[0]}
-              alt={req.item.name}
-              className="w-32 h-32 sm:w-24 sm:h-24 object-cover rounded"
-            />
+            <div className="flex flex-col sm:flex-row gap-6">
+              
+              {/* Product Image */}
+              <img
+                src={req.item.image[0]}
+                alt={req.item.name}
+                className="w-32 h-32 object-cover rounded"
+              />
 
-            <div className="flex-1 w-full">
-              <p className="font-bold text-lg">{req.item.name}</p>
-              <p className="text-sm sm:text-base">Order ID: {req.orderUniqueId}</p>
-              <p className="text-sm sm:text-base">Price: ₹{req.item.price}</p>
-              <p className="text-sm sm:text-base">
-                Status:{" "}
-                <b className="capitalize">{req.item.returnStatus}</b>
-              </p>
+              {/* Product Details */}
+              <div className="flex-1">
 
-              {req.item.returnStatus === "Pending" && (
-                <div className="mt-3 flex flex-col sm:flex-row gap-3">
-                  <button
-                    disabled={isProcessing}
-                    onClick={() =>
-                      updateStatus(
-                        req.orderId,
-                        req.item.productId,
-                        "Approved"
-                      )
-                    }
-                    className="bg-green-600 text-white px-4 py-2 rounded w-full sm:w-auto"
-                  >
-                    Approve
-                  </button>
+                <h3 className="text-lg font-bold mb-2">
+                  {req.item.name}
+                </h3>
 
-                  <button
-                    disabled={isProcessing}
-                    onClick={() =>
-                      handleReject(req.orderId, req.item.productId)
-                    }
-                    className="bg-red-600 text-white px-4 py-2 rounded w-full sm:w-auto"
-                  >
-                    Reject
-                  </button>
+                <div className="bg-gray-50 p-3 rounded text-sm space-y-1">
+
+                  <p>
+                    <span className="font-semibold">Order ID:</span>{" "}
+                    {req.orderUniqueId}
+                  </p>
+
+                  <p>
+                    <span className="font-semibold">Quantity:</span>{" "}
+                    {quantity}
+                  </p>
+
+                  <p>
+                    <span className="font-semibold">Size:</span>{" "}
+                    {req.item.size || "N/A"}
+                  </p>
+
+                  <p>
+                    <span className="font-semibold">Price (per item):</span>{" "}
+                    ₹{price}
+                  </p>
+
+                  <p className="font-semibold text-red-600">
+                    Return Amount: ₹{returnAmount}
+                  </p>
+
+                  {req.orderTotal && (
+                    <>
+                      <p>
+                        <span className="font-semibold">
+                          Original Order Total:
+                        </span>{" "}
+                        ₹{req.orderTotal}
+                      </p>
+
+                      <p className="font-semibold text-green-600">
+                        Updated Total After Return: ₹
+                        {req.updatedTotal || req.orderTotal - returnAmount}
+                      </p>
+                    </>
+                  )}
+
+                  <p className="mt-2">
+                    Status:{" "}
+                    <span
+                      className={`font-semibold ${
+                        req.item.returnStatus === "Approved"
+                          ? "text-green-600"
+                          : req.item.returnStatus === "Rejected"
+                          ? "text-red-600"
+                          : "text-yellow-600"
+                      }`}
+                    >
+                      {req.item.returnStatus}
+                    </span>
+                  </p>
                 </div>
-              )}
+
+                {/* ACTION BUTTONS */}
+                {req.item.returnStatus === "Pending" && (
+                  <div className="mt-4 flex gap-4 flex-wrap">
+                    <button
+                      disabled={isProcessing}
+                      onClick={() =>
+                        updateStatus(
+                          req.orderId,
+                          req.item.productId,
+                          "Approved"
+                        )
+                      }
+                      className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+                    >
+                      {isProcessing ? "Processing..." : "Approve"}
+                    </button>
+
+                    <button
+                      disabled={isProcessing}
+                      onClick={() =>
+                        handleReject(req.orderId, req.item.productId)
+                      }
+                      className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+                    >
+                      Reject
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         );

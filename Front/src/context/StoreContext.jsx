@@ -5,37 +5,53 @@ import { toast } from "react-toastify";
 export const StoreContext = createContext(null);
 
 const StoreContextProvider = (props) => {
+
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
- const [showSearch, setShowSearch] = useState(false);
+  const [showSearch, setShowSearch] = useState(false);
+  const [search, setSearch] = useState("");
 
-  const [search, setSearch] = useState(""); // <-- Added for SearchBar functionality
+  /* ================= CART (WITH LOCALSTORAGE SUPPORT) ================= */
+  const [cartItems, setCartItems] = useState(() => {
+    const savedCart = localStorage.getItem("cart");
+    return savedCart ? JSON.parse(savedCart) : {};
+  });
 
-  const [cartItems, setCartItems] = useState({});
   const [products, setProducts] = useState([]);
-  const [token, setToken] = useState("");
+  const [token, setToken] = useState(localStorage.getItem("token") || "");
 
-  // COUPON STATES
+  /* ================= COUPON ================= */
   const [couponCode, setCouponCode] = useState(null);
   const [discountAmount, setDiscountAmount] = useState(0);
 
-  
-  // ================= ADD TO CART =================
-const addToCart = async (itemId, size, price, qty = 1) => {
-  const cartKey = `${itemId}-${size}`;
-  const product = products.find((p) => p._id === itemId);
-  if (!product || !price) return;
+  /* ================= SAVE CART TO LOCALSTORAGE ================= */
+  useEffect(() => {
+    localStorage.setItem("cart", JSON.stringify(cartItems));
+  }, [cartItems]);
 
-  const item = {
-    quantity: qty,
-    price: Number(price),
-    size,
-    name: product.name,
-    image: product.image?.[0] || "",
-  };
+  /* ================= SAVE TOKEN ================= */
+  useEffect(() => {
+    if (token) {
+      localStorage.setItem("token", token);
+    }
+  }, [token]);
 
-  setCartItems((prev) => {
-    const updatedCart = {
+  /* ================= ADD TO CART ================= */
+  const addToCart = async (itemId, size, price, qty = 1) => {
+
+    const cartKey = `${itemId}-${size}`;
+    const product = products.find((p) => p._id === itemId);
+    if (!product || !price) return;
+
+    const item = {
+      quantity: qty,
+      price: Number(price),
+      size,
+      name: product.name,
+      image: product.image?.[0] || "",
+    };
+
+    setCartItems((prev) => ({
       ...prev,
       [cartKey]: prev[cartKey]
         ? {
@@ -43,25 +59,19 @@ const addToCart = async (itemId, size, price, qty = 1) => {
             quantity: prev[cartKey].quantity + qty,
           }
         : item,
-    };
+    }));
 
-    return updatedCart;
-  });
+    // Backend sync (if logged in)
+    if (token) {
+      await axios.post(
+        `${backendUrl}/api/cart/add`,
+        { cartKey, quantity: qty },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+    }
+  };
 
-  // Backend sync
-  if (token) {
-    await axios.post(
-      `${backendUrl}/api/cart/add`,
-      {
-        cartKey,
-        quantity: qty,
-      },
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
-  }
-};
-
-  // ================= REMOVE =================
+  /* ================= REMOVE ================= */
   const removeFromCart = (cartKey) => {
     setCartItems((prev) => {
       const updated = { ...prev };
@@ -70,7 +80,7 @@ const addToCart = async (itemId, size, price, qty = 1) => {
     });
   };
 
-  // ================= QTY =================
+  /* ================= QUANTITY ================= */
   const increaseQuantity = (cartKey) => {
     setCartItems((prev) => ({
       ...prev,
@@ -102,7 +112,7 @@ const addToCart = async (itemId, size, price, qty = 1) => {
     });
   };
 
-  // ================= TOTAL =================
+  /* ================= TOTAL ================= */
   const getTotalCartAmount = () => {
     let total = 0;
     for (const key in cartItems) {
@@ -114,10 +124,10 @@ const addToCart = async (itemId, size, price, qty = 1) => {
     return total;
   };
 
-  // ================= FINAL TOTAL (AFTER COUPON) =================
-  const getFinalCartAmount = () => Math.max(getTotalCartAmount() - discountAmount, 0);
+  const getFinalCartAmount = () =>
+    Math.max(getTotalCartAmount() - discountAmount, 0);
 
-  // ================= APPLY COUPON =================
+  /* ================= APPLY COUPON ================= */
   const applyCoupon = async (code) => {
     try {
       const res = await axios.post(
@@ -138,21 +148,21 @@ const addToCart = async (itemId, size, price, qty = 1) => {
     }
   };
 
-  // ================= REMOVE COUPON =================
   const removeCoupon = () => {
     setCouponCode(null);
     setDiscountAmount(0);
     toast.info("Coupon removed");
   };
 
-  // ================= CLEAR CART =================
+  /* ================= CLEAR CART ================= */
   const clearCart = () => {
     setCartItems({});
     setCouponCode(null);
     setDiscountAmount(0);
+    localStorage.removeItem("cart");
   };
 
-  // ================= PRODUCTS =================
+  /* ================= PRODUCTS ================= */
   const getProductsData = async () => {
     const res = await axios.get(`${backendUrl}/api/product/list`);
     if (res.data.success) {
@@ -160,27 +170,27 @@ const addToCart = async (itemId, size, price, qty = 1) => {
     }
   };
 
-  // ================= USER CART =================
+  /* ================= GET USER CART ================= */
   const getUserCart = async (jwtToken) => {
     const res = await axios.post(
       `${backendUrl}/api/cart/get`,
       {},
       { headers: { Authorization: `Bearer ${jwtToken}` } }
     );
+
     if (res.data.success) {
       setCartItems(res.data.cartData || {});
     }
   };
 
+  /* ================= INITIAL LOAD ================= */
   useEffect(() => {
     getProductsData();
   }, []);
 
   useEffect(() => {
-    const savedToken = localStorage.getItem("token");
-    if (savedToken && !token) {
-      setToken(savedToken);
-      getUserCart(savedToken);
+    if (token) {
+      getUserCart(token);
     }
   }, [token]);
 
@@ -210,8 +220,8 @@ const addToCart = async (itemId, size, price, qty = 1) => {
         showSearch,
         setShowSearch,
 
-        search,      // <-- Added for SearchBar
-        setSearch,   // <-- Added for SearchBar
+        search,
+        setSearch,
       }}
     >
       {props.children}

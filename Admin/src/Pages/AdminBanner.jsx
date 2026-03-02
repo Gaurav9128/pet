@@ -14,12 +14,12 @@ const AdminBanner = () => {
     if (backendUrl) {
       fetchBanners();
     }
-  }, []);
+  }, [backendUrl]);
 
   const fetchBanners = async () => {
     try {
       const res = await axios.get(`${backendUrl}/api/banners`);
-      setBanners(res.data || []);
+      setBanners(Array.isArray(res.data) ? res.data : []);
     } catch (error) {
       console.log("Fetch Error:", error);
       setBanners([]);
@@ -34,28 +34,49 @@ const AdminBanner = () => {
       return;
     }
 
-    try {
-      setLoading(true);
+    // 🔹 Check image dimensions before upload
+    const img = new Image();
+    const objectUrl = URL.createObjectURL(image);
+    img.src = objectUrl;
 
-      const formData = new FormData();
-      formData.append("image", image);
+    img.onload = async () => {
 
-      await axios.post(
-        `${backendUrl}/api/banners/upload`,
-        formData,
-        { headers: { "Content-Type": "multipart/form-data" } }
-      );
+      // ✅ Exact size validation (1800 x 520)
+      if (img.width !== 1800 || img.height !== 520) {
+        alert("Please upload image of size 1800 × 520 pixels only.");
+        URL.revokeObjectURL(objectUrl);
+        return;
+      }
 
-      alert("Banner uploaded successfully!");
-      setImage(null);
-      fetchBanners();
+      try {
+        setLoading(true);
 
-    } catch (error) {
-      console.log("Upload Error:", error);
-      alert("Upload failed");
-    } finally {
-      setLoading(false);
-    }
+        const formData = new FormData();
+        formData.append("image", image);
+
+        await axios.post(
+          `${backendUrl}/api/banners/upload`,
+          formData,
+          { headers: { "Content-Type": "multipart/form-data" } }
+        );
+
+        alert("Banner uploaded successfully!");
+        setImage(null);
+        fetchBanners();
+
+      } catch (error) {
+        console.log("Upload Error:", error);
+        alert("Upload failed");
+      } finally {
+        setLoading(false);
+        URL.revokeObjectURL(objectUrl);
+      }
+    };
+
+    img.onerror = () => {
+      alert("Invalid image file.");
+      URL.revokeObjectURL(objectUrl);
+    };
   };
 
   const handleDelete = async (id) => {
@@ -82,6 +103,7 @@ const AdminBanner = () => {
       <form onSubmit={handleUpload} className="upload-form">
         <input
           type="file"
+          accept="image/*"
           onChange={(e) => setImage(e.target.files[0])}
           required
         />

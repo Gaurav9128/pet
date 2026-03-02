@@ -162,7 +162,7 @@ const Product = () => {
   <br/>  <br/>
           <div className="mt-4 bg-gray-50 px-4 py-3 text-sm">
             <p className="font-medium">COD available ₹700 – ₹5000</p>
-            <p>Free delivery above ₹599</p>
+            {/* <p>Free delivery above ₹599</p> */}
           </div>
   <br/>  <br/>
           {/* ADD TO CART */}
