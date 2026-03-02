@@ -17,14 +17,13 @@ const Cart = () => {
   } = useContext(StoreContext);
 
   const navigate = useNavigate();
-
   const DELIVERY_FEE = 50;
 
   /* ================= COUPON STATES ================= */
   const [couponCode, setCouponCode] = useState("");
   const [discount, setDiscount] = useState(0);
   const [appliedCoupon, setAppliedCoupon] = useState(null);
-  const [minAmount, setMinAmount] = useState(null);   // 👈 NEW STATE
+  const [minAmount, setMinAmount] = useState(null);
 
   /* ================= CART CALCULATION ================= */
   const validItems = Object.values(cartItems || {}).filter(
@@ -40,11 +39,19 @@ const Cart = () => {
 
   /* ================= APPLY COUPON ================= */
   const applyCoupon = async () => {
+
+    if (isCartEmpty) {
+      toast.error("Your cart is empty");
+      return;
+    }
+
     if (!couponCode) {
-      return toast.error("Please enter a coupon code");
+      toast.error("Please enter a coupon code");
+      return;
     }
 
     try {
+
       const { data } = await axios.post(
         `${backendUrl}/api/coupon/apply`,
         {
@@ -53,14 +60,18 @@ const Cart = () => {
         }
       );
 
-      if (data.success) {
-        setDiscount(data.discount);
-        setAppliedCoupon(data.couponCode);
-        setMinAmount(data.minCartValue);  // 👈 IMPORTANT
-        toast.success("Coupon Applied 🎉");
-      } else {
+      if (!data.success) {
         toast.error(data.message);
+        return;
       }
+
+      // 🔥 SHOW TOAST FIRST (important)
+      toast.success("Coupon Applied 🎉");
+
+      // 🔥 THEN UPDATE STATE
+      setDiscount(data.discount);
+      setAppliedCoupon(data.couponCode);
+      setMinAmount(data.minCartValue || null);
 
     } catch (error) {
       toast.error("Failed to apply coupon");
@@ -69,33 +80,43 @@ const Cart = () => {
 
   /* ================= REMOVE COUPON ================= */
   const removeCoupon = () => {
+
+    // 🔥 SHOW TOAST FIRST
+    toast.info("Coupon Removed");
+
+    // 🔥 THEN RESET STATE
     setDiscount(0);
     setCouponCode("");
     setAppliedCoupon(null);
-    setMinAmount(null);   // 👈 RESET
-    toast.info("Coupon Removed");
+    setMinAmount(null);
   };
 
-  /* ================= AUTO REMOVE ================= */
+  /* ================= AUTO REMOVE LOGIC ================= */
   useEffect(() => {
 
     if (!appliedCoupon) return;
 
-    // Cart empty
+    // If cart becomes empty
     if (subTotal === 0) {
-      removeCoupon();
+      setDiscount(0);
+      setAppliedCoupon(null);
+      setMinAmount(null);
       return;
     }
 
-    // Below minimum cart value
+    // If subtotal drops below minimum required
     if (minAmount && subTotal < minAmount) {
+
       toast.warning(
         `Minimum cart value ₹${minAmount} required. Coupon removed.`
       );
-      removeCoupon();
+
+      setDiscount(0);
+      setAppliedCoupon(null);
+      setMinAmount(null);
     }
 
-  }, [subTotal]);   // 👈 ONLY subTotal dependency
+  }, [subTotal]);
 
   /* ================= UI ================= */
   return (
@@ -123,7 +144,11 @@ const Cart = () => {
               return (
                 <div key={cartKey}>
                   <div className='cart-items-title cart-items-item'>
-                    <img src={item.image} alt={item.name} className='cart-item-image' />
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      className='cart-item-image'
+                    />
                     <p>{item.name} ({item.size})</p>
                     <p>₹{item.price}</p>
 
@@ -135,7 +160,12 @@ const Cart = () => {
 
                     <p>₹{item.price * item.quantity}</p>
 
-                    <p className='cross' onClick={() => removeFromCart(cartKey)}>X</p>
+                    <p
+                      className='cross'
+                      onClick={() => removeFromCart(cartKey)}
+                    >
+                      X
+                    </p>
                   </div>
                   <hr />
                 </div>
@@ -149,6 +179,7 @@ const Cart = () => {
 
       {/* ================= CART TOTAL ================= */}
       <div className="cart-bottom">
+
         <div className='cart-total'>
           <h2>Cart Totals</h2>
 
@@ -193,7 +224,7 @@ const Cart = () => {
           <hr />
         </div>
 
-        {/* ================= COUPON ================= */}
+        {/* ================= COUPON SECTION ================= */}
         <div className="cart-promocode">
           <p>If you have a promo code, enter it here:</p>
 
@@ -202,14 +233,26 @@ const Cart = () => {
               type="text"
               placeholder="Enter promo code"
               value={couponCode}
-              onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+              onChange={(e) =>
+                setCouponCode(e.target.value.toUpperCase())
+              }
               disabled={isCartEmpty || appliedCoupon}
             />
 
             {!appliedCoupon ? (
-              <button onClick={applyCoupon} disabled={isCartEmpty}>APPLY</button>
+              <button
+                onClick={applyCoupon}
+                disabled={isCartEmpty}
+              >
+                APPLY
+              </button>
             ) : (
-              <button className="remove-btn" onClick={removeCoupon}>REMOVE</button>
+              <button
+                className="remove-btn"
+                onClick={removeCoupon}
+              >
+                REMOVE
+              </button>
             )}
           </div>
 
@@ -219,6 +262,7 @@ const Cart = () => {
             </p>
           )}
         </div>
+
       </div>
     </div>
   );
