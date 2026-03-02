@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import './LoginPopUp.css';
 import { assets } from '../../assets/assets';
 import { StoreContext } from '../../context/StoreContext';
@@ -19,6 +19,19 @@ const LoginPopUp = ({ setShowLogin }) => {
   const [otp, setOtp] = useState('');
   const [otpStep, setOtpStep] = useState(false);
 
+  const [countdown, setCountdown] = useState(0);
+
+  /* ================= COUNTDOWN TIMER ================= */
+  useEffect(() => {
+    let timer;
+    if (countdown > 0) {
+      timer = setTimeout(() => {
+        setCountdown(countdown - 1);
+      }, 1000);
+    }
+    return () => clearTimeout(timer);
+  }, [countdown]);
+
   /* ================= SUBMIT HANDLER ================= */
   const onSubmitHandler = async (e) => {
     e.preventDefault();
@@ -26,7 +39,6 @@ const LoginPopUp = ({ setShowLogin }) => {
     try {
       let response;
 
-      /* ===== SIGN UP (SEND OTP) ===== */
       if (currentState === 'Sign Up' && !otpStep) {
 
         response = await axios.post(`${backendUrl}/api/user/register`, {
@@ -37,14 +49,13 @@ const LoginPopUp = ({ setShowLogin }) => {
 
         if (response.data.success) {
           setOtpStep(true);
-          toast.info('OTP sent to your email for verification');
+          setCountdown(30);
+          toast.info('OTP sent to your email');
           return;
         }
 
-        /* ===== VERIFY SIGNUP OTP ===== */
       } else if (currentState === 'Sign Up' && otpStep) {
 
-        // ✅ FIXED ROUTE HERE
         response = await axios.post(`${backendUrl}/api/user/verify-otp`, {
           email,
           otp
@@ -57,7 +68,6 @@ const LoginPopUp = ({ setShowLogin }) => {
           return;
         }
 
-        /* ===== LOGIN ===== */
       } else if (currentState === 'Login' && !otpStep) {
 
         response = await axios.post(`${backendUrl}/api/user/login`, {
@@ -67,11 +77,23 @@ const LoginPopUp = ({ setShowLogin }) => {
 
         if (response.data.otpRequired) {
           setOtpStep(true);
+          setCountdown(30);
           toast.info('OTP sent to your email');
           return;
         }
 
-        /* ===== VERIFY LOGIN OTP ===== */
+        if (response.data.success) {
+          localStorage.setItem('token', response.data.token);
+          setToken(response.data.token);
+          toast.success("Login successful 🔐");
+          setTimeout(() => {
+            resetAll();
+            setShowLogin(false);
+            navigate("/");
+          }, 800);
+          return;
+        }
+
       } else if (currentState === 'Login' && otpStep) {
 
         response = await axios.post(`${backendUrl}/api/user/verify-otp`, {
@@ -91,7 +113,6 @@ const LoginPopUp = ({ setShowLogin }) => {
           }, 800);
         }
 
-        /* ===== FORGOT PASSWORD (SEND OTP) ===== */
       } else if (currentState === 'Forgot Password' && !otpStep) {
 
         response = await axios.post(`${backendUrl}/api/user/forgot-password`, {
@@ -100,11 +121,11 @@ const LoginPopUp = ({ setShowLogin }) => {
 
         if (response.data.success) {
           setOtpStep(true);
+          setCountdown(30);
           toast.info('OTP sent to your email');
           return;
         }
 
-        /* ===== RESET PASSWORD ===== */
       } else if (currentState === 'Forgot Password' && otpStep) {
 
         response = await axios.post(`${backendUrl}/api/user/reset-password`, {
@@ -130,6 +151,44 @@ const LoginPopUp = ({ setShowLogin }) => {
     }
   };
 
+  /* ================= RESEND OTP ================= */
+  const handleResendOtp = async () => {
+    if (countdown > 0) return;
+
+    try {
+      let response;
+
+      if (currentState === "Sign Up") {
+        response = await axios.post(`${backendUrl}/api/user/register`, {
+          name,
+          email,
+          password
+        });
+      } 
+      else if (currentState === "Login") {
+        response = await axios.post(`${backendUrl}/api/user/login`, {
+          email,
+          password
+        });
+      } 
+      else if (currentState === "Forgot Password") {
+        response = await axios.post(`${backendUrl}/api/user/forgot-password`, {
+          email
+        });
+      }
+
+      if (response.data.success || response.data.otpRequired) {
+        setCountdown(30);
+        toast.success("OTP resent successfully 📩");
+      } else {
+        toast.error(response.data.message);
+      }
+
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to resend OTP");
+    }
+  };
+
   /* ================= RESET ================= */
   const resetAll = () => {
     setName('');
@@ -138,6 +197,7 @@ const LoginPopUp = ({ setShowLogin }) => {
     setNewPassword('');
     setOtp('');
     setOtpStep(false);
+    setCountdown(0);
   };
 
   /* ================= LOGOUT ================= */
@@ -205,13 +265,28 @@ const LoginPopUp = ({ setShowLogin }) => {
               )}
 
               {otpStep && (
-                <input
-                  type="text"
-                  placeholder="Enter OTP"
-                  value={otp}
-                  onChange={(e) => setOtp(e.target.value)}
-                  required
-                />
+                <>
+                  <input
+                    type="text"
+                    placeholder="Enter OTP"
+                    value={otp}
+                    onChange={(e) => setOtp(e.target.value)}
+                    required
+                  />
+
+                  <div className="resend-otp">
+                    <button
+                      type="button"
+                      onClick={handleResendOtp}
+                      disabled={countdown > 0}
+                      className="resend-btn"
+                    >
+                      {countdown > 0
+                        ? `Resend OTP in ${countdown}s`
+                        : 'Resend OTP'}
+                    </button>
+                  </div>
+                </>
               )}
 
               {currentState === 'Forgot Password' && otpStep && (
