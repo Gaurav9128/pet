@@ -103,3 +103,66 @@
         justify-content: start;
     }
 }
+
+ .available-coupons1 {
+  margin-top: 25px;
+}
+
+.available-coupons1 h4 {
+  margin-bottom: 10px;
+}
+
+.coupon-car {
+  border: 1px dashed #000;
+  padding: 12px 15px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.coupon-car:hover {
+  background-color: #f5f5f5;
+}
+
+.coupon-car button {
+  background-color: black;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.coupon-card button:disabled {
+  background-color: grey;
+  /* cursor: not-allowed; */
+} 
+
+.pagination {
+  display: flex;
+  gap: 8px;
+  margin-top: 15px;
+  flex-wrap: wrap;
+}
+
+.pagination button {
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  background: white;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.pagination button.active-page {
+  background: black;
+  color: white;
+}
+
+.pagination button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
