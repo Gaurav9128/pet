@@ -38,7 +38,7 @@ const Cart = () => {
   const total = finalSubTotal + deliveryFee;
 
   /* ================= APPLY COUPON ================= */
-  const applyCoupon = async () => {
+ const applyCoupon = async () => {
 
     if (isCartEmpty) {
       toast.error("Your cart is empty");
@@ -79,7 +79,7 @@ const Cart = () => {
   };
 
   /* ================= REMOVE COUPON ================= */
-  const removeCoupon = () => {
+   const removeCoupon = () => {
 
     // 🔥 SHOW TOAST FIRST
     toast.info("Coupon Removed");
