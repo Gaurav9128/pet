@@ -22,6 +22,17 @@ const returnSchema = new mongoose.Schema(
       type: String,
       default: "Pending",
     },
+    returnStatus: {
+ type:String,
+ default:"Pending"
+},
+
+returnReason:String,
+returnRejectReason:String,
+
+returnQuantity:Number,
+
+refundAmount:Number,
 
     userId: {
       type: mongoose.Schema.Types.ObjectId,

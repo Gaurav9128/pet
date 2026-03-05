@@ -28,25 +28,27 @@ const SUBCATEGORY_OPTIONS = [
 ];
 
 const Collection = () => {
+
   const { products = [], search = '' } = useContext(StoreContext);
   const [searchParams] = useSearchParams();
 
-  // ✅ URL category = DB VALUE
   const categoryFromURL = searchParams.get('category');
 
   const [showFilter, setShowFilter] = useState(false);
 
-  // TEMP
   const [tempCategory, setTempCategory] = useState([]);
   const [tempSubCategory, setTempSubCategory] = useState([]);
 
-  // APPLIED
   const [category, setCategory] = useState([]);
   const [subCategory, setSubCategory] = useState([]);
 
   const [sortType, setSortType] = useState('relavent');
 
-  // ✅ AUTO APPLY URL CATEGORY
+  /* PAGINATION STATE */
+  const [currentPage, setCurrentPage] = useState(1);
+  const productsPerPage = 20;
+
+  /* AUTO APPLY CATEGORY FROM URL */
   useEffect(() => {
     if (categoryFromURL) {
       setCategory([categoryFromURL]);
@@ -54,144 +56,255 @@ const Collection = () => {
     }
   }, [categoryFromURL]);
 
-  /* ---------- TOGGLE CATEGORY ---------- */
+  /* SCROLL TOP WHEN PAGE CHANGE */
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [currentPage]);
+
+  /* CATEGORY TOGGLE */
   const toggleCategory = (e) => {
+
     const value = e.target.value;
+
     setTempCategory(prev =>
       prev.includes(value)
         ? prev.filter(i => i !== value)
         : [...prev, value]
     );
+
   };
 
-  /* ---------- TOGGLE SUB CATEGORY ---------- */
+  /* SUBCATEGORY TOGGLE */
   const toggleSubCategory = (e) => {
+
     const value = e.target.value;
+
     setTempSubCategory(prev =>
       prev.includes(value)
         ? prev.filter(i => i !== value)
         : [...prev, value]
     );
+
   };
 
-  /* ---------- APPLY FILTER ---------- */
+  /* APPLY FILTER */
   const applyFilters = () => {
+
     setCategory(tempCategory);
     setSubCategory(tempSubCategory);
+    setCurrentPage(1);
 
     if (window.innerWidth < 640) {
       setShowFilter(false);
     }
+
+  };
+  /* RESET FILTER */
+  const resetFilters = () => {
+
+    setTempCategory([]);
+    setTempSubCategory([]);
+
+    setCategory([]);
+    setSubCategory([]);
+
+    setCurrentPage(1);
+
   };
 
-  /* ---------- LOWEST PRICE ---------- */
+  /* LOWEST PRICE */
   const getLowestPrice = (product) => {
+
     if (!product?.sizes?.length) return 0;
+
     return Math.min(...product.sizes.map(s => Number(s.price) || 0));
+
   };
 
-  /* ---------- FILTER + SORT ---------- */
+  /* FILTER + SORT */
   const filteredProducts = useMemo(() => {
+
     let result = [...products];
 
-    // AVAILABLE
     result = result.filter(p => p.isAvailable);
 
-    // SEARCH
     if (search) {
+
       const searchLower = search.toLowerCase();
+
       result = result.filter(p =>
         (p.name || '').toLowerCase().includes(searchLower)
       );
+
     }
 
-    // ✅ CATEGORY FILTER (EXACT MATCH)
     if (category.length > 0) {
+
       result = result.filter(p =>
         category.includes(p.category)
       );
+
     }
 
-    // ✅ SUB CATEGORY FILTER (EXACT MATCH)
     if (subCategory.length > 0) {
+
       result = result.filter(p =>
         subCategory.includes(p.subCategory)
       );
+
     }
 
-    // SORT
     if (sortType === 'low-high') {
+
       result.sort((a, b) => getLowestPrice(a) - getLowestPrice(b));
-    } else if (sortType === 'high-low') {
+
+    }
+
+    else if (sortType === 'high-low') {
+
       result.sort((a, b) => getLowestPrice(b) - getLowestPrice(a));
+
     }
 
     return result;
+
   }, [products, search, category, subCategory, sortType]);
 
+  /* PAGINATION LOGIC */
+
+  const indexOfLastProduct = currentPage * productsPerPage;
+
+  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+
+  const currentProducts = filteredProducts.slice(
+    indexOfFirstProduct,
+    indexOfLastProduct
+  );
+
+  const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+
+  /* PAGE NUMBER LOGIC (AMAZON STYLE) */
+
+  const getPageNumbers = () => {
+
+    const pages = [];
+    const maxVisiblePages = 5;
+
+    let start = Math.max(currentPage - 2, 1);
+    let end = Math.min(start + maxVisiblePages - 1, totalPages);
+
+    if (end - start < maxVisiblePages - 1) {
+      start = Math.max(end - maxVisiblePages + 1, 1);
+    }
+
+    for (let i = start; i <= end; i++) {
+      pages.push(i);
+    }
+
+    return pages;
+
+  };
+
   return (
+
     <div className="flex flex-col sm:flex-row gap-10 pt-10 border-t">
 
-      {/* ---------- LEFT FILTER ---------- */}
+      {/* FILTER SECTION */}
+
       <div className="min-w-60">
+
         <p
           onClick={() => setShowFilter(!showFilter)}
           className="my-2 text-xl flex items-center cursor-pointer gap-2"
         >
           FILTERS
+
           <img
             className={`h-3 sm:hidden transition-transform ${showFilter ? 'rotate-90' : ''}`}
             src={assets.dropdown_icon}
             alt=""
           />
+
         </p>
 
         {/* CATEGORY */}
+
         <div className={`border pl-5 py-4 mt-6 ${showFilter ? '' : 'hidden'} sm:block`}>
+
           <p className="mb-4 font-semibold">CATEGORIES</p>
 
           {CATEGORY_OPTIONS.map(cat => (
+
             <label key={cat.value} className="flex gap-3 mb-2">
+
               <input
                 type="checkbox"
                 value={cat.value}
                 checked={tempCategory.includes(cat.value)}
                 onChange={toggleCategory}
               />
+
               {cat.label}
+
             </label>
+
           ))}
+
         </div>
 
-        {/* SUB CATEGORY */}
+        {/* SUBCATEGORY */}
+
         <div className={`border pl-5 py-4 my-5 ${showFilter ? '' : 'hidden'} sm:block`}>
+
           <p className="mb-4 font-semibold">TYPE</p>
 
           {SUBCATEGORY_OPTIONS.map(sub => (
+
             <label key={sub.value} className="flex gap-3 mb-2">
+
               <input
                 type="checkbox"
                 value={sub.value}
                 checked={tempSubCategory.includes(sub.value)}
                 onChange={toggleSubCategory}
               />
+
               {sub.label}
+
             </label>
+
           ))}
 
-          <button
-            onClick={applyFilters}
-            className="w-full bg-black text-white py-2 mt-4 rounded hover:bg-gray-800"
-          >
-            Done
-          </button>
+          <div className="flex gap-2 mt-4">
+
+            <button
+              onClick={applyFilters}
+              className="w-full bg-black text-white py-2 rounded hover:bg-gray-800"
+            >
+              Done
+            </button>
+
+            <button
+              onClick={resetFilters}
+              className="w-full border py-2 rounded hover:bg-gray-100"
+            >
+              Reset
+            </button>
+
+          </div>
+
         </div>
+
       </div>
 
-      {/* ---------- RIGHT PRODUCTS ---------- */}
+      {/* PRODUCT SECTION */}
+
       <div className="flex-1">
+
         <div className="flex justify-between mb-4 items-center">
+
           <Title text1="ALL" text2="COLLECTIONS" />
+
           <select
             onChange={(e) => setSortType(e.target.value)}
             className="border p-1 rounded"
@@ -200,26 +313,125 @@ const Collection = () => {
             <option value="low-high">Low to High</option>
             <option value="high-low">High to Low</option>
           </select>
+
         </div>
 
         {filteredProducts.length === 0 ? (
-          <p className="text-center text-gray-500 mt-10">No products found.</p>
+
+          <p className="text-center text-gray-500 mt-10">
+            No products found.
+          </p>
+
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {filteredProducts.map(item => (
-              <ProductItem
-                key={item._id}
-                id={item._id}
-                name={item.name}
-                image={item.image}
-                sizes={item.sizes}
-              />
-            ))}
-          </div>
+
+          <>
+
+            {/* PRODUCT GRID */}
+
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+
+              {currentProducts.map(item => (
+
+                <ProductItem
+                  key={item._id}
+                  id={item._id}
+                  name={item.name}
+                  image={item.image}
+                  sizes={item.sizes}
+                />
+
+              ))}
+
+            </div>
+<br/>
+            {/* PAGINATION */}
+
+            {totalPages > 1 && (
+
+              <div className="flex justify-center items-center gap-2 mt-12 flex-wrap">
+
+                {/* PREV */}
+                <button
+                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                  disabled={currentPage === 1}
+                  className="px-4 py-2 border rounded-md bg-white hover:bg-gray-100 disabled:opacity-40"
+                >
+                  Prev
+                </button>
+
+                {/* FIRST PAGE */}
+                {currentPage > 3 && (
+                  <>
+                    <button
+                      onClick={() => setCurrentPage(1)}
+                      className="px-4 py-2 border rounded-md hover:bg-gray-100"
+                    >
+                      1
+                    </button>
+
+                    <span className="px-1">...</span>
+                  </>
+                )}
+
+                {/* PAGE NUMBERS */}
+
+                {getPageNumbers().map(page => (
+
+                  <button
+                    key={page}
+                    onClick={() => setCurrentPage(page)}
+                    className={`w-10 h-10 flex items-center justify-center rounded-md border text-sm font-medium
+        ${currentPage === page
+                        ? "bg-orange-500 text-white border-orange-500"
+                        : "bg-white hover:bg-gray-100"
+                      }`}
+                  >
+                    {page}
+                  </button>
+
+                ))}
+
+                {/* LAST PAGE */}
+
+                {currentPage < totalPages - 2 && (
+                  <>
+                    <span className="px-1">...</span>
+
+                    <button
+                      onClick={() => setCurrentPage(totalPages)}
+                      className="px-4 py-2 border rounded-md hover:bg-gray-100"
+                    >
+                      {totalPages}
+                    </button>
+                  </>
+                )}
+
+                {/* NEXT */}
+
+                <button
+                  onClick={() =>
+                    setCurrentPage(prev => Math.min(prev + 1, totalPages))
+                  }
+                  disabled={currentPage === totalPages}
+                  className="px-4 py-2 border rounded-md bg-white hover:bg-gray-100 disabled:opacity-40"
+                >
+                  Next
+                </button>
+
+              </div>
+
+            )}
+
+          </>
+
         )}
+
       </div>
+
     </div>
+
   );
+
 };
 
 export default Collection;

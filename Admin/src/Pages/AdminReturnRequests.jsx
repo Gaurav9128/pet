@@ -3,193 +3,261 @@ import axios from "axios";
 import { toast } from "react-toastify";
 
 const AdminReturnRequests = ({ backendUrl, adminToken }) => {
-  const [returns, setReturns] = useState([]);
-  const [loadingAction, setLoadingAction] = useState(null);
 
-  // LOAD RETURN REQUESTS
+  const [returns,setReturns] = useState([])
+  const [loadingAction,setLoadingAction] = useState(null)
+  const [activeTab,setActiveTab] = useState("Pending")
+
+  // LOAD RETURNS
   const loadReturns = async () => {
     try {
-      const { data } = await axios.get(
+
+      const {data} = await axios.get(
         backendUrl + "/api/admin/return-requests",
-        { headers: { token: adminToken } }
-      );
+        {headers:{token:adminToken}}
+      )
 
-      if (data.success) {
-        const sorted = [...data.returnRequests].sort((a, b) => {
-          if (a.item.returnStatus === "Pending") return -1;
-          if (b.item.returnStatus === "Pending") return 1;
-          return new Date(b.createdAt) - new Date(a.createdAt);
-        });
-
-        setReturns(sorted);
+      if(data.success){
+        setReturns(data.returnRequests)
       }
+
     } catch {
-      toast.error("Failed to load return requests");
+      toast.error("Failed to load return requests")
     }
-  };
+  }
 
   // UPDATE STATUS
-  const updateStatus = async (orderId, productId, status, reason = "") => {
-    const actionKey = `${orderId}-${productId}`;
+  const updateStatus = async(orderId,productId,status,reason="") => {
 
-    try {
-      setLoadingAction(actionKey);
+    const actionKey = `${orderId}-${productId}`
 
-      const { data } = await axios.post(
+    try{
+
+      setLoadingAction(actionKey)
+
+      const {data} = await axios.post(
         backendUrl + "/api/admin/update-return-status",
-        { orderId, productId, status, reason },
-        { headers: { token: adminToken } }
-      );
+        {orderId,productId,status,reason},
+        {headers:{token:adminToken}}
+      )
 
-      if (data.success) {
-        toast.success(data.message);
-        loadReturns();
+      if(data.success){
+        toast.success(data.message)
+        loadReturns()
       }
-    } catch {
-      toast.error("Action failed");
-    } finally {
-      setLoadingAction(null);
+
+    }catch{
+      toast.error("Action Failed")
     }
-  };
+    finally{
+      setLoadingAction(null)
+    }
 
-  const handleReject = (orderId, productId) => {
-    const reason = prompt("Enter rejection reason");
-    if (!reason) return toast.error("Rejection reason required");
-    updateStatus(orderId, productId, "Rejected", reason);
-  };
+  }
 
-  useEffect(() => {
-    loadReturns();
-  }, []);
+  const rejectReturn = (orderId,productId)=>{
+    const reason = prompt("Enter rejection reason")
+
+    if(!reason){
+      toast.error("Reason required")
+      return
+    }
+
+    updateStatus(orderId,productId,"Rejected",reason)
+  }
+
+  useEffect(()=>{
+    loadReturns()
+  },[])
+
+  // FILTER RETURNS
+  const filteredReturns = returns.filter(
+    r => r.item.returnStatus === activeTab
+  )
+
+  // STATS
+  const pendingCount = returns.filter(r=>r.item.returnStatus==="Pending").length
+  const approvedCount = returns.filter(r=>r.item.returnStatus==="Approved").length
+  const rejectedCount = returns.filter(r=>r.item.returnStatus==="Rejected").length
 
   return (
-    <div className="p-4 sm:p-6">
-      <h2 className="text-2xl font-bold mb-6 text-center sm:text-left">
-        Return Requests
+
+    <div className="p-6">
+
+      <h2 className="text-2xl font-bold mb-6">
+        Return Management
       </h2>
 
-      {returns.map((req) => {
-        const isProcessing =
-          loadingAction === `${req.orderId}-${req.item.productId}`;
+      {/* DASHBOARD STATS */}
 
-        const quantity = req.item.returnQuantity || req.item.quantity;
-        const price = req.item.price;
-        const returnAmount = quantity * price;
+      <div className="grid grid-cols-3 gap-4 mb-8">
 
-        return (
-          <div
-            key={`${req.orderId}-${req.item.productId}`}
-            className="border rounded-lg p-5 mb-6 shadow-sm bg-white"
+        <div className="bg-yellow-100 p-4 rounded">
+          <p className="text-sm">Pending</p>
+          <h3 className="text-xl font-bold">{pendingCount}</h3>
+        </div>
+
+        <div className="bg-green-100 p-4 rounded">
+          <p className="text-sm">Approved</p>
+          <h3 className="text-xl font-bold">{approvedCount}</h3>
+        </div>
+
+        <div className="bg-red-100 p-4 rounded">
+          <p className="text-sm">Rejected</p>
+          <h3 className="text-xl font-bold">{rejectedCount}</h3>
+        </div>
+
+      </div>
+
+      {/* FILTER TABS */}
+
+      <div className="flex gap-4 mb-6">
+
+        {["Pending","Approved","Rejected"].map(tab=>(
+          <button
+            key={tab}
+            onClick={()=>setActiveTab(tab)}
+            className={`px-4 py-2 rounded ${
+              activeTab===tab
+              ? "bg-black text-white"
+              : "bg-gray-200"
+            }`}
           >
-            <div className="flex flex-col sm:flex-row gap-6">
-              
-              {/* Product Image */}
+            {tab}
+          </button>
+        ))}
+
+      </div>
+
+      {/* RETURN LIST */}
+
+      {filteredReturns.map((req)=>{
+
+        const actionKey = `${req.orderId}-${req.item.productId}`
+        const isProcessing = loadingAction === actionKey
+
+        const quantity = req.item.returnQuantity || req.item.quantity
+
+        /* ⭐ CORRECT REFUND LOGIC */
+
+        // ITEM LEVEL PRICE (this is important)
+        const itemPaidPrice =
+          req.item.paidPrice ||
+          req.item.price ||
+          req.item.finalPrice ||
+          0
+
+        const refundAmount = itemPaidPrice * quantity
+
+        return(
+
+          <div
+            key={actionKey}
+            className="border rounded-lg p-5 mb-6 shadow bg-white"
+          >
+
+            <div className="flex gap-6">
+
               <img
-                src={req.item.image[0]}
-                alt={req.item.name}
-                className="w-32 h-32 object-cover rounded"
+                src={req.item.image?.[0]}
+                alt=""
+                className="w-28 h-28 object-cover rounded"
               />
 
-              {/* Product Details */}
               <div className="flex-1">
 
-                <h3 className="text-lg font-bold mb-2">
+                <h3 className="font-bold text-lg mb-2">
                   {req.item.name}
                 </h3>
 
-                <div className="bg-gray-50 p-3 rounded text-sm space-y-1">
+                <div className="text-sm space-y-1">
 
                   <p>
-                    <span className="font-semibold">Order ID:</span>{" "}
-                    {req.orderUniqueId}
-                  </p>
-
-                  <p>
-                    <span className="font-semibold">Quantity:</span>{" "}
-                    {quantity}
+                    <b>Order ID:</b> {req.orderUniqueId}
                   </p>
 
                   <p>
-                    <span className="font-semibold">Size:</span>{" "}
-                    {req.item.size || "N/A"}
+                    <b>Quantity:</b> {quantity}
                   </p>
 
                   <p>
-                    <span className="font-semibold">Price (per item):</span>{" "}
-                    ₹{price}
+                    <b>Size:</b> {req.item.size}
                   </p>
 
-                  <p className="font-semibold text-red-600">
-                    Return Amount: ₹{returnAmount}
+                  <p>
+                    <b>Paid Price (per item):</b> ₹{itemPaidPrice}
                   </p>
 
-                  {req.orderTotal && (
-                    <>
-                      <p>
-                        <span className="font-semibold">
-                          Original Order Total:
-                        </span>{" "}
-                        ₹{req.orderTotal}
-                      </p>
+                  <p className="text-red-600 font-semibold">
+                    Refund Amount: ₹{refundAmount}
+                  </p>
 
-                      <p className="font-semibold text-green-600">
-                        Updated Total After Return: ₹
-                        {req.updatedTotal || req.orderTotal - returnAmount}
-                      </p>
-                    </>
-                  )}
-
-                  <p className="mt-2">
-                    Status:{" "}
-                    <span
-                      className={`font-semibold ${
-                        req.item.returnStatus === "Approved"
-                          ? "text-green-600"
-                          : req.item.returnStatus === "Rejected"
-                          ? "text-red-600"
-                          : "text-yellow-600"
-                      }`}
-                    >
+                  <p>
+                    <b>Status:</b>{" "}
+                    <span className={`font-bold
+                      ${req.item.returnStatus==="Pending" && "text-yellow-600"}
+                      ${req.item.returnStatus==="Approved" && "text-green-600"}
+                      ${req.item.returnStatus==="Rejected" && "text-red-600"}
+                    `}>
                       {req.item.returnStatus}
                     </span>
                   </p>
+
+                  {req.item.returnRejectReason && (
+                    <p className="text-red-500">
+                      Reject Reason: {req.item.returnRejectReason}
+                    </p>
+                  )}
+
                 </div>
 
                 {/* ACTION BUTTONS */}
-                {req.item.returnStatus === "Pending" && (
-                  <div className="mt-4 flex gap-4 flex-wrap">
+
+                {req.item.returnStatus==="Pending" && (
+
+                  <div className="flex gap-3 mt-4">
+
                     <button
                       disabled={isProcessing}
-                      onClick={() =>
-                        updateStatus(
-                          req.orderId,
-                          req.item.productId,
-                          "Approved"
-                        )
-                      }
-                      className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+                      onClick={()=>updateStatus(
+                        req.orderId,
+                        req.item.productId,
+                        "Approved"
+                      )}
+                      className="bg-green-600 text-white px-4 py-2 rounded"
                     >
-                      {isProcessing ? "Processing..." : "Approve"}
+                      Approve
                     </button>
 
                     <button
                       disabled={isProcessing}
-                      onClick={() =>
-                        handleReject(req.orderId, req.item.productId)
-                      }
-                      className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+                      onClick={()=>rejectReturn(
+                        req.orderId,
+                        req.item.productId
+                      )}
+                      className="bg-red-600 text-white px-4 py-2 rounded"
                     >
                       Reject
                     </button>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        );
-      })}
-    </div>
-  );
-};
 
-export default AdminReturnRequests;
+                  </div>
+
+                )}
+
+              </div>
+
+            </div>
+
+          </div>
+
+        )
+
+      })}
+
+    </div>
+
+  )
+
+}
+
+export default AdminReturnRequests

@@ -34,28 +34,36 @@ const placeOrder = async (req, res) => {
     const { userId, items, address, couponCode } = req.body;
 
     const orderUniqueId = await generateOrderId(orderModel);
-    const subTotal = calculateSubTotal(items);
+
+    /* ⭐ FIX: STORE PURCHASE PRICE */
+    const itemsWithPurchasePrice = items.map((item) => ({
+      ...item,
+      priceAtPurchase: item.price, // actual paid price
+      originalPrice: item.originalPrice || item.price,
+    }));
+
+    const subTotal = calculateSubTotal(itemsWithPurchasePrice);
 
     let discount = 0;
     let appliedCoupon = null;
 
-    /* ========== COUPON VALIDATION ========== */
+    /* ================= COUPON ================= */
     if (couponCode) {
       const coupon = await Coupon.findOne({ code: couponCode, isActive: true });
+
       if (!coupon) {
         return res.json({ success: false, message: "Invalid coupon" });
       }
 
-      // ✅ expiry check
       if (coupon.expiryDate) {
         const expiry = new Date(coupon.expiryDate);
         expiry.setHours(23, 59, 59, 999);
+
         if (Date.now() > expiry.getTime()) {
           return res.json({ success: false, message: "Coupon Expired" });
         }
       }
 
-      // ✅ min cart value
       if (subTotal < coupon.minCartValue) {
         return res.json({
           success: false,
@@ -63,7 +71,6 @@ const placeOrder = async (req, res) => {
         });
       }
 
-      // ✅ FIX: usedBy safe check
       coupon.usedBy = coupon.usedBy || [];
 
       if (coupon.usedBy.includes(userId)) {
@@ -73,7 +80,6 @@ const placeOrder = async (req, res) => {
         });
       }
 
-      // ✅ discount calculation
       discount =
         coupon.discountType === "flat"
           ? coupon.discountValue
@@ -88,7 +94,6 @@ const placeOrder = async (req, res) => {
         discount: Math.round(discount),
       };
 
-      // ✅ update coupon usage
       coupon.usedBy.push(userId);
       coupon.usedCount += 1;
       await coupon.save();
@@ -101,7 +106,7 @@ const placeOrder = async (req, res) => {
     const orderDataForMail = {
       orderUniqueId,
       userId,
-      items,
+      items: itemsWithPurchasePrice, // ⭐ updated items
       address,
       subTotal: Math.round(subTotal),
       discountAmount: Math.round(discount),
@@ -115,9 +120,11 @@ const placeOrder = async (req, res) => {
     };
 
     await orderModel.create(orderDataForMail);
+
     await finalizeOrder(userId, orderDataForMail);
 
     res.json({ success: true, orderUniqueId });
+
   } catch (error) {
     console.log("ORDER ERROR:", error);
     res.json({ success: false, message: error.message });
