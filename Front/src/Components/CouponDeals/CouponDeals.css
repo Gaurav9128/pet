@@ -145,3 +145,46 @@
     grid-template-columns: 1fr;
   }
 }
+
+
+.pagination{
+margin-top:40px;
+display:flex;
+justify-content:center;
+align-items:center;
+gap:8px;
+flex-wrap:wrap;
+}
+
+.pagination button{
+
+padding:8px 14px;
+border-radius:6px;
+border:1px solid #ddd;
+background:white;
+cursor:pointer;
+font-weight:500;
+transition:0.2s;
+
+}
+
+.pagination button:hover:not(:disabled){
+
+background:#f5f5f5;
+
+}
+
+.pagination button:disabled{
+
+opacity:0.5;
+cursor:not-allowed;
+
+}
+
+.active-page{
+
+background:#ff6b00 !important;
+color:white;
+border:none;
+
+}
