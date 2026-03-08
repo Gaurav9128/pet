@@ -18,7 +18,7 @@ const Header = () => {
         `${import.meta.env.VITE_BACKEND_URL}/api/banners`
       );
 
-      console.log(res.data); // Debug
+     
 
       // Safety check
       if (Array.isArray(res.data)) {

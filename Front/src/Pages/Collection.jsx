@@ -4,6 +4,7 @@ import { assets } from '../assets/assets';
 import Title from '../Components/Title.jsx';
 import ProductItem from '../Components/ProductItem.jsx';
 import { StoreContext } from '../context/StoreContext';
+import "./Collection.css";
 
 const CATEGORY_OPTIONS = [
   { label: 'Cat Food', value: 'cats' },
@@ -45,23 +46,25 @@ const Collection = () => {
   const [sortType, setSortType] = useState('relavent');
 
   /* PAGINATION STATE */
+
   const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 20;
 
   /* AUTO APPLY CATEGORY FROM URL */
+
   useEffect(() => {
+
     if (categoryFromURL) {
+
       setCategory([categoryFromURL]);
       setTempCategory([categoryFromURL]);
+
     }
+
   }, [categoryFromURL]);
 
-  /* SCROLL TOP WHEN PAGE CHANGE */
-  useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }, [currentPage]);
-
   /* CATEGORY TOGGLE */
+
   const toggleCategory = (e) => {
 
     const value = e.target.value;
@@ -75,6 +78,7 @@ const Collection = () => {
   };
 
   /* SUBCATEGORY TOGGLE */
+
   const toggleSubCategory = (e) => {
 
     const value = e.target.value;
@@ -88,6 +92,7 @@ const Collection = () => {
   };
 
   /* APPLY FILTER */
+
   const applyFilters = () => {
 
     setCategory(tempCategory);
@@ -95,11 +100,15 @@ const Collection = () => {
     setCurrentPage(1);
 
     if (window.innerWidth < 640) {
+
       setShowFilter(false);
+
     }
 
   };
+
   /* RESET FILTER */
+
   const resetFilters = () => {
 
     setTempCategory([]);
@@ -113,6 +122,7 @@ const Collection = () => {
   };
 
   /* LOWEST PRICE */
+
   const getLowestPrice = (product) => {
 
     if (!product?.sizes?.length) return 0;
@@ -122,6 +132,7 @@ const Collection = () => {
   };
 
   /* FILTER + SORT */
+
   const filteredProducts = useMemo(() => {
 
     let result = [...products];
@@ -183,25 +194,16 @@ const Collection = () => {
 
   const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
 
-  /* PAGE NUMBER LOGIC (AMAZON STYLE) */
+  /* PAGE CHANGE */
 
-  const getPageNumbers = () => {
+  const handlePageChange = (page) => {
 
-    const pages = [];
-    const maxVisiblePages = 5;
+    setCurrentPage(page);
 
-    let start = Math.max(currentPage - 2, 1);
-    let end = Math.min(start + maxVisiblePages - 1, totalPages);
-
-    if (end - start < maxVisiblePages - 1) {
-      start = Math.max(end - maxVisiblePages + 1, 1);
-    }
-
-    for (let i = start; i <= end; i++) {
-      pages.push(i);
-    }
-
-    return pages;
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
 
   };
 
@@ -343,84 +345,52 @@ const Collection = () => {
               ))}
 
             </div>
-<br/>
+
+            <br />
+
+            {/* SIMPLE PAGINATION */}
+
             {/* PAGINATION */}
 
-            {totalPages > 1 && (
+        {totalPages > 1 && (
 
-              <div className="flex justify-center items-center gap-2 mt-12 flex-wrap">
+          <div className="pagination">
 
-                {/* PREV */}
-                <button
-                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                  disabled={currentPage === 1}
-                  className="px-4 py-2 border rounded-md bg-white hover:bg-gray-100 disabled:opacity-40"
-                >
-                  Prev
-                </button>
+            <button
+              disabled={currentPage === 1}
+              onClick={() => handlePageChange(currentPage - 1)}
+            >
+              ◀ Prev
+            </button>
 
-                {/* FIRST PAGE */}
-                {currentPage > 3 && (
-                  <>
-                    <button
-                      onClick={() => setCurrentPage(1)}
-                      className="px-4 py-2 border rounded-md hover:bg-gray-100"
-                    >
-                      1
-                    </button>
+            {[...Array(totalPages)].map((_, index) => {
 
-                    <span className="px-1">...</span>
-                  </>
-                )}
+              const page = index + 1;
 
-                {/* PAGE NUMBERS */}
-
-                {getPageNumbers().map(page => (
-
-                  <button
-                    key={page}
-                    onClick={() => setCurrentPage(page)}
-                    className={`w-10 h-10 flex items-center justify-center rounded-md border text-sm font-medium
-        ${currentPage === page
-                        ? "bg-orange-500 text-white border-orange-500"
-                        : "bg-white hover:bg-gray-100"
-                      }`}
-                  >
-                    {page}
-                  </button>
-
-                ))}
-
-                {/* LAST PAGE */}
-
-                {currentPage < totalPages - 2 && (
-                  <>
-                    <span className="px-1">...</span>
-
-                    <button
-                      onClick={() => setCurrentPage(totalPages)}
-                      className="px-4 py-2 border rounded-md hover:bg-gray-100"
-                    >
-                      {totalPages}
-                    </button>
-                  </>
-                )}
-
-                {/* NEXT */}
+              return (
 
                 <button
-                  onClick={() =>
-                    setCurrentPage(prev => Math.min(prev + 1, totalPages))
-                  }
-                  disabled={currentPage === totalPages}
-                  className="px-4 py-2 border rounded-md bg-white hover:bg-gray-100 disabled:opacity-40"
+                  key={page}
+                  className={currentPage === page ? "active-page" : ""}
+                  onClick={() => handlePageChange(page)}
                 >
-                  Next
+                  {page}
                 </button>
 
-              </div>
+              );
 
-            )}
+            })}
+
+            <button
+              disabled={currentPage === totalPages}
+              onClick={() => handlePageChange(currentPage + 1)}
+            >
+              Next ▶
+            </button>
+
+          </div>
+
+        )}
 
           </>
 

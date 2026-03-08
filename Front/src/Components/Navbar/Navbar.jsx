@@ -10,14 +10,14 @@ import { Link, useNavigate } from "react-router-dom";
 import { StoreContext } from "../../context/StoreContext";
 
 const Navbar = ({ setShowLogin }) => {
+
   const [openCategories, setOpenCategories] = useState(false);
   const [openCat, setOpenCat] = useState(null);
   const [showUserMenu, setShowUserMenu] = useState(false);
 
-  /* 🔥 MOBILE DETECTION */
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
-  /* 🔥 LOGO CLICK STATE */
   const [logoClickCount, setLogoClickCount] = useState(0);
   const logoTimerRef = useRef(null);
 
@@ -33,9 +33,23 @@ const Navbar = ({ setShowLogin }) => {
   const dropdownRef = useRef(null);
   const buttonRef = useRef(null);
 
+  const [userEmail, setUserEmail] = useState("");
+
+  /* ===================== */
+  /* GET EMAIL */
+  /* ===================== */
+
+  useEffect(() => {
+    const email = localStorage.getItem("userEmail");
+    if (email) {
+      setUserEmail(email);
+    }
+  }, []);
+
   /* ===================== */
   /* MOBILE CHECK */
   /* ===================== */
+
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth <= 768);
@@ -50,6 +64,7 @@ const Navbar = ({ setShowLogin }) => {
   /* ===================== */
   /* CATEGORY TOGGLE */
   /* ===================== */
+
   const toggleCategory = (id) => {
     setOpenCat(openCat === id ? null : id);
   };
@@ -57,12 +72,14 @@ const Navbar = ({ setShowLogin }) => {
   const handleCategoryClick = () => {
     setOpenCategories(false);
     setOpenCat(null);
+    setMobileMenuOpen(false);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   /* ===================== */
-  /* LOGO CLICK HANDLER */
+  /* LOGO CLICK */
   /* ===================== */
+
   const handleLogoClick = () => {
     setLogoClickCount((prev) => prev + 1);
 
@@ -83,62 +100,35 @@ const Navbar = ({ setShowLogin }) => {
   };
 
   /* ===================== */
-  /* OUTSIDE CLICK CLOSE */
-  /* ===================== */
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target) &&
-        buttonRef.current &&
-        !buttonRef.current.contains(event.target)
-      ) {
-        setOpenCategories(false);
-        setOpenCat(null);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () =>
-      document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  /* ===================== */
-  /* AUTO CLOSE ON SCROLL */
-  /* ===================== */
-  useEffect(() => {
-    const handleScroll = () => {
-      setOpenCategories(false);
-      setOpenCat(null);
-      setShowUserMenu(false);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () =>
-      window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  /* ===================== */
   /* LOGOUT */
   /* ===================== */
+
   const logoutHandler = () => {
+
     localStorage.removeItem("token");
+    localStorage.removeItem("userEmail");
+
     setToken("");
+    setUserEmail("");
     setShowUserMenu(false);
+
   };
 
   return (
     <div className="navbar">
-      {/* ================= LEFT ================= */}
+
+      {/* LEFT */}
+
       <div className="navbar-left">
-        {/* LOGO */}
+
         <img
           src={assets.logo}
           alt="logo"
           className="logo"
           onClick={handleLogoClick}
-          style={{ cursor: "pointer" }}
         />
+
+        {/* DESKTOP CATEGORY BUTTON */}
 
         <button
           className="category-btn"
@@ -147,8 +137,8 @@ const Navbar = ({ setShowLogin }) => {
         >
           <span className="category-text">☰ All Categories</span>
         </button>
-
-        {/* CATEGORY DROPDOWN */}
+ 
+ {/* CATEGORY DROPDOWN */}
         {openCategories && (
           <div className="category-dropdown" ref={dropdownRef}>
             {[
@@ -182,52 +172,59 @@ const Navbar = ({ setShowLogin }) => {
         )}
       </div>
 
-      {/* ================= RIGHT ================= */}
+      {/* RIGHT */}
+
       <div className="navbar-right">
+
+        {/* MOBILE HAMBURGER */}
+
         <img
           onClick={() => {
             setShowSearch(true);
             navigate("/cats");
           }}
           src={assets.search_icon}
-          className="w-5 cursor-pointer"
+          className="nav-icon"
           alt="search"
         />
 
         <div className="navbar-search-icon">
+
           <Link to="/cart">
             <img
               src={assets.cart_icon}
-              alt="Cart"
+              alt="cart"
               className="nav-icon"
             />
           </Link>
-          <div
-            className={
-              getTotalCartAmount() === 0 ? "" : "dot"
-            }
-          ></div>
-        </div>
 
-        {/* ================= USER MENU ================= */}
+          <div
+            className={getTotalCartAmount() === 0 ? "" : "dot"}
+          ></div>
+
+        </div>
+        
+
+        {/* USER MENU */}
+
         {!token ? (
+
           <button onClick={() => setShowLogin(true)}>
-            sign in
+            Sign In
           </button>
+
         ) : (
+
           <div
             className="user-menu"
             onMouseEnter={
-              !isMobile
-                ? () => setShowUserMenu(true)
-                : undefined
+              !isMobile ? () => setShowUserMenu(true) : undefined
             }
             onMouseLeave={
-              !isMobile
-                ? () => setShowUserMenu(false)
-                : undefined
+              !isMobile ? () => setShowUserMenu(false) : undefined
             }
           >
+
             <button
               className="user-btn"
               onClick={() => {
@@ -236,11 +233,13 @@ const Navbar = ({ setShowLogin }) => {
                 }
               }}
             >
-              Account {showUserMenu ? "▲" : "▼"}
+              👤 {userEmail || "Account"}
             </button>
 
             {showUserMenu && (
+
               <div className="user-dropdown">
+
                 <Link
                   to="/payment"
                   onClick={() => setShowUserMenu(false)}
@@ -252,7 +251,6 @@ const Navbar = ({ setShowLogin }) => {
                   href="https://pet-admin-two.vercel.app/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  onClick={() => setShowUserMenu(false)}
                 >
                   Admin Panel
                 </a>
@@ -263,11 +261,93 @@ const Navbar = ({ setShowLogin }) => {
                 >
                   Logout
                 </button>
+
               </div>
+
             )}
+
           </div>
+
         )}
+        {isMobile && (
+          <button
+            className="mobile-menu-btn"
+            onClick={() => setMobileMenuOpen(true)}
+          >
+            ☰
+          </button>
+        )}
+
       </div>
+
+      {/* MOBILE SIDEBAR */}
+
+      <div className={`mobile-sidebar ${mobileMenuOpen ? "open" : ""}`}>
+
+        <div className="mobile-sidebar-header">
+
+          <span>Menu</span>
+
+          <button
+            className="close-btn"
+            onClick={() => setMobileMenuOpen(false)}
+          >
+            ✕
+          </button>
+
+        </div>
+
+        <ul className="mobile-menu-list">
+
+          <li>
+            <Link to="/cats" onClick={handleCategoryClick}>
+              Cat Food
+            </Link>
+          </li>
+
+          <li>
+            <Link to="/cats" onClick={handleCategoryClick}>
+              Dog Food
+            </Link>
+          </li>
+
+          <li>
+            <Link to="/cats" onClick={handleCategoryClick}>
+              Small Pets
+            </Link>
+          </li>
+
+          <li>
+            <Link to="/cats" onClick={handleCategoryClick}>
+              Pet Parent
+            </Link>
+          </li>
+
+          <li>
+            <Link to="/cats" onClick={handleCategoryClick}>
+              Pharmacy
+            </Link>
+          </li>
+
+          <li>
+            <Link to="/cats" onClick={handleCategoryClick}>
+              Shop By Breed
+            </Link>
+          </li>
+
+        </ul>
+
+      </div>
+
+      {/* OVERLAY */}
+
+      {mobileMenuOpen && (
+        <div
+          className="mobile-overlay"
+          onClick={() => setMobileMenuOpen(false)}
+        ></div>
+      )}
+
     </div>
   );
 };
