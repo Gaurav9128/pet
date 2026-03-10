@@ -54,7 +54,7 @@
 }
 
 .explore-menu-list::-webkit-scrollbar-thumb {
-  background: #ff4d6d;
+  background: #6eb7fc;
   border-radius: 10px;
 }
 
@@ -113,7 +113,7 @@
    ACTIVE CATEGORY
 ========================= */
 .explore-menu-list-item.active {
-  border: 2px solid #ff4d6d;
+  border: 2px solid #6eb7fc;
   background: #fff0f4;
   box-shadow: 0 6px 18px rgba(255, 77, 109, 0.25);
   transform: translateY(-4px);
@@ -121,11 +121,11 @@
 
 .explore-menu-list-item.active img {
   background: #ffe1e8;
-  border: 2px solid #ff4d6d;
+  border: 2px solid #6eb7fc;
 }
 
 .explore-menu-list-item.active p {
-  color: #ff4d6d;
+  color: #6eb7fc;
 }
 
 /* =========================

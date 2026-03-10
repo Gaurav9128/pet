@@ -13,14 +13,25 @@ import couponRoutes from "./routes/couponRoutes.js"
 import couponRoute from "./routes/couponRoute.js"
 import couponPublicRoutes from "./routes/couponPublicRoutes.js"
 import bannerRoutes from "./routes/bannerRoutes.js"
+import promoBannerRouter from "./routes/promoBannerRoutes.js";
+import path from "path";
+import { fileURLToPath } from "url";
+
 
 const app = express()
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 connectDB()
 connectCloudinary()
 
 app.use(express.json())
 app.use(cors())
+
+// image access
+app.use("/images", express.static(path.join(__dirname, "uploads")));
+
 
 app.use('/api/user',userRouter)
 app.use('/api/product',productRouter)
@@ -32,6 +43,7 @@ app.use("/api/coupon", couponRoutes)
 app.use("/api/admin/coupon", couponRoute)
 app.use("/api/coupons", couponPublicRoutes)
 app.use("/api/banners",bannerRoutes)
+app.use("/api/promo-banner", promoBannerRouter);
 
 app.get('/',(req,res)=>{
     res.send("API Working")

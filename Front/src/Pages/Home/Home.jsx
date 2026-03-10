@@ -6,6 +6,7 @@ import ExploreMenu from '../../Components/ExploreMenu/ExploreMenu'
 import BestSeller from '../../Components/BestSeller';
 import BrandsInFocus from '../../Components/Brand Banners/Brands Banner';
 import CouponDeals from '../../Components/CouponDeals/CouponDeals';
+import Banner from '../../Components/Banner/Banner';
 
 const Home = () => {
 
@@ -18,6 +19,7 @@ const Home = () => {
         {/* <FoodDisplay category={category} /> */}
         <BestSeller />
         <CouponDeals />
+        <Banner />
         <BrandsInFocus />
         </div>
   )
