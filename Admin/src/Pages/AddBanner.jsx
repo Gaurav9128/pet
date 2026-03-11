@@ -6,9 +6,11 @@ const AddBanner = () => {
   const [banners, setBanners] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
   const fetchBanners = async () => {
     try {
-      const res = await axios.get("http://localhost:4000/api/promo-banner/list");
+      const res = await axios.get(`${backendUrl}/api/promo-banner/list`);
 
       if (res.data?.success && Array.isArray(res.data.banners)) {
         setBanners(res.data.banners);
@@ -24,8 +26,10 @@ const AddBanner = () => {
   };
 
   useEffect(() => {
-    fetchBanners();
-  }, []);
+      if (backendUrl) {
+        fetchBanners();
+      }
+    }, [backendUrl]);
 
   const submitHandler = async (e) => {
     e.preventDefault();
@@ -38,7 +42,7 @@ const AddBanner = () => {
       setLoading(true);
 
       const res = await axios.post(
-        "http://localhost:4000/api/promo-banner/add",
+        `${backendUrl}/api/promo-banner/add`,
         formData
       );
 
@@ -63,7 +67,7 @@ const AddBanner = () => {
 
     try {
       const res = await axios.delete(
-        `http://localhost:4000/api/promo-banner/delete/${id}`
+        `${backendUrl}/api/promo-banner/delete/${id}`
       );
 
       if (res.data?.success) {

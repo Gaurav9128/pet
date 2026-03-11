@@ -5,19 +5,22 @@ import "./Banner.css";
 
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 const Banner = () => {
 
   const [banners, setBanners] = useState([]); // safe default
 
-  useEffect(() => {
-    fetchBanner();
-  }, []);
+   useEffect(() => {
+    if (backendUrl) {
+      fetchBanner();
+    }
+  }, [backendUrl]);
 
   const fetchBanner = async () => {
     try {
       const res = await axios.get(
-        "http://localhost:4000/api/promo-banner/list"
+        `${backendUrl}/api/promo-banner/list`
       );
 
       // ✅ FIX HERE
