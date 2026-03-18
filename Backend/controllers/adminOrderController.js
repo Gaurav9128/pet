@@ -47,23 +47,28 @@ export const updateReturnStatus = async (req, res) => {
       return res.status(404).json({ success: false, message: "Order not found" });
     }
 
-    // ✅ FIND ITEM
-    const item = order.items.find(i => i.productId === productId);
+    // ✅ FIND ITEM (FIXED 🔥)
+    const item = order.items.find(
+      i => i.productId.toString() === productId
+    );
+
     if (!item) {
       return res.status(404).json({ success: false, message: "Item not found" });
     }
 
-    // ✅ UPDATE RETURN STATUS
+    // ✅ DEBUG (optional)
+    console.log("Reject Reason from frontend:", rejectReason);
+
+    // ✅ UPDATE STATUS
     item.returnStatus = status;
 
-    // ✅ UPDATE REJECT REASON IF REJECTED
+    // ✅ HANDLE REJECT REASON (FIXED 🔥)
     if (status === "Rejected") {
-      // Use the provided reason if available, otherwise fallback to default
-      item.returnRejectReason = rejectReason && rejectReason.trim() !== "" 
-        ? rejectReason 
-        : "No reason provided";
+      item.returnRejectReason =
+        rejectReason && rejectReason.trim() !== ""
+          ? rejectReason
+          : "No reason provided";
     } else {
-      // Clear reject reason if status changed to Approved
       item.returnRejectReason = "";
     }
 
@@ -85,6 +90,7 @@ export const updateReturnStatus = async (req, res) => {
     let subject = "";
     let html = "";
 
+    // ✅ APPROVED EMAIL
     if (status === "Approved") {
       subject = "Return Approved – Pickup Scheduled";
 
@@ -94,6 +100,7 @@ export const updateReturnStatus = async (req, res) => {
           <h2 style="color:#333">Hi ${user.name || "Customer"},</h2>
           <p>Your return request has been <b style="color:green">APPROVED</b>.</p>
           <p><b>Order ID:</b> ${order.orderUniqueId}</p>
+
           <table width="100%" border="1" cellspacing="0" cellpadding="10" style="border-collapse:collapse; margin-top:15px">
             <thead style="background:#f2f2f2">
               <tr>
@@ -113,14 +120,22 @@ export const updateReturnStatus = async (req, res) => {
               </tr>
             </tbody>
           </table>
-          <p style="margin-top:15px">📦 <b>Pickup Message:</b><br/>Our pickup partner will contact you within 24–48 hours.</p>
+
+          <p style="margin-top:15px">
+            📦 <b>Pickup Message:</b><br/>
+            Our pickup partner will contact you within 24–48 hours.
+          </p>
+
           <hr style="margin:20px 0"/>
-          <p style="font-size:14px;color:#666">Thank you for shopping with <b>Belim Tails</b> ❤️</p>
+          <p style="font-size:14px;color:#666">
+            Thank you for shopping with <b>Belim Tails</b> ❤️
+          </p>
         </div>
       </div>
       `;
     }
 
+    // ❌ REJECTED EMAIL (FIXED 🔥)
     if (status === "Rejected") {
       subject = "Return Rejected";
 
@@ -129,12 +144,19 @@ export const updateReturnStatus = async (req, res) => {
         <div style="max-width:600px; background:#fff; margin:auto; padding:20px; border-radius:8px">
           <h2>Hi ${user.name || "Customer"},</h2>
           <p>Your return request has been <b style="color:red">REJECTED</b>.</p>
+
           <p><b>Order ID:</b> ${order.orderUniqueId}</p>
           <p><b>Product:</b> ${item.name}</p>
           <p><b>Price:</b> ₹${item.price}</p>
-          <p style="color:red"><b>Reason:</b> ${item.returnRejectReason}</p>
+
+          <p style="color:red">
+            <b>Reason:</b> ${item.returnRejectReason}
+          </p>
+
           <hr/>
-          <p style="font-size:14px;color:#666">For further assistance, contact Belim Tails support.</p>
+          <p style="font-size:14px;color:#666">
+            For further assistance, contact Belim Tails support.
+          </p>
         </div>
       </div>
       `;
@@ -160,4 +182,3 @@ export const updateReturnStatus = async (req, res) => {
     });
   }
 };
-

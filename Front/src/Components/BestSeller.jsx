@@ -10,7 +10,6 @@ const BestSeller = () => {
   const [showAll, setShowAll] = useState(false);
 
   useEffect(() => {
-    // Only bestseller products that are available
     const bestProduct = products.filter(
       (item) => item.bestseller && item.isAvailable
     );
@@ -34,18 +33,6 @@ const BestSeller = () => {
         </p>
       </div>
 
-      {/* SEE MORE BUTTON DESKTOP */}
-      <div className="hidden sm:flex justify-end mb-12">
-        <button
-          onClick={() => setShowAll(!showAll)}
-          className="flex items-center gap-1 text-lg font-semibold
-          text-red-500 hover:underline transition"
-        >
-          {showAll ? "SHOW LESS" : "SEE MORE"}
-          <span>→</span>
-        </button>
-      </div>
-
       {/* PRODUCT GRID */}
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 gap-y-8">
         {visibleProducts.map((item) => (
@@ -59,8 +46,8 @@ const BestSeller = () => {
         ))}
       </div>
 
-      {/* SEE MORE BUTTON MOBILE */}
-      <div className="flex sm:hidden justify-center mt-10">
+      {/* SEE MORE BUTTON (ALL DEVICES) */}
+      <div className="flex justify-center sm:justify-end mt-10">
         <button
           onClick={() => setShowAll(!showAll)}
           className="flex items-center gap-1 text-lg font-semibold

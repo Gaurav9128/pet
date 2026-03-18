@@ -41,7 +41,7 @@ const App = () => {
 
       <div className='app'>
         <Navbar setShowLogin={setShowLogin} />
-        <SearchBar />
+      
 
         <Scroll />
 

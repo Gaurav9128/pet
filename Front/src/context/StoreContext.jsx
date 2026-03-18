@@ -4,14 +4,13 @@ import { toast } from "react-toastify";
 
 export const StoreContext = createContext(null);
 
+
 const StoreContextProvider = (props) => {
 
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
-
-  const [showSearch, setShowSearch] = useState(false);
-  const [search, setSearch] = useState("");
-
-  /* ================= CART (WITH LOCALSTORAGE SUPPORT) ================= */
+const [showSearch, setShowSearch] = useState(false);
+const [searchQuery, setSearchQuery] = useState("");
+  /* ================= CART (LOCALSTORAGE) ================= */
   const [cartItems, setCartItems] = useState(() => {
     const savedCart = localStorage.getItem("cart");
     return savedCart ? JSON.parse(savedCart) : {};
@@ -24,7 +23,7 @@ const StoreContextProvider = (props) => {
   const [couponCode, setCouponCode] = useState(null);
   const [discountAmount, setDiscountAmount] = useState(0);
 
-  /* ================= SAVE CART TO LOCALSTORAGE ================= */
+  /* ================= SAVE CART ================= */
   useEffect(() => {
     localStorage.setItem("cart", JSON.stringify(cartItems));
   }, [cartItems]);
@@ -33,6 +32,8 @@ const StoreContextProvider = (props) => {
   useEffect(() => {
     if (token) {
       localStorage.setItem("token", token);
+    } else {
+      localStorage.removeItem("token");
     }
   }, [token]);
 
@@ -41,6 +42,7 @@ const StoreContextProvider = (props) => {
 
     const cartKey = `${itemId}-${size}`;
     const product = products.find((p) => p._id === itemId);
+
     if (!product || !price) return;
 
     const item = {
@@ -61,13 +63,17 @@ const StoreContextProvider = (props) => {
         : item,
     }));
 
-    // Backend sync (if logged in)
+    /* BACKEND SYNC */
     if (token) {
-      await axios.post(
-        `${backendUrl}/api/cart/add`,
-        { cartKey, quantity: qty },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      try {
+        await axios.post(
+          `${backendUrl}/api/cart/add`,
+          { cartKey, quantity: qty },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+      } catch (err) {
+        console.error("Cart sync error:", err.message);
+      }
     }
   };
 
@@ -127,7 +133,7 @@ const StoreContextProvider = (props) => {
   const getFinalCartAmount = () =>
     Math.max(getTotalCartAmount() - discountAmount, 0);
 
-  /* ================= APPLY COUPON ================= */
+  /* ================= COUPON ================= */
   const applyCoupon = async (code) => {
     try {
       const res = await axios.post(
@@ -164,24 +170,46 @@ const StoreContextProvider = (props) => {
 
   /* ================= PRODUCTS ================= */
   const getProductsData = async () => {
-    const res = await axios.get(`${backendUrl}/api/product/list`);
-    if (res.data.success) {
-      setProducts(res.data.products.reverse());
+    try {
+      const res = await axios.get(`${backendUrl}/api/product/list`);
+      if (res.data.success) {
+        setProducts(res.data.products.reverse());
+      }
+    } catch (err) {
+      console.error("Product fetch error:", err.message);
     }
   };
 
-  /* ================= GET USER CART ================= */
-  const getUserCart = async (jwtToken) => {
+  /* ================= USER CART ================= */
+  const getUserCart = async () => {
+  try {
+    const token = localStorage.getItem("token");
+
+    if (!token) return;
+
     const res = await axios.post(
       `${backendUrl}/api/cart/get`,
       {},
-      { headers: { Authorization: `Bearer ${jwtToken}` } }
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
     );
 
-    if (res.data.success) {
-      setCartItems(res.data.cartData || {});
+    setCartItems(res.data.cartData || {});
+  } catch (error) {
+    if (error.response?.status === 401) {
+      // ✅ TOKEN EXPIRED HANDLE
+      toast.error("Session expired, please login again");
+
+      setToken("");
+      localStorage.removeItem("token");
     }
-  };
+
+    console.error("Cart fetch error:", error.message);
+  }
+};
 
   /* ================= INITIAL LOAD ================= */
   useEffect(() => {
@@ -190,7 +218,7 @@ const StoreContextProvider = (props) => {
 
   useEffect(() => {
     if (token) {
-      getUserCart(token);
+      getUserCart();
     }
   }, [token]);
 
@@ -199,6 +227,7 @@ const StoreContextProvider = (props) => {
       value={{
         products,
         cartItems,
+
         addToCart,
         removeFromCart,
         increaseQuantity,
@@ -217,11 +246,11 @@ const StoreContextProvider = (props) => {
         token,
         setToken,
 
-        showSearch,
-        setShowSearch,
+        showSearch,        // ✅ ADD THIS
+        setShowSearch, 
 
-        search,
-        setSearch,
+        searchQuery,        // ✅ ADD
+        setSearchQuery,     // ✅ ADD
       }}
     >
       {props.children}

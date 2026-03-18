@@ -95,6 +95,10 @@ export const menu_list = [
     {
         menu_name: "Food supplements",
         menu_image: menu_8
+    },
+{
+        menu_name: "Food supplements",
+        menu_image: menu_8
     }]
 
 export const products = [
