@@ -1,4 +1,4 @@
-/* NAVBAR */
+/* NAVBAR MAIN CONTAINER */
 .navbar {
   width: 100%;
   padding: 12px 30px;
@@ -8,7 +8,7 @@
   z-index: 1000;
 }
 
-/* TOP ROW */
+/* TOP ROW (FLEX CONTAINER) */
 .navbar-top {
   display: flex;
   align-items: center;
@@ -16,198 +16,219 @@
   gap: 20px;
 }
 
-/* LEFT */
+/* LEFT SECTION (LOGO) */
 .navbar-left {
   display: flex;
-  align-items: center;   /* ⭐ IMPORTANT */
+  align-items: center;
   gap: 15px;
 }
+
 .logo {
-  width: 160px;  /* increase size */
+  width: 160px;
   cursor: pointer;
-}
-/* CATEGORY */
-.category-wrapper {
-  position: relative;
-  margin-left: 15px;
+  transition: 0.3s;
 }
 
-.category-btn {
-  padding: 6px 12px;
-  border-radius: 8px;
-  border: none;
-  background: #f3f4f6;
-  cursor: pointer;
-  font-size: 14px;
-  height: 40px;
-}
-
-.category-btn:hover {
-  background: #e5e7eb;
-}
-
-/* DROPDOWN */
-.category-dropdown {
-  position: absolute;
-  top: 40px;
-  left: 0;
-  width: 220px;
-  background: white;
-  border-radius: 10px;
-  padding: 8px 0;
-  box-shadow: 0 6px 15px rgba(0,0,0,0.15);
-  z-index: 2000;
-}
-
-.category-item {
-  padding: 10px 16px;
-  cursor: pointer;
-  font-size: 14px;
-}
-
-.category-item:hover {
-  background: #f3f4f6;
-}
-
-/* SEARCH CENTER */
+/* SEARCH BAR (CENTER) */
 .search-bar {
   flex: 1;
   display: flex;
   align-items: center;
   background: #f3f4f6;
   border-radius: 12px;
-  padding: 8px 12px;
+  padding: 8px 15px;
   max-width: 650px;
-  height: 40px;
+  height: 45px;
+  border: 1px solid transparent;
+  transition: 0.3s;
 }
 
-/* LOCATION */
+.search-bar:focus-within {
+  background: #fff;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
 .location-select {
   border: none;
   background: transparent;
   outline: none;
   font-size: 14px;
-  margin-right: 8px;
+  margin-right: 10px;
+  color: #4b5563;
+  cursor: pointer;
 }
 
-/* INPUT */
 .search-input {
   flex: 1;
   border: none;
   background: transparent;
   outline: none;
   font-size: 14px;
+  color: #1f2937;
 }
 
-/* ICON */
 .search-icon {
-  width: 18px;
+  width: 20px;
   cursor: pointer;
+  opacity: 0.6;
 }
 
-/* RIGHT */
+/* RIGHT SECTION (CART & ACCOUNT) */
 .navbar-right {
   display: flex;
   align-items: center;
   gap: 18px;
 }
 
-/* CART */
 .cart-wrapper {
   position: relative;
+  display: flex;
+  align-items: center;
 }
 
 .nav-icon {
-  width: 22px;
+  width: 24px;
   cursor: pointer;
 }
 
-/* CART BADGE */
 .cart-badge {
   position: absolute;
-  top: -5px;
-  right: -6px;
-  background: red;
+  top: -8px;
+  right: -8px;
+  background: #ff4d4f;
   color: white;
-  font-size: 10px;
+  font-size: 11px;
+  font-weight: bold;
   border-radius: 50%;
-  padding: 2px 6px;
+  min-width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #fff;
 }
 
-/* LOGIN BUTTON */
-.login-btn {
-  padding: 6px 14px;
-  border-radius: 20px;
+/* BUTTONS */
+.login-btn, .user-btn {
+  padding: 8px 18px;
+  border-radius: 25px;
   border: 1px solid #d1d5db;
   background: #fff;
   cursor: pointer;
-  height: 40px;
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: 0.2s;
 }
 
-.login-btn:hover {
-  background: #f3f4f6;
+.login-btn:hover, .user-btn:hover {
+  background: #f9fafb;
+  border-color: #9ca3af;
 }
 
-/* USER MENU */
+/* USER MENU & DROPDOWN */
 .user-menu {
   position: relative;
 }
 
-.user-btn {
-  padding: 6px 14px;
-  border-radius: 20px;
-  border: 1px solid #d1d5db;
-  background: #fff;
-  cursor: pointer;
-  
-}
-
-/* DROPDOWN */
 .user-dropdown {
   position: absolute;
-  top: 110%;
+  top: calc(100% + 10px);
   right: 0;
-  width: 180px;
-  background: #f3f4f6;
-  border-radius: 10px;
-  padding: 8px 0;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  width: 200px;
+  background: white;
+  border-radius: 12px;
+  padding: 8px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
   display: flex;
   flex-direction: column;
-  z-index: 2000; 
+  z-index: 2000;
+  border: 1px solid #f3f4f6;
 }
 
-/* DROPDOWN ITEMS */
 .user-dropdown a {
-  padding: 10px 16px;
+  padding: 12px 15px;
   text-decoration: none;
-  color: #111827;
+  color: #374151;
+  font-size: 14px;
+  border-radius: 8px;
 }
 
 .user-dropdown a:hover {
-  background: #e5e7eb;
+  background: #f3f4f6;
 }
 
 .logout-btn {
   background: none;
   border: none;
   text-align: left;
-  padding: 10px 16px;
-  color: #2563eb;
+  padding: 12px 15px;
+  color: #ef4444;
+  font-size: 14px;
+  font-weight: 500;
   cursor: pointer;
+  border-radius: 8px;
 }
 
 .logout-btn:hover {
-  background: #e5e7eb;
+  background: #fef2f2;
 }
 
-/* RESPONSIVE */
+/* --- MOBILE RESPONSIVE (CRITICAL FIX) --- */
+
 @media (max-width: 768px) {
-  .search-bar {
-    display: none;
+  .navbar {
+    padding: 10px 15px;
+  }
+
+  /* Isse content wrap hoga taaki search bar niche aa sake */
+  .navbar-top {
+    flex-wrap: wrap; 
+    gap: 12px;
+  }
+
+  /* Logo stays left */
+  .navbar-left {
+    order: 1;
   }
 
   .logo {
-    width: 90px;
+    width: 110px;
+  }
+
+  /* Icons stay right */
+  .navbar-right {
+    order: 2;
+    gap: 15px;
+  }
+
+  /* Search bar takes full width in 2nd row */
+  .search-bar {
+    order: 3;
+    display: flex; /* Yahan 'none' hata kar 'flex' kiya */
+    width: 100%;
+    max-width: 100%;
+    margin-top: 5px;
+    height: 42px;
+    flex: none; /* Flex-grow ko disable kiya mobile ke liye */
+  }
+
+  .location-select {
+    display: none; /* Mobile par space bachane ke liye location hide ki */
+  }
+
+  .user-btn {
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+
+  .user-dropdown {
+    position: fixed; /* Mobile par dropdown better handle karne ke liye */
+    top: 60px;
+    right: 15px;
+    width: 180px;
   }
 }

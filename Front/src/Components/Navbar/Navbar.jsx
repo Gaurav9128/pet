@@ -1,35 +1,29 @@
-import React, { useContext, useState, useEffect, useRef } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import "./Navbar.css";
 import { assets } from "../../assets/assets";
 import { Link, useNavigate } from "react-router-dom";
 import { StoreContext } from "../../context/StoreContext";
 
 const Navbar = ({ setShowLogin }) => {
-
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [userEmail, setUserEmail] = useState("");
 
   const {
     setShowSearch,
     setSearchQuery,
-    getTotalCartAmount,
     token,
     setToken,
+    getCartCount, // <--- Destructured from Context
   } = useContext(StoreContext);
 
   const navigate = useNavigate();
-  const [userEmail, setUserEmail] = useState("");
 
   useEffect(() => {
     const email = localStorage.getItem("userEmail");
     if (email) setUserEmail(email);
-  }, []);
 
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-
+    const checkMobile = () => setIsMobile(window.innerWidth <= 768);
     checkMobile();
     window.addEventListener("resize", checkMobile);
     return () => window.removeEventListener("resize", checkMobile);
@@ -41,13 +35,12 @@ const Navbar = ({ setShowLogin }) => {
     setToken("");
     setUserEmail("");
     setShowUserMenu(false);
+    navigate("/");
   };
 
   return (
     <div className="navbar">
-
       <div className="navbar-top">
-
         {/* LEFT */}
         <div className="navbar-left">
           <img
@@ -76,16 +69,17 @@ const Navbar = ({ setShowLogin }) => {
             }}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
-
           <img src={assets.search_icon} alt="search" className="search-icon" />
         </div>
 
         {/* RIGHT */}
         <div className="navbar-right">
-
           <Link to="/cart" className="cart-wrapper">
             <img src={assets.cart_icon} alt="cart" className="nav-icon" />
-            {getTotalCartAmount() > 0 && <span className="cart-badge">0</span>}
+            {/* Yaha ab dynamic count dikhega */}
+            {getCartCount() > 0 && (
+              <span className="cart-badge">{getCartCount()}</span>
+            )}
           </Link>
 
           {!token ? (
@@ -100,14 +94,14 @@ const Navbar = ({ setShowLogin }) => {
             >
               <button
                 className="user-btn"
-                onClick={() => isMobile && setShowUserMenu(prev => !prev)}
+                onClick={() => isMobile && setShowUserMenu((prev) => !prev)}
               >
-                👤 {userEmail || "Account"}
+                👤 {userEmail.split("@")[0] || "Account"}
               </button>
 
               {showUserMenu && (
                 <div className="user-dropdown">
-                  <Link to="/payment">My Orders</Link>
+                  <Link to="/payment" onClick={() => setShowUserMenu(false)}>My Orders</Link>
                   <button onClick={logoutHandler} className="logout-btn">
                     Logout
                   </button>
@@ -115,9 +109,7 @@ const Navbar = ({ setShowLogin }) => {
               )}
             </div>
           )}
-
         </div>
-
       </div>
     </div>
   );
