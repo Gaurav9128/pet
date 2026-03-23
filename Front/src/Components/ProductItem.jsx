@@ -8,23 +8,13 @@ const ProductItem = ({ id, image = [], name, sizes = [], isAvailable = true }) =
 
   const getPriceData = () => {
     if (!sizes.length) return { price: 0, mrp: 0, discount: 0 };
-
-    const validSizes = sizes.filter(
-      s => Number(s.price) > 0 && Number(s.mrp) > 0
-    );
-
+    const validSizes = sizes.filter(s => Number(s.price) > 0 && Number(s.mrp) > 0);
     if (!validSizes.length) return { price: 0, mrp: 0, discount: 0 };
 
-    const activeSize =
-      selectedSize ||
-      validSizes.reduce((min, curr) =>
-        Number(curr.price) < Number(min.price) ? curr : min
-      );
-
+    const activeSize = selectedSize || validSizes.reduce((min, curr) => Number(curr.price) < Number(min.price) ? curr : min);
     const price = Number(activeSize.price);
     const mrp = Number(activeSize.mrp);
-    const discount =
-      mrp > price ? Math.round(((mrp - price) / mrp) * 100) : 0;
+    const discount = mrp > price ? Math.round(((mrp - price) / mrp) * 100) : 0;
 
     return { price, mrp, discount };
   };
@@ -32,76 +22,58 @@ const ProductItem = ({ id, image = [], name, sizes = [], isAvailable = true }) =
   const { price, mrp, discount } = getPriceData();
 
   return (
-    <div
-      className="bg-pink-50 border border-pink-200 rounded-2xl
-                 hover:shadow-lg hover:-translate-y-1
-                 transition-all duration-300
-                 flex flex-col h-full"
-    >
-
-      {/* IMAGE */}
+    <div className="bg-white flex flex-col h-full overflow-hidden group">
+      <br/>
+      {/* IMAGE SECTION - Reference style (Gray background behind image) */}
       <Link
         to={`/product/${id}`}
-        className="bg-white rounded-xl m-3 h-44
-                   flex items-center justify-center
-                   overflow-hidden"
+        className="bg-[#F7F7F7] rounded-lg aspect-square flex items-center justify-center overflow-hidden p-4"
       >
         <img
           src={image?.[0]}
           alt={name}
-          className="w-full h-full object-contain
-                     hover:scale-105 transition-transform"
+          className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
         />
       </Link>
-
-      {/* CONTENT */}
-      <div className="px-4 pt-2 flex flex-col flex-1">
-
-        <p className="text-sm font-semibold line-clamp-2 text-gray-800">
+<br/>
+      {/* CONTENT SECTION - Padding adjusted to match reference */}
+      <div className="px-1 py-3 flex flex-col flex-1">
+        
+        {/* Name - Reference has dark, clean text */}
+        <p className="text-[14px] sm:text-[15px] font-normal text-[#212121] line-clamp-2 leading-snug min-h-[40px]">
           <Link to={`/product/${id}`}>{name}</Link>
         </p>
-
-        {/* PRICE */}
-        {price > 0 ? (
-          <div className="flex items-center gap-2 mt-2 flex-wrap">
-            <span className="text-lg font-bold text-gray-900">
-              ₹{currency}{price}
+         <br/>
+        {/* PRICE - Styled like the reference image */}
+        <div className="mt-1 flex items-baseline gap-1.5 flex-wrap">
+          <span className="text-base sm:text-lg font-bold text-gray-900">
+            ₹{price}
+          </span>
+          {mrp > price && (
+            <span className="text-xs sm:text-sm text-gray-500 line-through font-normal">
+              ₹{mrp}
             </span>
-
-            {mrp > price && (
-              <span className="text-sm text-gray-500 line-through">
-                ₹{currency}{mrp}
-              </span>
-            )}
-
-            {discount > 0 && (
-              <span className="text-sm text-green-600 font-semibold">
-                ({discount}% OFF)
-              </span>
-            )}
-          </div>
-        ) : (
-          <p className="text-red-500 text-sm mt-1">
-            Price not available
-          </p>
-        )}
-
-        {/* SIZES */}
+          )}
+          {discount > 0 && (
+            <span className="text-[11px] sm:text-xs text-green-600 font-bold">
+              {discount}% OFF
+            </span>
+          )}
+        </div>
+        <br/>
+        {/* SIZES - Minimalist buttons */}
         {sizes.length > 0 && (
-          <div className="mt-3 flex flex-wrap gap-2">
+          <div className="mt-2 flex flex-wrap gap-1.5">
             {sizes.map((size, index) => {
               const isActive = selectedSize?.label === size.label;
-
               return (
                 <button
                   key={index}
                   onClick={() => setSelectedSize(size)}
-                  className={`px-3 py-1 text-xs font-semibold
-                    border rounded-md min-w-[60px]
-                    transition-all
-                    ${isActive
-                      ? "border-red-500 text-red-500 bg-red-50"
-                      : "border-gray-400 hover:border-red-500 hover:text-red-500"
+                  className={`px-2 py-0.5 text-[15px] border rounded transition-all
+                    ${isActive 
+                      ? "border-black bg-black text-white" 
+                      : "border-gray-300 text-gray-600 hover:border-gray-800"
                     }`}
                 >
                   {size.label}
@@ -110,31 +82,23 @@ const ProductItem = ({ id, image = [], name, sizes = [], isAvailable = true }) =
             })}
           </div>
         )}
+        <br/>
+        {/* ACTION BUTTON - Pushed to bottom */}
+        <div className="mt-auto pt-3">
+          {isAvailable ? (
+            <Link
+              to={`/product/${id}`}
+              className="block w-full border border-[#e0e0e0] text-gray-800 py-1.5 text-xs sm:text-sm font-semibold rounded-md text-center hover:bg-gray-50 hover:border-gray-400 transition-all"
+            >
+              BUY NOW
+            </Link>
+          ) : (
+            <span className="block w-full bg-gray-100 text-gray-400 py-1.5 text-xs sm:text-sm font-medium rounded-md text-center">
+              OUT OF STOCK
+            </span>
+          )}
+        </div>
       </div>
-
-      {/* BUY NOW / UNAVAILABLE */}
-      {isAvailable ? (
-        <Link
-          to={`/product/${id}`}
-          className="mx-4 mb-4 border border-red-500
-                     text-red-500 py-2.5
-                     text-base font-semibold rounded-lg
-                     text-center hover:bg-red-500 hover:text-white
-                     transition-all"
-        >
-          BUY NOW
-        </Link>
-      ) : (
-        <button
-          disabled
-          className="mx-4 mb-4 border border-gray-400 bg-gray-400
-                     text-white py-2.5
-                     text-base font-semibold rounded-lg
-                     cursor-not-allowed"
-        >
-          UNAVAILABLE
-        </button>
-      )}
     </div>
   );
 };
