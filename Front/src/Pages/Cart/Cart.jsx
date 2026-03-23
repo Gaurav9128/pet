@@ -3,7 +3,7 @@ import './Cart.css';
 import { StoreContext } from '../../context/StoreContext';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import Swal from 'sweetalert2'; // Sirf Swal use hoga
+import Swal from 'sweetalert2';
 
 const Cart = () => {
   const {
