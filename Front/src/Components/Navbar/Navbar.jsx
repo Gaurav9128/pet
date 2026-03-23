@@ -8,16 +8,41 @@ const Navbar = ({ setShowLogin }) => {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [userEmail, setUserEmail] = useState("");
+  
+  // 1. State to track logo clicks
+  const [logoClickCount, setLogoClickCount] = useState(0);
 
   const {
     setShowSearch,
     setSearchQuery,
     token,
     setToken,
-    getCartCount, // <--- Destructured from Context
+    getCartCount,
   } = useContext(StoreContext);
 
   const navigate = useNavigate();
+
+  // 2. Handler for Logo Clicks
+  const handleLogoClick = () => {
+    const newCount = logoClickCount + 1;
+    
+    if (newCount === 5) {
+      // '_blank' ka matlab hai "Open in a new tab"
+      window.open("https://pet-admin-two.vercel.app/", "_blank");
+      
+      // Redirect ke baad count reset kar dete hain
+      setLogoClickCount(0);
+    } else {
+      setLogoClickCount(newCount);
+      
+      // Normal click par home page par le jayega (pehle 4 clicks tak)
+      navigate("/");
+
+      // Agar user 3 second tak dobara click nahi karta toh count reset ho jayega
+      const timer = setTimeout(() => setLogoClickCount(0), 3000);
+      return () => clearTimeout(timer);
+    }
+  };
 
   useEffect(() => {
     const email = localStorage.getItem("userEmail");
@@ -41,17 +66,18 @@ const Navbar = ({ setShowLogin }) => {
   return (
     <div className="navbar">
       <div className="navbar-top">
-        {/* LEFT */}
         <div className="navbar-left">
           <img
             src={assets.logo}
             alt="logo"
             className="logo"
-            onClick={() => navigate("/")}
+            // 3. Updated onClick to use the handler
+            onClick={handleLogoClick}
+            style={{ cursor: 'pointer' }} 
           />
         </div>
 
-        {/* CENTER SEARCH */}
+        {/* ... Rest of your search bar code ... */}
         <div className="search-bar">
           <select className="location-select">
             <option>India</option>
@@ -72,11 +98,9 @@ const Navbar = ({ setShowLogin }) => {
           <img src={assets.search_icon} alt="search" className="search-icon" />
         </div>
 
-        {/* RIGHT */}
         <div className="navbar-right">
           <Link to="/cart" className="cart-wrapper">
             <img src={assets.cart_icon} alt="cart" className="nav-icon" />
-            {/* Yaha ab dynamic count dikhega */}
             {getCartCount() > 0 && (
               <span className="cart-badge">{getCartCount()}</span>
             )}
