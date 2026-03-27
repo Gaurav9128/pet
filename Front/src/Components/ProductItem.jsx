@@ -2,105 +2,102 @@ import React, { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import { StoreContext } from "../context/StoreContext";
 
-const ProductItem = ({ id, image = [], name, sizes = [], isAvailable = true, rating, reviewsCount }) => {
+const ProductItem = ({ id, image = [], name, sizes = [], isAvailable = true }) => {
   const { currency } = useContext(StoreContext);
-  const [selectedSize, setSelectedSize] = useState(null);
+  const [selectedSize, setSelectedSize] = useState(sizes[0] || null);
 
   const getPriceData = () => {
-    if (!sizes.length) return { price: 0, mrp: 0, discount: 0 };
-    const validSizes = sizes.filter(s => Number(s.price) > 0 && Number(s.mrp) > 0);
-    if (!validSizes.length) return { price: 0, mrp: 0, discount: 0 };
-
-    const activeSize = selectedSize || validSizes.reduce((min, curr) => Number(curr.price) < Number(min.price) ? curr : min);
+    if (!sizes.length) return { price: 0, mrp: 0, discount: 0, savings: 0 };
+    const activeSize = selectedSize || sizes[0];
     const price = Number(activeSize.price);
     const mrp = Number(activeSize.mrp);
     const discount = mrp > price ? Math.round(((mrp - price) / mrp) * 100) : 0;
-
-    return { price, mrp, discount };
+    const savings = mrp - price;
+    return { price, mrp, discount, savings };
   };
 
-  const { price, mrp, discount } = getPriceData();
-
-  // Helper function to render stars based on rating number
-  const renderStars = (rating) => {
-    const stars = [];
-    for (let i = 1; i <= 5; i++) {
-      stars.push(
-        <span key={i} className={i <= rating ? "text-yellow-500" : "text-gray-300"}>
-          ★
-        </span>
-      );
-    }
-    return stars;
-  };
+  const { price, mrp, discount, savings } = getPriceData();
 
   return (
-    <div className="bg-[#FAF7F0] border border-[#E8E2D2] rounded-3xl flex flex-col h-full overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 group">
-      
-      {/* IMAGE SECTION */}
-      <Link to={`/product/${id}`} className="relative m-2 rounded-2xl overflow-hidden aspect-square flex items-center justify-center bg-white shadow-inner">
-        <img src={image?.[0]} alt={name} className="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-500" />
+    /* Card Container: Added m-2 for outside spacing */
+    <div className="bg-white border border-gray-100 rounded-3xl flex flex-col h-full overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 max-w-[380px] mx-auto m-2">
+
+      {/* 1. IMAGE SECTION - Added p-6 to keep image away from card edges */}
+      <Link to={`/product/${id}`} className="block w-full aspect-square bg-[#FBFBFB] p-6">
+        <img
+          src={image?.[0]}
+          alt={name}
+          className="w-full h-full object-contain hover:scale-105 transition-transform duration-500"
+        />
       </Link>
 
-      {/* CONTENT SECTION */}
-      <div className="px-5 py-4 flex flex-col flex-1">
-        
-        {/* Product Name */}
-        <p className="text-[15px] sm:text-[16px] font-extrabold text-[#2D2D2D] line-clamp-2 leading-tight min-h-[40px] mb-1">
-          <Link to={`/product/${id}`}>{name}</Link>
-        </p>
+      {/* 2. CONTENT SECTION - Increased horizontal padding to px-7 */}
+      <div className="px-7 pt-2 pb-7 flex flex-col flex-1 text-left">
 
-        {/* DYNAMIC RATING - Only shows if rating exists in database */}
-        {rating > 0 ? (
-          <div className="flex items-center gap-1 mb-2">
-            <div className="flex text-sm">
-              {renderStars(rating)}
-            </div>
-            <span className="text-[10px] text-gray-500 font-bold">
-              ({rating}/5) {reviewsCount && `· ${reviewsCount}`}
+        {/* Product Title - Proper line height */}
+        <h2 className="text-[20px] font-bold text-[#222] leading-[1.4] mb-4 line-clamp-2 min-h-[56px] text-center">
+          {name}
+        </h2>
+
+        {/* Price Section - Bold & Spaced */}
+        <div className="flex items-center justify-center gap-3 mb-5 flex-wrap">
+          {/* justify-center se pura price block center ho jayega */}
+
+          <span className="text-3xl font-black text-[#004D40]">
+            ₹{currency}{price}
+          </span>
+
+          <span className="text-gray-400 line-through text-base font-medium">
+            ₹{mrp}
+          </span>
+
+          {discount > 0 && (
+            <span className="bg-[#4CAF50] text-white px-3 py-1  text-[13px] font-bold uppercase tracking-tight">
+              ₹{savings} OFF ({discount}%)
             </span>
-          </div>
-        ) : (
-          <div className="mb-2 h-4"></div> // Spacer if no rating
-        )}
-
-        {/* PRICE SECTION */}
-        <div className="flex items-baseline gap-2 flex-wrap mb-3">
-          <span className="text-xl font-black text-[#1a1a1a]">₹{price}</span>
-          {mrp > price && <span className="text-sm text-gray-400 line-through font-medium">₹{mrp}</span>}
-          {discount > 0 && <span className="text-sm text-[#1B5E20] font-bold">({discount}% OFF)</span>}
+          )}
         </div>
 
-        {/* SIZES SECTION */}
-        <div className="flex-grow">
-          <p className="text-[11px] font-bold text-gray-700 mb-2 uppercase tracking-wide">Select Weight:</p>
-          <div className="grid grid-cols-2 gap-2">
-            {sizes.map((size, index) => {
-              const isActive = selectedSize?.label === size.label;
-              return (
-                <button
-                  key={index}
-                  onClick={() => setSelectedSize(size)}
-                  className={`py-1.5 text-[10px] font-bold border-2 rounded-xl transition-all ${isActive ? "border-[#5B215E] bg-white text-[#5B215E]" : "border-gray-200 bg-white text-gray-700 hover:border-gray-400"}`}
-                >
-                  {size.label}
-                </button>
-              );
-            })}
+        {/* Sizes - Fixed spacing between buttons */}
+        <div className="mb-6">
+          {/* Yahan 'justify-center' add kiya hai taaki buttons center ho jayein */}
+          <div className="flex flex-wrap gap-2.5 justify-center">
+            {sizes.map((size, index) => (
+              <button
+                key={index}
+                onClick={() => setSelectedSize(size)}
+                className={`px-4 py-1.5 text-[12px] font-bold border-2  transition-all ${selectedSize?.label === size.label
+                  ? "border-black bg-white text-black shadow-sm"
+                  : "border-gray-100 bg-gray-50 text-gray-400 hover:border-gray-300"
+                  }`}
+              >
+                {size.label}
+              </button>
+            ))}
           </div>
         </div>
 
-        {/* BUY NOW BUTTON */}
-        <div className="mt-5">
+        <br />
+
+        {/* Action Button - Large and rounded with padding */}
+        <div className="mt-auto pt-4 flex flex-col items-center">
           {isAvailable ? (
-            <Link 
-              to={`/product/${id}`} 
-              className="flex items-center justify-center gap-2 w-full bg-[#5B215E] text-white py-3 text-sm font-black uppercase tracking-widest rounded-xl hover:bg-[#4A1A4C] transition-all shadow-md active:scale-95 border-none"
+            /* Link ko sahi se band kiya gaya hai aur usme button wrap hai */
+            <Link
+              to={`/product/${id}`}
+              className="w-[90%] flex justify-center no-underline"
             >
-              <span className="text-white">BUY NOW 🛒</span>
+              <button className="w-full bg-[#1E5F74] text-white py-2.5 rounded-lg text-[13px] font-bold uppercase tracking-wider hover:bg-[#154656] transition-all flex justify-center items-center gap-2 shadow-md active:scale-95">
+                <span className="text-base">🛒</span>
+                ADD TO CART & BUY NOW
+              </button>
             </Link>
           ) : (
-            <button disabled className="w-full bg-gray-200 text-gray-500 py-3 text-sm font-bold rounded-xl cursor-not-allowed">
+            /* Out of stock button link ke bahar */
+            <button
+              disabled
+              className="w-[90%] bg-gray-100 text-gray-400 py-2.5 rounded-lg text-[13px] font-bold uppercase cursor-not-allowed"
+            >
               OUT OF STOCK
             </button>
           )}

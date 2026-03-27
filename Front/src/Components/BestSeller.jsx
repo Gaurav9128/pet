@@ -30,19 +30,20 @@ const BestSeller = () => {
       </div>
 
       {/* PRODUCT GRID - Balanced spacing for rounded borders */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 gap-y-6 sm:gap-6 sm:gap-y-10">
-        {visibleProducts.map((item) => (
-          <ProductItem
-            key={item._id}
-            id={item._id}
-            name={item.name}
-            image={item.image}
-            sizes={item.sizes}
-            rating={item.rating} // Database se rating
-            reviewsCount={item.reviewsCount} // Database se reviews count
-          />
-        ))}
-      </div>
+      {/* PRODUCT GRID - Updated to show 4 columns on medium screens and up */}
+<div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 gap-y-6 sm:gap-6 sm:gap-y-10">
+  {visibleProducts.map((item) => (
+    <ProductItem
+      key={item._id}
+      id={item._id}
+      name={item.name}
+      image={item.image}
+      sizes={item.sizes}
+      rating={item.rating}
+      reviewsCount={item.reviewsCount}
+    />
+  ))}
+</div>
 
       {/* SEE MORE BUTTON */}
       <div className="flex justify-center sm:justify-end mt-12">

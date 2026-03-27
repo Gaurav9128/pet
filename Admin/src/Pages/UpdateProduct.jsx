@@ -18,7 +18,7 @@ const UpdateProduct = ({ token }) => {
     bestseller: false,
     isAvailable: true,
     sizes: [],
-    details: []
+    details: [],
   });
 
   const [existingImages, setExistingImages] = useState([]);
@@ -40,7 +40,7 @@ const UpdateProduct = ({ token }) => {
             bestseller: p.bestseller,
             isAvailable: p.isAvailable,
             sizes: p.sizes || [],
-            details: p.details || []
+            details: p.details || [],
           });
           setExistingImages(p.image || []);
         }
@@ -56,7 +56,7 @@ const UpdateProduct = ({ token }) => {
     const { name, value, type, checked } = e.target;
     setFormData({
       ...formData,
-      [name]: type === "checkbox" ? checked : value
+      [name]: type === "checkbox" ? checked : value,
     });
   };
 
@@ -75,7 +75,7 @@ const UpdateProduct = ({ token }) => {
   const addSize = () => {
     setFormData({
       ...formData,
-      sizes: [...formData.sizes, { label: "", mrp: "", price: "" }]
+      sizes: [...formData.sizes, { label: "", mrp: "", price: "" }],
     });
   };
 
@@ -88,7 +88,7 @@ const UpdateProduct = ({ token }) => {
   const addDetail = () => {
     setFormData({
       ...formData,
-      details: [...formData.details, { label: "", value: "" }]
+      details: [...formData.details, { label: "", value: "" }],
     });
   };
 
@@ -98,8 +98,19 @@ const UpdateProduct = ({ token }) => {
     setFormData({ ...formData, details });
   };
 
+  // --- UPDATED IMAGE HANDLER (Max 4 Check) ---
   const handleImageChange = (e) => {
-    setNewImages((prev) => [...prev, ...Array.from(e.target.files)]);
+    const files = Array.from(e.target.files);
+    const totalCurrentImages = existingImages.length + newImages.length;
+
+    if (totalCurrentImages + files.length >= 5) {
+      toast.error(`Limit exceeded! You can only have 4 images in total. (Current: ${totalCurrentImages})`);
+      // Reset input value so same file can be picked again if limit cleared
+      e.target.value = null; 
+      return;
+    }
+
+    setNewImages((prev) => [...prev, ...files]);
   };
 
   const removeNewImage = (i) => {
@@ -116,6 +127,12 @@ const UpdateProduct = ({ token }) => {
 
   // ================= UPDATE =================
   const handleUpdate = async () => {
+    // Final Safety Check
+    if (existingImages.length + newImages.length === 0) {
+        toast.error("Please provide at least one image");
+        return;
+    }
+
     try {
       const data = new FormData();
 
@@ -133,8 +150,12 @@ const UpdateProduct = ({ token }) => {
       );
 
       data.append("details", JSON.stringify(formData.details));
+      
+      // Append new files
       newImages.forEach((img) => data.append("images", img));
-      data.append("existingImages", JSON.stringify(existingImages)); // send remaining existing images
+      
+      // Send remaining existing image URLs
+      data.append("existingImages", JSON.stringify(existingImages));
 
       const res = await axios.post(
         `${backendUrl}/api/product/update`,
@@ -146,7 +167,8 @@ const UpdateProduct = ({ token }) => {
         toast.success("Product updated successfully");
         navigate("/list");
       }
-    } catch {
+    } catch (error) {
+      console.error(error);
       toast.error("Update failed");
     }
   };
@@ -187,7 +209,7 @@ const UpdateProduct = ({ token }) => {
           </select>
 
           <select name="rating" value={formData.rating} onChange={handleChange}>
-            {[1,2,3,4,5].map(r => (
+            {[1, 2, 3, 4, 5].map((r) => (
               <option key={r} value={r}>{r} ★</option>
             ))}
           </select>
@@ -196,7 +218,7 @@ const UpdateProduct = ({ token }) => {
         {/* ================= EXISTING IMAGES ================= */}
         {existingImages.length > 0 && (
           <div>
-            <h3 className="font-semibold">Existing Images</h3>
+            <h3 className="font-semibold">Existing Images ({existingImages.length}/4)</h3>
             <div className="flex gap-3 flex-wrap mb-3">
               {existingImages.map((img, i) => (
                 <div key={i} className="relative image-box">
@@ -239,7 +261,18 @@ const UpdateProduct = ({ token }) => {
           ))}
         </div>
 
-        <input type="file" multiple onChange={handleImageChange} />
+        {/* Dynamic restriction on File Input */}
+        <div className="mb-4">
+            <input 
+                type="file" 
+                multiple 
+                onChange={handleImageChange} 
+                disabled={existingImages.length + newImages.length >= 4}
+            />
+            {existingImages.length + newImages.length >= 4 && (
+                <p style={{color: 'red', fontSize: '12px'}}>Max limit reached. Remove images to add more.</p>
+            )}
+        </div>
 
         {/* ================= SIZES ================= */}
         <h3>Sizes & Pricing</h3>

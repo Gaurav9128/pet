@@ -1,177 +1,111 @@
-/* =========================
-   GLOBAL RESET
-========================= */
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
-/* =========================
-   MAIN CONTAINER
-========================= */
+/* Container */
 .explore-menu {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  width: 100%;
-  padding: 20px;
+  padding: 40px 5%;
+  background-color: #ffffff;
 }
 
 .explore-menu h1 {
-  color: #262626;
-  font-weight: 500;
+  font-size: 24px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 30px;
   text-align: center;
+  font-family: 'Poppins', sans-serif;
 }
 
-/* =========================
-   GRID LAYOUT
-========================= */
+/* Grid Layout */
 .explore-menu-list {
-
   display: grid;
-
-  grid-template-columns: repeat(8, 1fr);
-
-  gap: 20px;
-
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 25px;
   width: 100%;
-
 }
 
-/* =========================
-   CARD
-========================= */
+/* Modern Card Design */
 .explore-menu-list-item {
-
-  height: 200px;
-
-  padding: 14px;
-
-  border-radius: 22px;
-
-  background: #fff;
-
-  border: 1px solid #f3d9e0;
-
-  display: flex;
-
-  flex-direction: column;
-
-  align-items: center;
-
-  justify-content: flex-start;
-
   cursor: pointer;
-
-  transition: all 0.3s ease;
-
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-/* =========================
-   IMAGE
-========================= */
-.explore-menu-list-item img {
-
+/* The Box containing the image and badge */
+.badge-container {
   width: 100%;
+  aspect-ratio: 1/1.2; /* Making it slightly taller than wide */
+  background: #FFFDF7; /* Creamy background from image 2 */
+  border: 1px solid #F0EAD6;
+  border-radius: 18px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 15px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+}
 
-  height: 140px;
+/* Discount Badge Styling */
+.discount-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: #E91E63; /* Pinkish-red like image 1 */
+  color: white;
+  font-size: 9px;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
 
+.image-wrapper img {
+  width: 100px;
+  height: 80px;
   object-fit: contain;
-
-  border-radius: 12px;
-
-  background: #ffeef4;
-
-  padding: 6px;
-
+  transition: transform 0.3s ease;
 }
 
-/* =========================
-   TEXT
-========================= */
-.explore-menu-list-item p {
+/* Tiny text inside the box */
+.small-label {
+  font-size: 11px;
+  color: #777;
+  margin-top: 8px;
+}
 
-  margin-top: 10px;
-
-  font-size: 16px;
-
-  font-weight: 600;
-
-  color: #000;
-
+/* Big Bold Text outside the box */
+.main-title {
+  margin-top: 15px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #222;
   text-align: center;
-
 }
 
-/* =========================
-   ACTIVE CATEGORY
-========================= */
-.explore-menu-list-item.active {
-
-  border: 2px solid #6eb7fc;
-
-  background: #fff0f4;
-
-  box-shadow: 0 6px 18px rgba(255, 77, 109, 0.25);
-
-  transform: translateY(-4px);
-
+/* Hover & Active States */
+.explore-menu-list-item:hover .badge-container {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+  border-color: #6a1b9a; /* Purple touch on hover */
 }
 
-.explore-menu-list-item.active img {
-
-  background: #ffe1e8;
-
-  border: 2px solid #6eb7fc;
-
+.explore-menu-list-item.active .badge-container {
+  border: 2.5px solid #6a1b9a;
+  background: #fdfaff;
 }
 
-.explore-menu-list-item.active p {
-
-  color: #6eb7fc;
-
+.explore-menu-list-item.active .main-title {
+  color: #6a1b9a;
 }
 
-/* =========================
-   HOVER
-========================= */
-.explore-menu-list-item:hover {
-
-  box-shadow: 0 4px 14px rgba(0,0,0,0.1);
-
-}
-
-/* =========================
-   RESPONSIVE
-========================= */
-
-@media (max-width:1200px){
-
-.explore-menu-list{
-
-grid-template-columns: repeat(6,1fr);
-
-}
-
-}
-
-@media (max-width:900px){
-
-.explore-menu-list{
-
-grid-template-columns: repeat(4,1fr);
-
-}
-
-}
-
-@media (max-width:600px){
-
-.explore-menu-list{
-
-grid-template-columns: repeat(2,1fr);
-
-}
-
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  .explore-menu-list {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+  }
+  .badge-container {
+    padding: 10px;
+  }
 }

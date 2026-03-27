@@ -173,7 +173,7 @@ const Collection = () => {
             alt=""
           />
         </p>
-
+<br/>
         <div className={`border pl-5 py-4 mt-6 ${showFilter ? '' : 'hidden'} sm:block`}>
           <p className="mb-4 font-semibold">CATEGORIES</p>
 
@@ -189,7 +189,7 @@ const Collection = () => {
             </label>
           ))}
         </div>
-
+<br/>
         <div className={`border pl-5 py-4 my-5 ${showFilter ? '' : 'hidden'} sm:block`}>
           <p className="mb-4 font-semibold">TYPE</p>
 
@@ -204,7 +204,7 @@ const Collection = () => {
               {sub.label}
             </label>
           ))}
-
+<br/>
           <div className="flex gap-2 mt-4">
             <button onClick={applyFilters} className="w-full bg-black text-white py-2 rounded">
               Done
@@ -213,6 +213,7 @@ const Collection = () => {
               Reset
             </button>
           </div>
+          
         </div>
       </div>
 
@@ -230,14 +231,14 @@ const Collection = () => {
             <option value="high-low">High to Low</option>
           </select>
         </div>
-
+        <br/>
         {filteredProducts.length === 0 ? (
           <p className="text-center text-gray-500 mt-10">
             No products found.
           </p>
         ) : (
           <>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
               {currentProducts.map(item => (
                 <ProductItem
                   key={item._id}

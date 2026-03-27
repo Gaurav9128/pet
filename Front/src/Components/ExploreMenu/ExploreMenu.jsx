@@ -5,65 +5,65 @@ import { menu_list } from "../../assets/assets";
 
 const ExploreMenu = ({ category, setCategory }) => {
 
-  const navigate = useNavigate();
+const navigate = useNavigate();
 
-  const categoryMap = {
-    "Dog food": "dogs",
-    "Cat food": "cats",
-    "Small Pets": "small-pets",
-    "Pet Parent": "pet-parent",
-    "Henlo": "henlo",
-    "Pharmacy": "pharmacy",
-    "Consult a Vet": "vet"
-  };
+const categoryMap = {
+"Dog food": "dogs",
+ "Cat food": "cats",
+ "Small Pets": "small-pets",
+ "Pet Parent": "pet-parent",
+ "Henlo": "henlo",
+ "Pharmacy": "pharmacy",
+ "Consult a Vet": "vet"
+};
 
-  const handleCategoryClick = (menuName) => {
+const handleCategoryClick = (menuName) => {
 
-    setCategory(menuName);
+ setCategory(menuName);
 
-    const categoryValue = categoryMap[menuName];
+ const categoryValue = categoryMap[menuName];
 
-    navigate(`/cats?category=${categoryValue}`);
+ navigate(`/cats?category=${categoryValue}`);
 
-  };
+ };
 
-  return (
+ return (
 
-    <div className="explore-menu">
+ <div className="explore-menu">
 
-      <h1>Everyday essentials</h1>
+ <h1>Everyday essentials</h1>
 
-      <div className="explore-menu-list">
+ <div className="explore-menu-list">
 
-        {menu_list.map((item) => {
+ {menu_list.map((item) => {
 
-          const isActive =
-            category?.toLowerCase().trim() ===
-            item.menu_name.toLowerCase().trim();
+ const isActive =
+  category?.toLowerCase().trim() ===
+   item.menu_name.toLowerCase().trim();
 
-          return (
+ return (
 
-            <div
-              key={item.menu_name}
-              className={`explore-menu-list-item ${isActive ? "active" : ""}`}
-              onClick={() => handleCategoryClick(item.menu_name)}
-            >
+ <div
+ key={item.menu_name}
+ className={`explore-menu-list-item ${isActive ? "active" : ""}`}
+onClick={() => handleCategoryClick(item.menu_name)}
+>
 
-              <img src={item.menu_image} alt={item.menu_name} />
+ <img src={item.menu_image} alt={item.menu_name} />
 
-              <p>{item.menu_name}</p>
+ <p>{item.menu_name}</p>
 
-            </div>
+ </div>
 
-          );
+ );
 
-        })}
+ })}
 
-      </div>
+ </div>
 
-    </div>
+ </div>
 
-  );
+ );
 
 };
 
