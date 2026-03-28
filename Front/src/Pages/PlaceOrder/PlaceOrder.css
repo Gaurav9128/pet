@@ -128,7 +128,11 @@
     transition: all 0.3s ease;
     margin-top: 20px;          /* gap from payment section */
 }
-
+.order-btn:disabled {
+    background-color: #555 !important;
+    cursor: not-allowed;
+    opacity: 0.8;
+}
 .order-btn:hover{
     background-color: transparent;
     color: #000;
@@ -147,6 +151,55 @@ footer {
     padding-bottom: 40px; /* footer se gap create kare */
 }
 
+.dropdown-field {
+    width: 100%;
+    border: 1px solid #c5c5c5;
+    border-radius: 4px;
+    padding: 8px 12px;
+    outline-color: orange;
+}
+
+.place-order-left .multi-fields {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+    margin-bottom: 15px; /* Input gap consistent rakhega */
+}
+
+/* Dropdown ko input jaisa dikhane ke liye */
+.dropdown-field {
+    width: 100%;
+    height: 40px; /* Input height ke barabar */
+    border: 1px solid #c5c5c5;
+    border-radius: 4px;
+    padding: 0 10px;
+    background-color: white;
+    outline-color: #2563eb;
+    margin-bottom: 0px; /* multi-field gap handle karega */
+}
+
+/* Taaki mobile pe dropdowns upar neeche na ho jayein */
+.place-order-left .multi-fields input, 
+.place-order-left .multi-fields select {
+    flex: 1; /* Dono fields barabar width lengi */
+}
+
+.place-order-left input {
+    margin-bottom: 15px; /* Standalone inputs ka gap */
+}
+
+/* Payment box adjustments */
+.payment-box {
+    flex: 1; /* Dono payment boxes barabar size ke */
+    justify-content: center;
+}
+
+/* COD Disabled styling */
+.payment-box.disabled {
+    background-color: #f9f9f9;
+    border-color: #eee;
+    color: #aaa;
+}
 /* =========================
    MOBILE RESPONSIVE FIX
    ========================= */

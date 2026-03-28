@@ -80,4 +80,23 @@ const getUserCart = async (req, res) => {
   }
 };
 
-export { addToCart, updateCart, getUserCart };
+/* ================= CLEAR CART (Fixes 404 Error) ================= 
+   Order place hone ke baad ya manually cart khali karne ke liye
+*/
+const clearCart = async (req, res) => {
+    try {
+        const userId = req.userId;
+
+        // Database mein cartData ko empty object {} kar rahe hain
+        await userModel.findByIdAndUpdate(userId, { cartData: {} });
+
+        res.json({ success: true, message: "Cart cleared successfully" });
+
+    } catch (error) {
+        console.log(error);
+        res.json({ success: false, message: error.message });
+    }
+};
+
+// Sabhi functions ko export karein
+export { addToCart, updateCart, getUserCart, clearCart };

@@ -7,18 +7,15 @@ import PlaceOrder from './Pages/PlaceOrder/PlaceOrder';
 import Footer from './Components/Footer/Footer.jsx';
 import LoginPopUp from './Components/LoginPopUp/LoginPopUp.jsx';
 import Orders from './Pages/Orders';
-import SearchBar from './Components/SearchBar.jsx';
 import StoreContextProvider from './context/StoreContext';
 import Collection from './Pages/Collection';
 import Product from './Pages/Product';
 import PrivacyPolicy from './Pages/PrivacyPolicy.jsx';
 import TermsAndConditions from './Pages/TermCondition.jsx';
 import ContactUs from './Components/ContactUs/ContactUs.jsx';
-// import ScrollToTop from "./Components/scroll.jsx";
 import Scroll from "./Components/scroll.jsx";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 
+// Toastify ke imports hata diye gaye hain kyunki ab hum SweetAlert2 use kar rahe hain
 
 const App = () => {
 
@@ -26,23 +23,16 @@ const App = () => {
 
   return (
     <StoreContextProvider>
-      {/* Your Routes / Layout */}
+      {/* SweetAlert2 ko ToastContainer ki zaroorat nahi hoti. 
+          Ye directly LoginPopUp ya kisi bhi component se call karne par popup dikha dega.
+      */}
       
-      <ToastContainer
-        position="top-right"
-        autoClose={2000}
-        newestOnTop
-        closeOnClick
-        pauseOnHover={false}
-        draggable
-        theme="colored"
-      />
+      {/* 1. Agar showLogin true hai, toh sirf PopUp dikhega */}
       {showLogin && <LoginPopUp setShowLogin={setShowLogin} />}
 
       <div className='app'>
-        <Navbar setShowLogin={setShowLogin} />
-      
-
+       {!showLogin && <Navbar setShowLogin={setShowLogin} />}
+        
         <Scroll />
 
         <Routes>
@@ -53,12 +43,12 @@ const App = () => {
           <Route path='/cats' element={<Collection />} />
           <Route path="/product/:productId" element={<Product />} />
           <Route path="/privacypolicy" element={<PrivacyPolicy />} />
-         <Route path='/termscondition' element={<TermsAndConditions />} />
-         <Route path='/contactus' element={<ContactUs />}/>
+          <Route path='/termscondition' element={<TermsAndConditions />} />
+          <Route path='/contactus' element={<ContactUs />}/>
         </Routes>
       </div>
 
-      <Footer />
+      {!showLogin && <Footer />}
     </StoreContextProvider>
   );
 };

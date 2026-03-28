@@ -10,6 +10,7 @@ const StoreContextProvider = (props) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [products, setProducts] = useState([]);
   const [token, setToken] = useState(localStorage.getItem("token") || "");
+  const [user, setUser] = useState(null); // 👈 User state for auto-fill
   const [couponCode, setCouponCode] = useState(null);
   const [discountAmount, setDiscountAmount] = useState(0);
 
@@ -23,16 +24,49 @@ const StoreContextProvider = (props) => {
     localStorage.setItem("cart", JSON.stringify(cartItems));
   }, [cartItems]);
 
-  // ================= SAVE TOKEN =================
+  // ================= SAVE TOKEN & FETCH USER DATA =================
   useEffect(() => {
     if (token) {
       localStorage.setItem("token", token);
+      getUserProfile(); // Token milte hi user profile fetch karo (Email ke liye)
     } else {
       localStorage.removeItem("token");
+      setUser(null);
     }
   }, [token]);
 
-  // ================= GET TOTAL ITEMS COUNT (NEW) =================
+  // ================= FETCH USER PROFILE (For Auto-fill) =================
+  const getUserProfile = async () => {
+    try {
+      const res = await axios.get(`${backendUrl}/api/user/profile`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.data.success) {
+        setUser(res.data.user); // Isse email auto-fill ho jayega
+      }
+    } catch (error) {
+      console.error("User profile fetch error", error);
+    }
+  };
+
+  // ================= CLEAR CART (Fixes your Error) =================
+  const clearCart = async () => {
+    setCartItems({}); // UI se clear
+    localStorage.removeItem("cart"); // Storage se clear
+    
+    // Agar backend se bhi cart clear karni hai toh:
+    if (token) {
+      try {
+        await axios.post(`${backendUrl}/api/cart/clear`, {}, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+      } catch (err) {
+        console.error("Backend cart clear error", err);
+      }
+    }
+  };
+
+  // ================= GET TOTAL ITEMS COUNT =================
   const getCartCount = () => {
     let totalCount = 0;
     for (const key in cartItems) {
@@ -47,7 +81,6 @@ const StoreContextProvider = (props) => {
   const addToCart = async (itemId, size, price, qty = 1) => {
     const cartKey = `${itemId}-${size}`;
     const product = products.find((p) => p._id === itemId);
-
     if (!product || !price) return;
 
     const item = {
@@ -67,18 +100,14 @@ const StoreContextProvider = (props) => {
 
     if (token) {
       try {
-        await axios.post(
-          `${backendUrl}/api/cart/add`,
-          { cartKey, quantity: qty },
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
+        await axios.post(`${backendUrl}/api/cart/add`, { cartKey, quantity: qty }, { headers: { Authorization: `Bearer ${token}` } });
       } catch (err) {
         console.error("Cart sync error:", err.message);
       }
     }
   };
 
-  // ================= REMOVE/QUANTITY LOGIC =================
+  // ... (removeFromCart, increaseQuantity, decreaseQuantity logic same rahega)
   const removeFromCart = (cartKey) => {
     setCartItems((prev) => {
       const updated = { ...prev };
@@ -103,10 +132,7 @@ const StoreContextProvider = (props) => {
         delete updated[cartKey];
         return updated;
       }
-      return {
-        ...prev,
-        [cartKey]: { ...item, quantity: item.quantity - 1 },
-      };
+      return { ...prev, [cartKey]: { ...item, quantity: item.quantity - 1 } };
     });
   };
 
@@ -157,9 +183,10 @@ const StoreContextProvider = (props) => {
       value={{
         products, cartItems, addToCart, removeFromCart,
         increaseQuantity, decreaseQuantity, getTotalCartAmount,
-        getFinalCartAmount, getCartCount, // <--- Added here
+        getFinalCartAmount, getCartCount, clearCart, // 👈 clearCart Added
         token, setToken, backendUrl, showSearch, setShowSearch,
-        searchQuery, setSearchQuery, couponCode, discountAmount
+        searchQuery, setSearchQuery, couponCode, discountAmount,
+        user, setUser // 👈 user state Added for auto-fill
       }}
     >
       {props.children}

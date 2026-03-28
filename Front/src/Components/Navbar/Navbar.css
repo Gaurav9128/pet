@@ -130,35 +130,54 @@
 }
 
 /* USER MENU & DROPDOWN */
+/* Container ko thoda padding dein taaki gap fill ho jaye */
 .user-menu {
   position: relative;
+  display: inline-block;
+  padding-bottom: 10px; /* Invisible bridge: button aur menu ko jode rakhta hai */
+}
+
+.user-btn {
+  cursor: pointer;
+  /* baki styles */
 }
 
 .user-dropdown {
   position: absolute;
-  top: calc(100% + 10px);
+  top: 100%; /* Button ke exact niche */
   right: 0;
-  width: 200px;
-  background: white;
-  border-radius: 12px;
-  padding: 8px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  background-color: white;
+  min-width: 140px;
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  z-index: 100;
   display: flex;
   flex-direction: column;
-  z-index: 2000;
-  border: 1px solid #f3f4f6;
+  padding: 10px 0;
+  margin-top: -5px; /* Thoda upar shift taaki button se chipka rahe */
 }
 
-.user-dropdown a {
-  padding: 12px 15px;
+.user-dropdown Link, 
+.user-dropdown button {
+  padding: 10px 15px;
   text-decoration: none;
-  color: #374151;
+  color: #333;
   font-size: 14px;
-  border-radius: 8px;
+  background: none;
+  border: none;
+  text-align: left;
+  width: 100%;
+  cursor: pointer;
 }
 
-.user-dropdown a:hover {
-  background: #f3f4f6;
+.user-dropdown Link:hover,
+.user-dropdown button:hover {
+  background-color: #f1f1f1;
+}
+
+.user-dropdown hr {
+  border: 0.5px solid #eee;
+  margin: 5px 0;
 }
 
 .logout-btn {
