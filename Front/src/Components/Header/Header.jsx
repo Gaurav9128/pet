@@ -18,15 +18,11 @@ const Header = () => {
         `${import.meta.env.VITE_BACKEND_URL}/api/banners`
       );
 
-     
-
-      // Safety check
       if (Array.isArray(res.data)) {
         setBanners(res.data);
       } else {
         setBanners([]);
       }
-
     } catch (error) {
       console.log(error);
     }
@@ -38,8 +34,16 @@ const Header = () => {
     speed: 500,
     slidesToShow: 1,
     slidesToScroll: 1,
-    arrows: true,
+    arrows: true, // Desktop par dikhenge
     autoplay: true,
+    responsive: [
+      {
+        breakpoint: 768,
+        settings: {
+          arrows: false, // Mobile par arrows hata diye taaki image badi dikhe
+        }
+      }
+    ]
   };
 
   return (
@@ -49,7 +53,7 @@ const Header = () => {
           <div className="item" key={banner._id}>
             <img
               src={banner.imageUrl}
-              className="w-100"
+              className="banner-img"
               alt="banner"
             />
           </div>

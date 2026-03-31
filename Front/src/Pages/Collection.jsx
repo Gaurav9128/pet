@@ -29,27 +29,18 @@ const SUBCATEGORY_OPTIONS = [
 ];
 
 const Collection = () => {
-
-  const {
-    products = [],
-    searchQuery   // ✅ ADD THIS
-  } = useContext(StoreContext);
-
+  const { products = [], searchQuery } = useContext(StoreContext);
   const [searchParams] = useSearchParams();
 
   const searchFromURL = searchParams.get('search') || '';
   const categoryFromURL = searchParams.get('category');
 
   const [showFilter, setShowFilter] = useState(false);
-
   const [tempCategory, setTempCategory] = useState([]);
   const [tempSubCategory, setTempSubCategory] = useState([]);
-
   const [category, setCategory] = useState([]);
   const [subCategory, setSubCategory] = useState([]);
-
   const [sortType, setSortType] = useState('relavent');
-
   const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 20;
 
@@ -63,18 +54,14 @@ const Collection = () => {
   const toggleCategory = (e) => {
     const value = e.target.value;
     setTempCategory(prev =>
-      prev.includes(value)
-        ? prev.filter(i => i !== value)
-        : [...prev, value]
+      prev.includes(value) ? prev.filter(i => i !== value) : [...prev, value]
     );
   };
 
   const toggleSubCategory = (e) => {
     const value = e.target.value;
     setTempSubCategory(prev =>
-      prev.includes(value)
-        ? prev.filter(i => i !== value)
-        : [...prev, value]
+      prev.includes(value) ? prev.filter(i => i !== value) : [...prev, value]
     );
   };
 
@@ -82,10 +69,7 @@ const Collection = () => {
     setCategory(tempCategory);
     setSubCategory(tempSubCategory);
     setCurrentPage(1);
-
-    if (window.innerWidth < 640) {
-      setShowFilter(false);
-    }
+    if (window.innerWidth < 640) setShowFilter(false);
   };
 
   const resetFilters = () => {
@@ -101,55 +85,30 @@ const Collection = () => {
     return Math.min(...product.sizes.map(s => Number(s.price) || 0));
   };
 
-  /* ================= FILTER + SEARCH ================= */
   const filteredProducts = useMemo(() => {
-
-    let result = [...products];
-
-    result = result.filter(p => p.isAvailable);
-
-    // ✅ URL search + Navbar search combine
+    let result = [...products].filter(p => p.isAvailable);
     const finalSearch = (searchQuery || searchFromURL).toLowerCase();
 
     if (finalSearch) {
-      result = result.filter(p =>
-        (p.name || '').toLowerCase().includes(finalSearch)
-      );
+      result = result.filter(p => (p.name || '').toLowerCase().includes(finalSearch));
     }
-
     if (category.length > 0) {
-      result = result.filter(p =>
-        category.includes(p.category)
-      );
+      result = result.filter(p => category.includes(p.category));
     }
-
     if (subCategory.length > 0) {
-      result = result.filter(p =>
-        subCategory.includes(p.subCategory)
-      );
+      result = result.filter(p => subCategory.includes(p.subCategory));
     }
-
     if (sortType === 'low-high') {
       result.sort((a, b) => getLowestPrice(a) - getLowestPrice(b));
-    }
-
-    else if (sortType === 'high-low') {
+    } else if (sortType === 'high-low') {
       result.sort((a, b) => getLowestPrice(b) - getLowestPrice(a));
     }
-
     return result;
-
   }, [products, searchQuery, searchFromURL, category, subCategory, sortType]);
 
-  /* PAGINATION */
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-
-  const currentProducts = filteredProducts.slice(
-    indexOfFirstProduct,
-    indexOfLastProduct
-  );
-
+  const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
   const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
 
   const handlePageChange = (page) => {
@@ -158,87 +117,113 @@ const Collection = () => {
   };
 
   return (
-
-    <div className="flex flex-col sm:flex-row gap-10 pt-10 border-t">
-
-      <div className="min-w-60">
-        <p
-          onClick={() => setShowFilter(!showFilter)}
-          className="my-2 text-xl flex items-center cursor-pointer gap-2"
+    <div className="flex flex-col sm:flex-row gap-8 pt-10 border-t font-sans">
+      
+      {/* --- SIDEBAR FILTERS (PROFESSIONAL LOOK) --- */}
+      <div className="min-w-64">
+        <div 
+          onClick={() => setShowFilter(!showFilter)} 
+          className="flex items-center justify-between sm:cursor-default cursor-pointer bg-gray-50 p-3 rounded-lg sm:bg-transparent sm:p-0"
         >
-          FILTERS
-          <img
-            className={`h-3 sm:hidden transition-transform ${showFilter ? 'rotate-90' : ''}`}
-            src={assets.dropdown_icon}
-            alt=""
+          <p className="text-xl font-bold tracking-tight text-gray-800">FILTERS</p>
+          <img 
+            className={`h-3 sm:hidden transition-transform duration-300 ${showFilter ? 'rotate-180' : ''}`} 
+            src={assets.dropdown_icon} 
+            alt="toggle" 
           />
-        </p>
-<br/>
-        <div className={`border pl-5 py-4 mt-6 ${showFilter ? '' : 'hidden'} sm:block`}>
-          <p className="mb-4 font-semibold">CATEGORIES</p>
-
-          {CATEGORY_OPTIONS.map(cat => (
-            <label key={cat.value} className="flex gap-3 mb-2">
-              <input
-                type="checkbox"
-                value={cat.value}
-                checked={tempCategory.includes(cat.value)}
-                onChange={toggleCategory}
-              />
-              {cat.label}
-            </label>
-          ))}
         </div>
-<br/>
-        <div className={`border pl-5 py-4 my-5 ${showFilter ? '' : 'hidden'} sm:block`}>
-          <p className="mb-4 font-semibold">TYPE</p>
+        
+        <div className={`${showFilter ? 'block' : 'hidden'} sm:block transition-all duration-500`}>
+          
+          {/* Categories Section */}
+          <div className="mt-8">
+            <p className="mb-4 text-sm font-bold uppercase tracking-widest text-[#1E5F74] border-b pb-2">Categories</p>
+            <div className="flex flex-col gap-2">
+              {CATEGORY_OPTIONS.map(cat => (
+                <label key={cat.value} className="group flex items-center gap-3 cursor-pointer py-1">
+                  <div className="relative flex items-center justify-center">
+                    <input 
+                      type="checkbox" 
+                      value={cat.value} 
+                      checked={tempCategory.includes(cat.value)} 
+                      onChange={toggleCategory}
+                      className="peer appearance-none w-5 h-5 border-2 border-gray-300 rounded checked:bg-[#1E5F74] checked:border-[#1E5F74] transition-all"
+                    />
+                    <span className="absolute text-white opacity-0 peer-checked:opacity-100 pointer-events-none text-xs">✓</span>
+                  </div>
+                  <span className={`text-[15px] transition-colors ${tempCategory.includes(cat.value) ? 'text-[#1E5F74] font-semibold' : 'text-gray-600 group-hover:text-gray-900'}`}>
+                    {cat.label}
+                  </span>
+                </label>
+              ))}
+            </div>
+          </div>
 
-          {SUBCATEGORY_OPTIONS.map(sub => (
-            <label key={sub.value} className="flex gap-3 mb-2">
-              <input
-                type="checkbox"
-                value={sub.value}
-                checked={tempSubCategory.includes(sub.value)}
-                onChange={toggleSubCategory}
-              />
-              {sub.label}
-            </label>
-          ))}
-<br/>
-          <div className="flex gap-2 mt-4">
-            <button onClick={applyFilters} className="w-full bg-black text-white py-2 rounded">
-              Done
+          {/* Type Section */}
+          <div className="mt-10">
+            <p className="mb-4 text-sm font-bold uppercase tracking-widest text-[#1E5F74] border-b pb-2">Product Type</p>
+            <div className="flex flex-col gap-2">
+              {SUBCATEGORY_OPTIONS.map(sub => (
+                <label key={sub.value} className="group flex items-center gap-3 cursor-pointer py-1">
+                  <div className="relative flex items-center justify-center">
+                    <input 
+                      type="checkbox" 
+                      value={sub.value} 
+                      checked={tempSubCategory.includes(sub.value)} 
+                      onChange={toggleSubCategory}
+                      className="peer appearance-none w-5 h-5 border-2 border-gray-300 rounded checked:bg-[#1E5F74] checked:border-[#1E5F74] transition-all"
+                    />
+                    <span className="absolute text-white opacity-0 peer-checked:opacity-100 pointer-events-none text-xs">✓</span>
+                  </div>
+                  <span className={`text-[15px] transition-colors ${tempSubCategory.includes(sub.value) ? 'text-[#1E5F74] font-semibold' : 'text-gray-600 group-hover:text-gray-900'}`}>
+                    {sub.label}
+                  </span>
+                </label>
+              ))}
+            </div>
+          </div>
+
+          {/* Filter Actions */}
+          <div className="flex flex-col gap-3 mt-8">
+            <button 
+              onClick={applyFilters} 
+              className="w-full bg-[#1E5F74] text-white py-3 rounded-lg text-sm font-bold shadow-md hover:bg-[#154656] active:scale-95 transition-all"
+            >
+              APPLY FILTERS
             </button>
-            <button onClick={resetFilters} className="w-full border py-2 rounded">
-              Reset
+            <button 
+              onClick={resetFilters} 
+              className="w-full bg-white border border-gray-200 text-gray-500 py-2 rounded-lg text-xs font-semibold hover:bg-gray-50 transition-all"
+            >
+              RESET ALL
             </button>
           </div>
-          
         </div>
       </div>
 
+      {/* --- PRODUCT DISPLAY AREA --- */}
       <div className="flex-1">
-
-        <div className="flex justify-between mb-4 items-center">
+        <div className="flex justify-between mb-6 items-center flex-wrap gap-4">
           <Title text1="ALL" text2="COLLECTIONS" />
-
-          <select
-            onChange={(e) => setSortType(e.target.value)}
-            className="border p-1 rounded"
-          >
-            <option value="relavent">Relevant</option>
-            <option value="low-high">Low to High</option>
-            <option value="high-low">High to Low</option>
-          </select>
+          <div className="relative min-w-[200px]">
+            <select 
+              onChange={(e) => setSortType(e.target.value)} 
+              className="w-full border border-gray-200 p-2.5 rounded-lg text-sm font-medium outline-none bg-white shadow-sm focus:ring-2 focus:ring-[#1E5F74] transition-all cursor-pointer"
+            >
+              <option value="relavent">Sort by: Relevant</option>
+              <option value="low-high">Price: Low to High</option>
+              <option value="high-low">Price: High to Low</option>
+            </select>
+          </div>
         </div>
-        <br/>
+
         {filteredProducts.length === 0 ? (
-          <p className="text-center text-gray-500 mt-10">
-            No products found.
-          </p>
+          <div className="flex flex-col items-center justify-center py-20">
+            <p className="text-xl text-gray-400 font-medium italic">Oops! No products found matching your choice.</p>
+          </div>
         ) : (
           <>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 gap-y-6 items-stretch">
               {currentProducts.map(item => (
                 <ProductItem
                   key={item._id}
@@ -249,36 +234,37 @@ const Collection = () => {
                 />
               ))}
             </div>
-
-            <br />
-
+<br/>
+            {/* Pagination UI */}
             {totalPages > 1 && (
-              <div className="pagination">
-                <button disabled={currentPage === 1} onClick={() => handlePageChange(currentPage - 1)}>
-                  ◀ Prev
+              <div className="flex justify-center items-center gap-2 mt-16 mb-10">
+                <button 
+                  disabled={currentPage === 1} 
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  className="w-10 h-10 flex items-center justify-center border rounded-full hover:bg-gray-100 disabled:opacity-30 disabled:hover:bg-transparent transition-all"
+                >
+                  &larr;
                 </button>
-
-                {[...Array(totalPages)].map((_, index) => {
-                  const page = index + 1;
-                  return (
-                    <button
-                      key={page}
-                      className={currentPage === page ? "active-page" : ""}
-                      onClick={() => handlePageChange(page)}
-                    >
-                      {page}
-                    </button>
-                  );
-                })}
-
-                <button disabled={currentPage === totalPages} onClick={() => handlePageChange(currentPage + 1)}>
-                  Next ▶
+                {[...Array(totalPages)].map((_, index) => (
+                  <button
+                    key={index + 1}
+                    className={`w-10 h-10 rounded-full text-sm font-bold transition-all ${currentPage === index + 1 ? "bg-[#1E5F74] text-white shadow-lg" : "text-gray-600 hover:bg-gray-100"}`}
+                    onClick={() => handlePageChange(index + 1)}
+                  >
+                    {index + 1}
+                  </button>
+                ))}
+                <button 
+                  disabled={currentPage === totalPages} 
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  className="w-10 h-10 flex items-center justify-center border rounded-full hover:bg-gray-100 disabled:opacity-30 disabled:hover:bg-transparent transition-all"
+                >
+                  &rarr;
                 </button>
               </div>
             )}
           </>
         )}
-
       </div>
     </div>
   );

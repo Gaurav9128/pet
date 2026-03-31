@@ -5,13 +5,13 @@ import "./Banner.css";
 
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 const Banner = () => {
+  const [banners, setBanners] = useState([]);
 
-  const [banners, setBanners] = useState([]); // safe default
-
-   useEffect(() => {
+  useEffect(() => {
     if (backendUrl) {
       fetchBanner();
     }
@@ -19,15 +19,10 @@ const Banner = () => {
 
   const fetchBanner = async () => {
     try {
-      const res = await axios.get(
-        `${backendUrl}/api/promo-banner/list`
-      );
-
-      // ✅ FIX HERE
+      const res = await axios.get(`${backendUrl}/api/promo-banner/list`);
       setBanners(res.data.banners || []);
-
     } catch (error) {
-      console.log(error);
+      console.log("Error fetching banners:", error);
     }
   };
 
@@ -38,7 +33,8 @@ const Banner = () => {
     slidesToShow: 1,
     slidesToScroll: 1,
     autoplay: true,
-    autoplaySpeed: 3000
+    autoplaySpeed: 3000,
+    arrows: false, // Mobile par arrows aksar distrub karte hain
   };
 
   return (
@@ -46,18 +42,16 @@ const Banner = () => {
       <Slider {...settings}>
         {banners.length > 0 ? (
           banners.map((item, index) => (
-            <div key={index}>
+            <div key={index} className="banner-slide-item">
               <img
                 src={item.image}
-                alt="banner"
-                className="banner-image"
+                alt={`banner-${index}`}
+                className="banner-img"
               />
             </div>
           ))
         ) : (
-          <div style={{ textAlign: "center", padding: "40px" }}>
-            No banners available
-          </div>
+          <div className="no-banner">No banners available</div>
         )}
       </Slider>
     </div>

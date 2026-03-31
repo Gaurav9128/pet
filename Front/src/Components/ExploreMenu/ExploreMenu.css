@@ -1,111 +1,134 @@
-/* Container */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap');
+
 .explore-menu {
-  padding: 40px 5%;
+  padding: 50px 5%;
   background-color: #ffffff;
+  font-family: 'Plus Jakarta Sans', sans-serif;
 }
 
-.explore-menu h1 {
-  font-size: 24px;
+.explore-menu-title {
+  font-size: 28px;
   font-weight: 700;
   color: #1a1a1a;
-  margin-bottom: 30px;
+  margin-bottom: 35px;
   text-align: center;
-  font-family: 'Poppins', sans-serif;
 }
 
-/* Grid Layout */
+/* Grid layout for clean alignment */
 .explore-menu-list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
   gap: 25px;
   width: 100%;
 }
 
-/* Modern Card Design */
-.explore-menu-list-item {
+.explore-menu-item {
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   display: flex;
   flex-direction: column;
   align-items: center;
-}
-
-/* The Box containing the image and badge */
-.badge-container {
-  width: 100%;
-  aspect-ratio: 1/1.2; /* Making it slightly taller than wide */
-  background: #FFFDF7; /* Creamy background from image 2 */
-  border: 1px solid #F0EAD6;
-  border-radius: 18px;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 15px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
-}
-
-/* Discount Badge Styling */
-.discount-badge {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  background: #E91E63; /* Pinkish-red like image 1 */
-  color: white;
-  font-size: 9px;
-  font-weight: 800;
-  padding: 3px 8px;
-  border-radius: 4px;
-  text-transform: uppercase;
-}
-
-.image-wrapper img {
-  width: 100px;
-  height: 80px;
-  object-fit: contain;
   transition: transform 0.3s ease;
 }
 
-/* Tiny text inside the box */
-.small-label {
-  font-size: 11px;
-  color: #777;
-  margin-top: 8px;
+/* The Professional Pink Box Wrapper */
+.badge-container {
+  width: 100%;
+  aspect-ratio: 1/1; /* Makes it a perfect square */
+  background: #FFF0F5; /* Soft Pink tint */
+  border: 1px solid #fce4ec;
+  border-radius: 24px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden; /* Clips the bottom discount tag */
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Big Bold Text outside the box */
-.main-title {
-  margin-top: 15px;
-  font-size: 15px;
+.image-wrapper {
+  width: 75%;
+  height: 70%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.image-wrapper img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  transition: transform 0.4s ease;
+}
+
+/* Bottom Discount Badge */
+.discount-tag {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #E91E63; /* Signature Pink-Red */
+  color: white;
+  font-size: 11px;
   font-weight: 700;
-  color: #222;
+  padding: 8px 0;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Labels below the pink box */
+.text-section {
+  margin-top: 15px;
   text-align: center;
 }
 
-/* Hover & Active States */
-.explore-menu-list-item:hover .badge-container {
+.main-label {
+  font-size: 17px;
+  font-weight: 700;
+  color: #222;
+  margin: 0;
+}
+
+.sub-label {
+  font-size: 13px;
+  color: #777;
+  margin-top: 4px;
+}
+
+/* Hover & Active Effects */
+.explore-menu-item:hover .badge-container {
   transform: translateY(-8px);
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
-  border-color: #6a1b9a; /* Purple touch on hover */
+  box-shadow: 0 12px 25px rgba(233, 30, 99, 0.15);
+  border-color: #E91E63;
 }
 
-.explore-menu-list-item.active .badge-container {
-  border: 2.5px solid #6a1b9a;
-  background: #fdfaff;
+.explore-menu-item:hover img {
+  transform: scale(1.1);
 }
 
-.explore-menu-list-item.active .main-title {
-  color: #6a1b9a;
+.explore-menu-item.active .badge-container {
+  background: white;
+  border: 3.5px solid #E91E63;
 }
 
-/* Responsive adjustments */
-@media (max-width: 600px) {
+.explore-menu-item.active .main-label {
+  color: #E91E63;
+}
+
+.divider {
+  margin: 40px 0;
+  height: 2px;
+  background-color: #f3f3f3;
+  border: none;
+}
+
+/* Responsive for Mobile */
+@media (max-width: 768px) {
   .explore-menu-list {
     grid-template-columns: repeat(2, 1fr);
     gap: 15px;
   }
-  .badge-container {
-    padding: 10px;
+  .explore-menu-title {
+    font-size: 22px;
   }
 }

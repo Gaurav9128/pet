@@ -135,7 +135,7 @@ const Product = () => {
             <div className="flex flex-col gap-5">
               <div className="flex items-center gap-5 bg-green-50 p-6 rounded-2xl border border-green-100 shadow-sm">
                 <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center text-white shrink-0 font-bold text-xl">✓</div>
-                <p className="text-base font-black text-gray-700">Clean Ingredients & 100% Real Chicken</p>
+                <p className="text-base font-black text-gray-700">Clean Ingredients & 100% Natural</p>
               </div>
               <div className="flex items-center gap-5 bg-red-50 p-6 rounded-2xl border border-red-100 opacity-80 shadow-sm">
                 <div className="w-12 h-12 bg-red-400 rounded-full flex items-center justify-center text-white shrink-0 font-bold text-xl">✕</div>

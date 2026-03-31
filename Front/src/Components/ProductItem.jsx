@@ -2,102 +2,88 @@ import React, { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import { StoreContext } from "../context/StoreContext";
 
-const ProductItem = ({ id, image = [], name, sizes = [], isAvailable = true }) => {
+const ProductItem = ({ id, image = [], name, sizes = [], brand = "BRAND NAME", isAvailable = true }) => {
   const { currency } = useContext(StoreContext);
   const [selectedSize, setSelectedSize] = useState(sizes[0] || null);
+  const [quantity, setQuantity] = useState(1);
 
   const getPriceData = () => {
-    if (!sizes.length) return { price: 0, mrp: 0, discount: 0, savings: 0 };
+    if (!sizes.length) return { price: 0, mrp: 0 };
     const activeSize = selectedSize || sizes[0];
-    const price = Number(activeSize.price);
-    const mrp = Number(activeSize.mrp);
-    const discount = mrp > price ? Math.round(((mrp - price) / mrp) * 100) : 0;
-    const savings = mrp - price;
-    return { price, mrp, discount, savings };
+    return {
+      price: Number(activeSize.price),
+      mrp: Number(activeSize.mrp)
+    };
   };
 
-  const { price, mrp, discount, savings } = getPriceData();
+  const { price, mrp } = getPriceData();
 
   return (
-    /* Card Container: Added m-2 for outside spacing */
-    <div className="bg-white border border-gray-100 rounded-3xl flex flex-col h-full overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 max-w-[380px] mx-auto m-2">
+    /* h-full ensures all cards in a row stretch to the same height */
+    <div className="bg-white border border-gray-100 rounded-xl flex flex-col h-full overflow-hidden shadow-sm relative group font-sans">
 
-      {/* 1. IMAGE SECTION - Added p-6 to keep image away from card edges */}
-      <Link to={`/product/${id}`} className="block w-full aspect-square bg-[#FBFBFB] p-6">
+      {/* 1. IMAGE SECTION - Fixed Aspect Ratio */}
+      <Link to={`/product/${id}`} className="block w-full aspect-[4/3] sm:aspect-square p-4 bg-[#f9f9f9] overflow-hidden">
         <img
           src={image?.[0]}
           alt={name}
-          className="w-full h-full object-contain hover:scale-105 transition-transform duration-500"
+          className="w-full h-full object-contain hover:scale-105 transition-transform duration-300"
         />
       </Link>
 
-      {/* 2. CONTENT SECTION - Increased horizontal padding to px-7 */}
-      <div className="px-7 pt-2 pb-7 flex flex-col flex-1 text-left">
-
-        {/* Product Title - Proper line height */}
-        <h2 className="text-[20px] font-bold text-[#222] leading-[1.4] mb-4 line-clamp-2 min-h-[56px] text-center">
+      {/* 2. CONTENT SECTION */}
+      <div className="px-3 pt-3 flex flex-col flex-1">
+        
+        {/* TITLE - Fixed height for 2 lines to keep everything aligned */}
+        <h2 className="text-[13px] font-semibold text-[#333] leading-[1.3] mb-2 line-clamp-2 h-[34px] text-center overflow-hidden">
           {name}
         </h2>
 
-        {/* Price Section - Bold & Spaced */}
-        <div className="flex items-center justify-center gap-3 mb-5 flex-wrap">
-          {/* justify-center se pura price block center ho jayega */}
-
-          <span className="text-3xl font-black text-[#004D40]">
-            ₹{currency}{price}
-          </span>
-
-          <span className="text-gray-400 line-through text-base font-medium">
-            ₹{mrp}
-          </span>
-
-          {discount > 0 && (
-            <span className="bg-[#4CAF50] text-white px-3 py-1  text-[13px] font-bold uppercase tracking-tight">
-              ₹{savings} OFF ({discount}%)
-            </span>
-          )}
+        {/* SIZE SELECTOR */}
+        <div className="mb-2">
+          <select
+            className="w-full border border-gray-200 rounded py-1 px-2 text-[12px] text-gray-600 outline-none bg-gray-50 cursor-pointer"
+            value={selectedSize?.label}
+            onChange={(e) => setSelectedSize(sizes.find(s => s.label === e.target.value))}
+          >
+            {sizes.map((size, index) => (
+              <option key={index} value={size.label}>{size.label}</option>
+            ))}
+          </select>
         </div>
 
-        {/* Sizes - Fixed spacing between buttons */}
-        <div className="mb-6">
-          {/* Yahan 'justify-center' add kiya hai taaki buttons center ho jayein */}
-          <div className="flex flex-wrap gap-2.5 justify-center">
-            {sizes.map((size, index) => (
-              <button
-                key={index}
-                onClick={() => setSelectedSize(size)}
-                className={`px-4 py-1.5 text-[12px] font-bold border-2  transition-all ${selectedSize?.label === size.label
-                  ? "border-black bg-white text-black shadow-sm"
-                  : "border-gray-100 bg-gray-50 text-gray-400 hover:border-gray-300"
-                  }`}
-              >
-                {size.label}
-              </button>
-            ))}
+        {/* PRICE & QUANTITY */}
+        <div className="flex items-center justify-between mb-2">
+          <div className="flex flex-col">
+            <span className="text-[10px] text-gray-400 font-bold uppercase leading-none">Price</span>
+            <span className="text-base font-bold text-[#111]">₹{price}</span>
+          </div>
+
+          <div className="flex items-center border border-gray-200 rounded bg-gray-50 scale-90">
+            <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="px-2 py-0.5 text-gray-500 hover:bg-gray-200">-</button>
+            <span className="px-1 py-0.5 text-[12px] font-bold w-6 text-center border-x border-gray-200">{quantity}</span>
+            <button onClick={() => setQuantity(quantity + 1)} className="px-2 py-0.5 text-gray-500 hover:bg-gray-200">+</button>
           </div>
         </div>
 
-        <br />
+        {/* TOTAL INFO */}
+        <div className="mb-3">
+          <p className="text-[10px] text-gray-500 italic">
+            Total: <span className="font-bold text-gray-700">₹{price * quantity}.00</span>
+          </p>
+        </div>
 
-        {/* Action Button - Large and rounded with padding */}
-        <div className="mt-auto pt-4 flex flex-col items-center">
+        {/* 3. BUTTON SECTION - Pushed to the absolute bottom */}
+        <div className="mt-auto -mx-3"> 
           {isAvailable ? (
-            /* Link ko sahi se band kiya gaya hai aur usme button wrap hai */
-            <Link
-              to={`/product/${id}`}
-              className="w-[90%] flex justify-center no-underline"
-            >
-              <button className="w-full bg-[#1E5F74] text-white py-2.5 rounded-lg text-[13px] font-bold uppercase tracking-wider hover:bg-[#154656] transition-all flex justify-center items-center gap-2 shadow-md active:scale-95">
-                <span className="text-base">🛒</span>
+            <Link to={`/product/${id}`} className="no-underline">
+              <button className="w-full bg-[#1E5F74] text-white py-3 text-[11px] font-bold uppercase tracking-wider hover:bg-[#154656] transition-all flex justify-center items-center gap-2">
+                <span className="text-sm">🛒</span>
                 ADD TO CART & BUY NOW
               </button>
             </Link>
           ) : (
-            /* Out of stock button link ke bahar */
-            <button
-              disabled
-              className="w-[90%] bg-gray-100 text-gray-400 py-2.5 rounded-lg text-[13px] font-bold uppercase cursor-not-allowed"
-            >
+            <button disabled className="w-full bg-gray-200 text-gray-400 py-3 text-[11px] font-bold uppercase cursor-not-allowed">
               OUT OF STOCK
             </button>
           )}

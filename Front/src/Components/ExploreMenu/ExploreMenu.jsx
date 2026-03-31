@@ -4,10 +4,9 @@ import "./ExploreMenu.css";
 import { menu_list } from "../../assets/assets";
 
 const ExploreMenu = ({ category, setCategory }) => {
+  const navigate = useNavigate();
 
-const navigate = useNavigate();
-
-const categoryMap = {
+  const categoryMap = {
 "Dog food": "dogs",
  "Cat food": "cats",
  "Small Pets": "small-pets",
@@ -27,44 +26,43 @@ const handleCategoryClick = (menuName) => {
 
  };
 
- return (
+  return (
+    <div className="explore-menu" id="explore-menu">
+      <h1 className="explore-menu-title">Everyday essentials</h1>
+      
+      <div className="explore-menu-list">
+        {menu_list.map((item, index) => {
+          const isActive = category === item.menu_name;
 
- <div className="explore-menu">
+          return (
+            <div
+              key={index}
+              className={`explore-menu-item ${isActive ? "active" : ""}`}
+              onClick={() => handleCategoryClick(item.menu_name)}
+            >
+              {/* Pink Box with Image & Offer */}
+              <div className="badge-container">
+                <div className="image-wrapper">
+                  <img src={item.menu_image} alt={item.menu_name} />
+                </div>
+                {/* Offer tag docked at bottom */}
+                <div className="discount-tag">
+                  Up to {index % 2 === 0 ? "50%" : "30%"} OFF
+                </div>
+              </div>
 
- <h1>Everyday essentials</h1>
-
- <div className="explore-menu-list">
-
- {menu_list.map((item) => {
-
- const isActive =
-  category?.toLowerCase().trim() ===
-   item.menu_name.toLowerCase().trim();
-
- return (
-
- <div
- key={item.menu_name}
- className={`explore-menu-list-item ${isActive ? "active" : ""}`}
-onClick={() => handleCategoryClick(item.menu_name)}
->
-
- <img src={item.menu_image} alt={item.menu_name} />
-
- <p>{item.menu_name}</p>
-
- </div>
-
- );
-
- })}
-
- </div>
-
- </div>
-
- );
-
+              {/* Labels outside the box */}
+              <div className="text-section">
+                <h3 className="main-label">{item.menu_name}</h3>
+                <p className="sub-label">{item.menu_name}</p>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      <hr className="divider" />
+    </div>
+  );
 };
 
 export default ExploreMenu;
