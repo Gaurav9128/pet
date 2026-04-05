@@ -46,10 +46,12 @@ const Collection = () => {
 
   useEffect(() => {
     if (categoryFromURL) {
-      setCategory([categoryFromURL]);
-      setTempCategory([categoryFromURL]);
+        // URL se "dogs,cats" ko array ['dogs', 'cats'] mein badalna zaroori hai
+        const categoriesArray = categoryFromURL.split(',');
+        setCategory(categoriesArray);
+        setTempCategory(categoriesArray);
     }
-  }, [categoryFromURL]);
+}, [categoryFromURL]);
 
   const toggleCategory = (e) => {
     const value = e.target.value;
@@ -126,6 +128,7 @@ const Collection = () => {
           className="flex items-center justify-between sm:cursor-default cursor-pointer bg-gray-50 p-3 rounded-lg sm:bg-transparent sm:p-0"
         >
           <p className="text-xl font-bold tracking-tight text-gray-800">FILTERS</p>
+          &nbsp;&nbsp;
           <img 
             className={`h-3 sm:hidden transition-transform duration-300 ${showFilter ? 'rotate-180' : ''}`} 
             src={assets.dropdown_icon} 
@@ -134,7 +137,7 @@ const Collection = () => {
         </div>
         
         <div className={`${showFilter ? 'block' : 'hidden'} sm:block transition-all duration-500`}>
-          
+          <br/>
           {/* Categories Section */}
           <div className="mt-8">
             <p className="mb-4 text-sm font-bold uppercase tracking-widest text-[#1E5F74] border-b pb-2">Categories</p>
@@ -158,7 +161,7 @@ const Collection = () => {
               ))}
             </div>
           </div>
-
+          <br/>
           {/* Type Section */}
           <div className="mt-10">
             <p className="mb-4 text-sm font-bold uppercase tracking-widest text-[#1E5F74] border-b pb-2">Product Type</p>
@@ -182,7 +185,7 @@ const Collection = () => {
               ))}
             </div>
           </div>
-
+           &nbsp;
           {/* Filter Actions */}
           <div className="flex flex-col gap-3 mt-8">
             <button 
@@ -216,14 +219,14 @@ const Collection = () => {
             </select>
           </div>
         </div>
-
+           <br/>
         {filteredProducts.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20">
             <p className="text-xl text-gray-400 font-medium italic">Oops! No products found matching your choice.</p>
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 gap-y-6 items-stretch">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4 gap-y-6 items-stretch">
               {currentProducts.map(item => (
                 <ProductItem
                   key={item._id}

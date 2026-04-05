@@ -50,7 +50,7 @@ const Navbar = ({ setShowLogin }) => {
       <div className="navbar-top">
         <div className="navbar-left">
           <img
-            src={assets.logo}
+            src={assets.logo_2}
             alt="logo"
             className="logo"
             onClick={handleLogoClick}

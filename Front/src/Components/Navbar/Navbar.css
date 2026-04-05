@@ -24,9 +24,11 @@
 }
 
 .logo {
-  width: 160px;
+  width: 180px;       /* 160px se ghata kar 120px kiya */
+  height: 100px;       /* Sleek height set ki */
+  object-fit: contain; /* Aspect ratio maintain rahega */
   cursor: pointer;
-  transition: 0.3s;
+  transition: transform 0.2s ease;
 }
 
 /* SEARCH BAR (CENTER) */

@@ -66,7 +66,7 @@
   bottom: 0;
   left: 0;
   right: 0;
-  background-color: #E91E63; /* Signature Pink-Red */
+  background-color: #ffffff; /* Signature Pink-Red */
   color: white;
   font-size: 11px;
   font-weight: 700;
@@ -99,7 +99,7 @@
 .explore-menu-item:hover .badge-container {
   transform: translateY(-8px);
   box-shadow: 0 12px 25px rgba(233, 30, 99, 0.15);
-  border-color: #E91E63;
+  border-color: #ffffff;
 }
 
 .explore-menu-item:hover img {
@@ -108,11 +108,11 @@
 
 .explore-menu-item.active .badge-container {
   background: white;
-  border: 3.5px solid #E91E63;
+  border: 3.5px solid #ffffff;
 }
 
 .explore-menu-item.active .main-label {
-  color: #E91E63;
+  color: #ffffff;
 }
 
 .divider {
@@ -131,4 +131,19 @@
   .explore-menu-title {
     font-size: 22px;
   }
+}
+
+.show-more-btn {
+  background-color: #ff4d4d; /* Aapka theme color */
+  color: white;
+  border: none;
+  padding: 10px 25px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.3s;
+}
+
+.show-more-btn:hover {
+  background-color: #e63939;
 }
