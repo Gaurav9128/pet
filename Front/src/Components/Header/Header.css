@@ -1,73 +1,54 @@
-/* Container styling */
+/* 1. Pure page ki extra space khatam karne ke liye */
+body, html {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+/* 2. Header/Banner Container - Isse FULL WIDTH rakhein */
 .header {
-    width: 90%; /* Desktop par sides mein thoda gap */
-    height: auto; /* Fixed height/vw hata di taaki responsive rahe */
-    margin: 30px auto;
+    width: 100% !important; 
+    max-width: 100% !important; 
+    margin: 0 !important; 
+    padding: 0 !important;
     position: relative;
+    display: block;
 }
 
 .homeBannerSection {
-  width: 100%;
-  margin-top: 20px;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: block;
+    line-height: 0; /* Image ke niche ki 4px white line hatane ke liye */
 }
 
-/* Image styling (Desktop Default) */
+/* 3. The Professional Image Fix */
 .homeBannerSection img {
-  width: 100%;
-  height: auto;
-  aspect-ratio: 16 / 6; /* Desktop par wide look */
-  object-fit: cover;
-  border-radius: 15px;
-  display: block;
+    width: 100% !important;
+    height: auto !important; /* Height auto hone se image kabhi cut nahi hogi */
+    display: block !important;
+    
+    /* YEH DO LINES HATANA SABSE ZAROORI HAI */
+    aspect-ratio: auto !important; /* Fixed ratio khatam */
+    object-fit: fill !important;  /* Image ko container mein poora dikhane ke liye */
+    
+    border-radius: 0 !important; /* Professional banners edge-to-edge hote hain */
 }
 
-/* Header contents styling (if any) */
-.header-contents {
-  position: absolute;
-  top: 50%;
-  left: 5%;
-  transform: translateY(-50%);
-  max-width: 50%;
+/* 4. Banner Dots/Pagination (If you have them) */
+.swiper-pagination {
+    bottom: 10px !important;
 }
 
-/* ✅ Medium Screens (Tablets/Small Laptops) */
-@media (max-width: 1050px) {
+/* 5. Mobile View Fix */
+@media (max-width: 768px) {
     .header {
-        width: 95%;
+        width: 100% !important;
     }
     .homeBannerSection img {
-        aspect-ratio: 16 / 7; /* Thoda sa tall desktop ke muqable */
-    }
-    .header-contents {
-      max-width: 45%;
-    }
-}
-
-/* ✅ MOBILE VIEW FIX (Banners ko bada dikhane ke liye) */
-@media (max-width: 750px) {
-    .header {
-        width: 100%; /* Mobile par full width screen */
-        margin: 10px 0;
-        padding: 0 10px; /* Sides mein halki space */
-    }
-
-    .homeBannerSection img {
-        /* 16/9 ratio mobile par image ko kaafi bada aur clear dikhayega */
-        aspect-ratio: 16 / 9; 
-        height: auto; 
-        object-fit: cover; /* Image stretch nahi hogi, crop hokar fit hogi */
-        border-radius: 10px;
-    }
-
-    .header-contents {
-      max-width: 75%; /* Mobile par text ko zyada space di */
-    }
-}
-
-/* Bahut chote phones ke liye (iPhone SE etc.) */
-@media (max-width: 480px) {
-    .homeBannerSection img {
-        /* Extra vertical height taaki banner "daba" hua na lage */
-        aspect-ratio: 3/ 1; 
+        /* Mobile par agar image choti lage toh aap 16/9 use kar sakte hain, 
+           lekin side se text cutne ka darr rehta hai. Isliye auto hi best hai. */
+        height: auto !important;
     }
 }

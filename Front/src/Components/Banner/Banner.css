@@ -1,80 +1,76 @@
-/* Main Slider Container */
+/* 1. Main Slider Container */
 .banner-slider {
-  width: 92%; /* Desktop par thoda gap sides mein */
-  margin: 20px auto;
+  width: 100% !important; /* Professional look ke liye full width */
+  max-width: 1440px; /* Badi screens par control karne ke liye */
+  margin: 0 auto !important; /* Top/Bottom whitespace hatane ke liye 0 kiya */
+  padding: 0 !important;
   position: relative;
 }
 
-/* Slick List rounding */
+/* 2. Slick List (Extra spacing hatane ke liye) */
 .banner-slider .slick-list {
-  border-radius: 12px;
+  border-radius: 0; /* Full width edge-to-edge look ke liye 0, ya 12px agar gap chahiye */
   overflow: hidden;
+  margin: 0;
+  padding: 0;
 }
 
 /* Slide Item */
 .banner-slide-item {
-  outline: none; /* Click karne par blue border na aaye */
+  outline: none;
+  line-height: 0; /* Image ke niche ki 4px white space hatane ke liye */
 }
 
-/* ✅ Image Styling (Desktop & General) */
+/* ✅ Image Styling (Professional Fix) */
 .banner-img {
-  width: 100%;
-  height: auto; /* Fixed height (350px/450px) hata di taaki cut na ho */
-  aspect-ratio: 16 / 6; /* Desktop par wide look */
-  object-fit: cover; /* Image stretch nahi hogi */
-  display: block;
-  border-radius: 12px;
+  width: 100% !important;
+  height: auto !important; /* Image ko natural height lene dein */
+  display: block !important;
+  
+  /* Fixed ratios aur cover hata diya taaki image CUT na ho */
+  aspect-ratio: auto !important; 
+  object-fit: contain !important; 
+  
+  border-radius: 0; /* Professional sites par banners edge-to-edge hote hain */
   transition: all 0.3s ease;
 }
 
-/* Slick Dots Styling (Dots ko image ke andar lane ke liye) */
+/* 3. Slick Dots (Image ke upar professional dots) */
 .slick-dots {
-  bottom: 15px !important;
+  bottom: 20px !important;
+  z-index: 10;
 }
 
 .slick-dots li button:before {
-  color: #fff !important; /* White dots for better visibility */
-  font-size: 10px !important;
-  opacity: 0.7;
-}
-
-.slick-dots li.slick-active button:before {
-  opacity: 1;
   color: #fff !important;
+  font-size: 12px !important;
+  text-shadow: 0px 0px 5px rgba(0,0,0,0.5); /* Dots ko har background par dikhane ke liye */
 }
 
 /* ========================================= */
-/* ✅ MOBILE VIEW FIX (768px se kam screens) */
+/* ✅ MOBILE VIEW (Fix for small screens) */
 /* ========================================= */
 
 @media (max-width: 768px) {
   .banner-slider {
-    width: 95%; /* Mobile par side space kam kar di */
-    margin-top: 10px;
+    width: 100% !important;
+    margin-top: 0 !important; /* Navbar se chipka rahega */
   }
 
   .banner-img {
-    /* Mobile par height ko proportion mein bada dikhane ke liye ratio change */
-    aspect-ratio: 16 / 9; 
-    height: auto; 
-    object-fit: cover;
-    border-radius: 8px;
+    height: auto !important; 
+    border-radius: 0;
+    /* Mobile par bhi aspect-ratio auto hi rakhein taaki text na kate */
   }
 
-  /* Dots ko mobile par thoda niche adjust karna agar image ke upar aa rahe hain */
   .slick-dots {
     bottom: 10px !important;
   }
 }
 
-/* Bahut chote phones ke liye (iPhone SE etc.) */
+/* Bahut chote phones ke liye */
 @media (max-width: 480px) {
   .banner-slider {
-    width: 100%; /* Pura screen width use karega */
-    padding: 0 5px;
-  }
-
-  .banner-img {
-    aspect-ratio: 3 / 1.0; /* Taki mobile par banner "tall" aur bada dikhe */
+    padding: 0;
   }
 }
