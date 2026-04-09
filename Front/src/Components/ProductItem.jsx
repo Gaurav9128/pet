@@ -2,91 +2,112 @@ import React, { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import { StoreContext } from "../context/StoreContext";
 
-const ProductItem = ({ id, image = [], name, sizes = [], isAvailable = true }) => {
+const ProductItem = ({ id, image = [], name, sizes = [], isAvailable = true, rating = 0 }) => {
   const { currency } = useContext(StoreContext);
   const [selectedSize, setSelectedSize] = useState(sizes[0] || null);
 
   const getPriceData = () => {
-    if (!sizes.length) return { price: 0, mrp: 0, discount: 0, savings: 0 };
+    if (!sizes.length) return { price: 0, mrp: 0, discount: 0 };
     const activeSize = selectedSize || sizes[0];
     const price = Number(activeSize.price);
     const mrp = Number(activeSize.mrp);
     const discount = mrp > price ? Math.round(((mrp - price) / mrp) * 100) : 0;
-    const savings = mrp - price;
-    return { price, mrp, discount, savings };
+    return { price, mrp, discount };
   };
 
-  const { price, mrp, discount, savings } = getPriceData();
+  const { price, mrp, discount } = getPriceData();
+
+  const renderStars = () => {
+    const stars = [];
+    for (let i = 1; i <= 5; i++) {
+      stars.push(
+        <span key={i} className={i <= rating ? "text-yellow-500 text-sm" : "text-gray-300 text-sm"}>
+          ★
+        </span>
+      );
+    }
+    return stars;
+  };
 
   return (
-    <div className="bg-white border border-gray-100 rounded-3xl flex flex-col h-full overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 max-w-[380px] mx-auto m-2">
+    // Outer Card: max-w maintain kiya hai, p-4 overall card ko
+    <div className="bg-[#FCF8F1] border border-gray-200 rounded-xl flex flex-col h-full overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 max-w-[380px] w-full mx-auto m-2 p-4">
       
-      {/* 1. IMAGE SECTION */}
-      <Link to={`/product/${id}`} className="block w-full aspect-square bg-[#FBFBFB] p-6">
-        <img
-          src={image?.[0]}
-          alt={name}
-          className="w-full h-full object-contain hover:scale-105 transition-transform duration-500"
-        />
-      </Link>
-
-      {/* 2. CONTENT SECTION */}
-      {/* flex-1 aur flex-col yahan buttons ko bottom mein push karne mein help karega */}
-      <div className="px-7 pt-4 pb-7 flex flex-col flex-1">
+      {/* IMAGE SECTION */}
+      <div className="relative bg-white rounded-lg overflow-hidden mb-5 p-5 aspect-square flex items-center justify-center shrink-0">
         
-        {/* Title: min-h-14 ensures 2 lines space always */}
-        <h2 className="text-[18px] font-bold text-[#222] leading-[1.4] mb-3 line-clamp-2 min-h-[50px] text-center">
+
+        <Link to={`/product/${id}`} className="w-full h-full flex items-center justify-center">
+          <img
+            src={image?.[0]}
+            alt={name}
+            className="max-w-[90%] max-h-[90%] object-contain hover:scale-105 transition-transform duration-500"
+          />
+        </Link>
+      </div>
+
+      {/* YELLOW/CREAM CONTENT SECTION - BADHAYI GAYI SPACING KE SAATH */}
+      {/* py-5 add kiya hai vertical spacing badhane ke liye, px-4 pehle se hai */}
+      <div className="flex flex-col flex-1 px-4 py-5 pb-6">
+        
+        {/* Title: Size text-[20px] pehle hi bada kiya tha, mb-3 badhaya gaya hai */}
+        <h2 className="text-[20px] font-extrabold text-[#222] leading-[1.3] mb-3 line-clamp-2 min-h-[52px]">
           {name}
         </h2>
 
-        {/* Price: min-h-12 ensures space is consistent even if discount is missing */}
-        <div className="flex items-center justify-center gap-2 mb-4 flex-wrap min-h-[48px]">
-          <span className="text-2xl font-black text-[#004D40]">
-            ₹{currency}{price}
+        {/* Rating: mb-4 badhaya gaya hai */}
+        <div className="flex items-center gap-1.5 mb-4">
+          <div className="flex">
+            {renderStars()}
+          </div>
+          <span className="text-gray-500 text-xs font-bold">
+            ({rating > 0 ? rating : "0 reviews"})
           </span>
-          <span className="text-gray-400 line-through text-sm font-medium">
-            ₹{mrp}
-          </span>
+        </div>
+
+        {/* Price Section: mb-5 badhaya gaya hai */}
+        <div className="flex items-baseline gap-3 mb-5 flex-wrap">
+          <span className="text-3xl font-black text-black tracking-tight">₹{currency}{price}</span>
+          <span className="text-lg text-gray-400 line-through font-medium">₹{mrp}</span>
           {discount > 0 && (
-            <span className="bg-[#4CAF50] text-white px-2 py-0.5 text-[11px] font-bold uppercase">
-              ₹{savings} OFF ({discount}%)
-            </span>
+            <span className="text-lg font-bold text-green-700">({discount}% OFF)</span>
           )}
         </div>
 
-        {/* Sizes: min-h ensures size buttons don't shift the layout */}
-        <div className="mb-4 min-h-[60px] flex items-center justify-center">
-          <div className="flex flex-wrap gap-2 justify-center">
+        {/* DROPDOWN SECTION: mb-6 badhaya gaya hai */}
+        <div className="mb-6">
+          <label className="text-[12px] font-bold text-gray-700 mb-2.5 block uppercase tracking-wider">
+            Select Weight:
+          </label>
+          <select 
+            value={selectedSize?.label} 
+            onChange={(e) => {
+              const size = sizes.find(s => s.label === e.target.value);
+              setSelectedSize(size);
+            }}
+            // Dropdown size py-3.5 pehle se bada hai
+            className="w-full bg-white border border-gray-300 rounded-lg px-4 py-3.5 text-[15px] font-bold text-gray-700 outline-none focus:border-[#5D2667] transition-colors cursor-pointer appearance-none shadow-sm"
+            style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23666'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem center', backgroundSize: '1.5em' }}
+          >
             {sizes.map((size, index) => (
-              <button
-                key={index}
-                onClick={() => setSelectedSize(size)}
-                className={`px-3 py-1 text-[11px] font-bold border-2 transition-all ${
-                  selectedSize?.label === size.label
-                    ? "border-black bg-white text-black shadow-sm"
-                    : "border-gray-100 bg-gray-50 text-gray-400 hover:border-gray-300"
-                }`}
-              >
-                {size.label}
-              </button>
+              <option key={index} value={size.label}>
+                {size.label} - ₹{size.price}
+              </option>
             ))}
-          </div>
+          </select>
         </div>
 
-        {/* 3. BUTTON SECTION - mt-auto pushes this to the very bottom */}
-        <div className="mt-auto pt-2 flex justify-center">
+        {/* BUTTON SECTION: mt-auto button ko bottom par rakhega */}
+        <div className="mt-auto pt-2">
           {isAvailable ? (
-            <Link to={`/product/${id}`} className="w-full flex justify-center no-underline">
-              <button className="w-full bg-[#1E5F74] text-white py-3 rounded-xl text-[12px] font-bold uppercase tracking-wider hover:bg-[#154656] transition-all flex justify-center items-center gap-2 shadow-md active:scale-95">
-                <span className="text-base">🛒</span>
-                ADD TO CART & BUY NOW
+            <Link to={`/product/${id}`} className="no-underline block">
+              {/* Button py-4 pehle se bada hai */}
+              <button className="w-full bg-[#5D2667] text-white py-4 rounded-xl text-[15px] font-black uppercase tracking-[2px] hover:bg-[#4a1e52] transition-all flex justify-center items-center gap-2 shadow-lg active:scale-95">
+                BUY NOW 🛒
               </button>
             </Link>
           ) : (
-            <button
-              disabled
-              className="w-full bg-gray-100 text-gray-400 py-3 rounded-xl text-[12px] font-bold uppercase cursor-not-allowed"
-            >
+            <button disabled className="w-full bg-gray-200 text-gray-400 py-4 rounded-xl text-[15px] font-bold uppercase cursor-not-allowed">
               OUT OF STOCK
             </button>
           )}

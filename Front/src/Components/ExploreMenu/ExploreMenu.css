@@ -147,3 +147,8 @@
 .show-more-btn:hover {
   background-color: #e63939;
 }
+
+.explore-menu-item {
+  background-color: var(--card-bg);
+  color: var(--text-color);
+}

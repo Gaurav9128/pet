@@ -20,6 +20,7 @@ const Home = () => {
         <BestSeller />
         <CouponDeals />
         <Banner />
+        <br/>
         <BrandsInFocus />
         </div>
   )

@@ -20,7 +20,7 @@ const ExploreMenu = ({ category, setCategory }) => {
     "Biscuits": ["pet-parent"],
     "Dental Sticks": ["henlo"],
     "Food Bowl": ["pharmacy"],
-    "Water Bowls": ["vet"],
+    "Cages": ["vet"],
     "Travel Feeding Bottles": ["travel"],
     "Shampoos": ["shampoos"],
     "Wipes": ["Wipes"],

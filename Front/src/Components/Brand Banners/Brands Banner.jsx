@@ -1,61 +1,59 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion"; // Optional: Animation ke liye install karein 'npm install framer-motion'
 import "./BrandsInFocus.css";
 
-const brands = [
-  {
-    name: "Farmina",
-    img: "https://supertails.com/cdn/shop/files/frame_1707515186_2d5472e1-b03a-42da-951a-a364e36ab51f_1200x.webp?v=1762496743",
-  },
-  {
-    name: "Matisse",
-    img: "https://supertails.com/cdn/shop/files/frame_1707515452_7985fdf8-78db-4c3c-9706-e2c036bfe450_1200x.webp?v=1762496743",
-  },
-  {
-    name: "Hearty",
-    img: "https://supertails.com/cdn/shop/files/frame_1707515084_709b94fe-210b-4e74-b727-672150e3170c_1200x.webp?v=1762496743",
-  },
-  {
-    name: "Carniwell",
-    img: "https://supertails.com/cdn/shop/files/frame_1707515583_1200x.webp?v=1762496743",
-  },
-  {
-    name: "Drools",
-    img: "https://supertails.com/cdn/shop/files/frame_1707515584_1200x.webp?v=1762496743",
-  },
-  {
-    name: "Orijen",
-    img: "https://supertails.com/cdn/shop/files/frame_1707515450_630395f9-73c9-4077-a1ce-b071a4045b1c_1200x.webp?v=1762496743",
-  },
+const BRANDS = [
+  { name: "Drools", img: "https://res.cloudinary.com/dess3pfpq/image/upload/v1775748084/download__3_-removebg-preview_1_vbtxgu.png" },
+
+  { name: "Me-O", img: "https://res.cloudinary.com/dess3pfpq/image/upload/v1775748003/download__8_-removebg-preview_ks3sda.png" },
+  { name: "Whiskas", img: "https://res.cloudinary.com/dess3pfpq/image/upload/v1775747704/download__6_-removebg-preview_t2ri20.png" },
+  { name: "Royal Canin", img: "https://res.cloudinary.com/dess3pfpq/image/upload/v1775747835/download__2_-removebg-preview_cluo0h.png" },
+  { name: "Sheba", img: "https://res.cloudinary.com/dess3pfpq/image/upload/v1775747916/download__7_-removebg-preview_xmoye4.png" },
+  { name: "Pedigree", img: "https://res.cloudinary.com/dess3pfpq/image/upload/v1775748226/download__9_-removebg-preview_aog4uf.png" },
 ];
 
-export default function BrandsInFocus() {
+const BrandsInFocus = () => {
   const navigate = useNavigate();
 
   const handleBrandClick = (brandName) => {
-    // ✅ COLLECTION PAGE PE BRAND FILTER
-    navigate(`/cats?brand=${encodeURIComponent(brandName)}`);
+    navigate(`/cats?brand=${encodeURIComponent(brandName.toLowerCase())}`);
   };
 
   return (
-    <div className="brands-container">
-      <h2 className="brands-title">Brands in Focus</h2>
+    <section className="brands-section">
+      <div className="container">
+        <div className="section-header">
+          <h2 className="brands-title">Top Brands in Focus</h2>
+          <p className="brands-subtitle">Trusted nutrition for your furry friends</p>
+        </div>
 
-      <div className="brands-grid">
-        {brands.map((brand, i) => (
-          <div
-            key={i}
-            className="brand-card cursor-pointer"
-            onClick={() => handleBrandClick(brand.name)}
-          >
-            <img
-              src={brand.img}
-              alt={brand.name}
-              className="brand-image"
-            />
-          </div>
-        ))}
+        <div className="brands-grid">
+          {BRANDS.map((brand, index) => (
+            <motion.div
+              key={index}
+              whileHover={{ y: -8 }}
+              transition={{ type: "spring", stiffness: 300 }}
+              className="brand-card"
+              onClick={() => handleBrandClick(brand.name)}
+              role="button"
+              aria-label={`View products from ${brand.name}`}
+            >
+              <div className="image-wrapper">
+                <img
+                  src={brand.img}
+                  alt={`${brand.name} logo`}
+                  className="brand-image"
+                  loading="lazy"
+                />
+              </div>
+              <span className="brand-label">{brand.name}</span>
+            </motion.div>
+          ))}
+        </div>
       </div>
-    </div>
+    </section>
   );
-}
+};
+
+export default BrandsInFocus;

@@ -73,7 +73,7 @@ export const assets = {
 
 export const menu_list = [
     {
-        menu_name: "Dry Pet Food",
+        menu_name: "Dry  Food",
         menu_image: menu_1
     },
     {
@@ -93,20 +93,16 @@ export const menu_list = [
         menu_image: menu_4
     },
     {
-        menu_name: "Food Bowl",
+        menu_name: "Shampoos",
+        menu_image: menu_9
+    },
+    {
+        menu_name: "Bowl",
         menu_image: menu_6
     },
     {
-        menu_name: "Water Bowls",
+        menu_name: "Cages",
         menu_image: menu_7
-    },
-    {
-        menu_name: "Travel Feeding Bottles",
-        menu_image: menu_8
-    },
-{
-        menu_name: "Shampoos",
-        menu_image: menu_9
     },
     {
         menu_name: "Wipes",
@@ -116,18 +112,20 @@ export const menu_list = [
         menu_name: "Combs, Brushes",
         menu_image: menu_11
     },
+    
     {
         menu_name: "Nail Clippers",
         menu_image: menu_12
     },
     {
+        menu_name: "Travel Feeding Bottles",
+        menu_image: menu_8
+    },
+
+    {
         menu_name: "Ear & Eye Cleaning",
         menu_image: menu_13
     },
-
-
-
-
 ]
 
 export const products = [
