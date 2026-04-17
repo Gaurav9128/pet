@@ -7,6 +7,7 @@ import BestSeller from '../../Components/BestSeller';
 import BrandsInFocus from '../../Components/Brand Banners/Brands Banner';
 import CouponDeals from '../../Components/CouponDeals/CouponDeals';
 import Banner from '../../Components/Banner/Banner';
+import TrustBar from '../../Components/TrustBar';
 
 const Home = () => {
 
@@ -15,6 +16,7 @@ const Home = () => {
     <div>
         <Header />
         <br/>
+        <TrustBar />
         <ExploreMenu category={category} setCategory={setCategory} />
         {/* <FoodDisplay category={category} /> */}
         <BestSeller />

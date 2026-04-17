@@ -234,6 +234,7 @@ const Collection = () => {
                   name={item.name}
                   image={item.image}
                   sizes={item.sizes}
+                  rating={item.rating}
                 />
               ))}
             </div>

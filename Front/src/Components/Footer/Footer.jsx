@@ -1,50 +1,73 @@
 import React from "react";
 import "./Footer.css";
-import Logo from "../../assets/logo.png";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { assets } from "../../assets/assets";
 
 const Footer = () => {
+  const navigate = useNavigate();
+
+  // Logo par click karne par home page par bhejne ke liye function
+  const handleLogoClick = () => {
+    navigate("/");
+    window.scrollTo(0, 0); // Click karne par page upar se start ho
+  };
+
   return (
     <footer className="footer">
-      {/* Main Content */}
       <div className="footer-container">
-        <div className="footer-logo">
-          <img src={Logo} alt="Logo" />
-          <p>
-            Your trusted partner in digital innovation. We build reliable and modern web solutions.
+        {/* Left Section: Logo & Tagline */}
+        <div className="footer-section brand-info">
+          <div className="logo-wrapper">
+            <img
+              src={assets.logo_3}
+              alt="Belim Tails Logo"
+              className="footer-logo-img"
+              onClick={handleLogoClick}
+              style={{
+                cursor: "pointer",
+                height: "120px",  /* Yahan se bhi height control kar sakte hain */
+                width: "auto"
+              }}
+            />
+          </div>
+          <p className="tagline">
+            Your product perfect to your side. We provide the health and happiness arts,
+            making us to you and with momentous products.
           </p>
         </div>
 
-        <div className="footer-links">
-          <h4>Quick Links</h4>
-          <ul>
-           <li className="hover:text-blue-600 hover:underline cursor-pointer"><a href="/">Home</a></li>
-           <li><Link to="/contactus" className="hover:text-blue-600 hover:underline">Contact Us</Link></li>
-            <li>
-  <Link to="/privacypolicy" className="hover:text-blue-600 hover:underline">
-    Privacy Policy
-  </Link>
-</li>
-
-<li>
-  <Link to="/termscondition" className="hover:text-blue-600 hover:underline">
-    Terms & Conditions
-  </Link>
-</li>
+        {/* Middle Section: Quick Links */}
+        <div className="footer-section">
+          <h4 className="footer-heading">Quick Links</h4>
+          <ul className="footer-links-list">
+            <li><Link to="/">Home</Link></li>
+            <li><Link to="/contactus">About</Link></li>
+            <li><Link to="/privacypolicy">Privacy Policy</Link></li>
+            <li><Link to="/termscondition">Terms & Conditions</Link></li>
           </ul>
         </div>
 
-        <div className="footer-contact">
-          <h4>Contact Us</h4>
-          <p>Email: Rizwaanbhati.rb1004@gmail.com</p>
-          <p>Phone: +91 7014021793</p>
-          <p>Address: Jaipur, Rajasthan, India</p>
+        {/* Right Section: Contact Us */}
+        <div className="footer-section">
+          <h4 className="footer-heading">Contact Us</h4>
+          <div className="contact-details">
+            <p>Email: Rizwaanbhati.rb1004@gmail.com</p>
+            <p>Ph: +91 7014021793</p>
+            <p>Mahindra, Moe oenmation, India</p>
+          </div>
         </div>
       </div>
 
-      {/* Bottom Bar */}
+      {/* Bottom Bar (Stats & Copyright) */}
       <div className="footer-bottom">
-        <p>© 2025 Belim Tails. All Rights Reserved.</p>
+        <div className="footer-bottom-left">
+          <p>© 2026 Belim Tails. All Rights Reserved.</p>
+        </div>
+        <div className="stats-container">
+          <span className="stat-item">Visits: 1492</span>
+          <span className="stat-item">Online: 5</span>
+          <span className="stat-item admin-tag">Admin</span>
+        </div>
       </div>
     </footer>
   );

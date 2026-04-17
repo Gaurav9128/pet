@@ -24,6 +24,7 @@ import p_img2 from './Food.png'
 import logo from './logo.png'
 import logo_1 from './logo_1.png'
 import logo_2 from './logo_2.png'
+import logo_3 from './logo_3.png'
 import hero_img from './hero_img.png'
 import cart_icon from './cart_icon.png'
 import bin_icon from './bin_icon.png'
@@ -49,6 +50,7 @@ export const assets = {
     logo,
     logo_1,
     logo_2,
+    logo_3,
     hero_img,
     cart_icon,
     dropdown_icon,
@@ -73,7 +75,7 @@ export const assets = {
 
 export const menu_list = [
     {
-        menu_name: "Dry  Food",
+        menu_name: "Dry Food",
         menu_image: menu_1
     },
     {

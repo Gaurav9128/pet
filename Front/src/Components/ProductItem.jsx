@@ -18,100 +18,109 @@ const ProductItem = ({ id, image = [], name, sizes = [], isAvailable = true, rat
   const { price, mrp, discount } = getPriceData();
 
   const renderStars = () => {
-    const stars = [];
-    for (let i = 1; i <= 5; i++) {
-      stars.push(
-        <span key={i} className={i <= rating ? "text-yellow-500 text-sm" : "text-gray-300 text-sm"}>
-          ★
-        </span>
-      );
-    }
-    return stars;
+    return Array.from({ length: 5 }, (_, i) => (
+      <span key={i} className={i < rating ? "text-yellow-500 text-sm" : "text-gray-300 text-sm"}>
+        ★
+      </span>
+    ));
   };
 
   return (
-    // Outer Card: max-w maintain kiya hai, p-4 overall card ko
-    <div className="bg-[#FCF8F1] border border-gray-200 rounded-xl flex flex-col h-full overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 max-w-[380px] w-full mx-auto m-2 p-4">
-      
-      {/* IMAGE SECTION */}
-      <div className="relative bg-white rounded-lg overflow-hidden mb-5 p-5 aspect-square flex items-center justify-center shrink-0">
-        
+    <div className="bg-[#F8F4F4] rounded-2xl shadow-md hover:shadow-xl transition duration-300 w-full max-w-[320px] h-full flex flex-col overflow-hidden p-4">
 
-        <Link to={`/product/${id}`} className="w-full h-full flex items-center justify-center">
+      {/* IMAGE */}
+      <div className="bg-white rounded-xl h-[180px] flex items-center justify-center overflow-hidden mb-3 relative group shadow-sm border border-gray-100">
+
+        {/* BADGE */}
+        <div className="absolute top-2.5 left-2.5 bg-white px-3 py-1 rounded-full flex items-center gap-1.5 z-10 shadow-sm border border-gray-200">
+          <span className="text-[#BE3C25] text-xs">🐾</span>
+          <h2 className="text-[#BE3C25] font-bold text-[10px] uppercase tracking-wider">
+            Belim Tails
+          </h2>
+        </div>
+
+        {/* IMAGE */}
+        <Link to={`/product/${id}`} className="w-full h-full flex items-center justify-center p-2">
           <img
             src={image?.[0]}
             alt={name}
-            className="max-w-[90%] max-h-[90%] object-contain hover:scale-105 transition-transform duration-500"
+            className="max-h-full object-contain hover:scale-105 transition duration-500"
           />
         </Link>
       </div>
 
-      {/* YELLOW/CREAM CONTENT SECTION - BADHAYI GAYI SPACING KE SAATH */}
-      {/* py-5 add kiya hai vertical spacing badhane ke liye, px-4 pehle se hai */}
-      <div className="flex flex-col flex-1 px-4 py-5 pb-6">
-        
-        {/* Title: Size text-[20px] pehle hi bada kiya tha, mb-3 badhaya gaya hai */}
-        <h2 className="text-[20px] font-extrabold text-[#222] leading-[1.3] mb-3 line-clamp-2 min-h-[52px]">
-          {name}
-        </h2>
+      {/* CONTENT */}
+      <div className="flex flex-col flex-1 justify-between px-2">
 
-        {/* Rating: mb-4 badhaya gaya hai */}
-        <div className="flex items-center gap-1.5 mb-4">
-          <div className="flex">
-            {renderStars()}
+        <div>
+          <h2 className="text-[16px] font-semibold text-gray-800 leading-snug line-clamp-2 min-h-[42px] mb-1 text-center">
+            {name}
+          </h2>
+
+          {/* Rating */}
+          <div className="flex items-center gap-2 mb-4">
+            <div className="flex scale-110 origin-left">{renderStars()}</div>
+            <span className="text-gray-500 text-sm font-medium">({rating}/5)</span>
           </div>
-          <span className="text-gray-500 text-xs font-bold">
-            ({rating > 0 ? rating : "0 reviews"})
-          </span>
+
+          {/* Price */}
+          <div className="flex items-baseline gap-3 mb-3 flex-wrap">
+            <span className="text-3xl font-extrabold text-[#BE3C25]">
+              ₹{currency}{price}
+            </span>
+
+            <span className="text-gray-500 line-through text-base">
+              ₹{mrp}
+            </span>
+
+            {discount > 0 && (
+              <span className="text-[#E0804B] text-lg font-bold">
+                {discount}% OFF
+              </span>
+            )}
+          </div>
+
+          {/* SIZE */}
+          <div className="mb-4">
+            <p className="text-sm font-semibold text-gray-800 mb-2">Select Weight:</p>
+
+            <div className="flex flex-wrap gap-2.5">
+              {sizes.map((size, index) => (
+                <button
+                  key={index}
+                  onClick={() => setSelectedSize(size)}
+                  className={`px-4 py-2.5 text-sm font-bold border-2 rounded-full transition-all
+        ${selectedSize?.label === size.label
+                      ? "bg-[#BE3C25] text-white border-[#BE3C25] shadow-md"
+                      : "bg-white text-gray-800 border-gray-300 hover:border-[#BE3C25]"
+                    }`}
+                >
+                  {size.label}
+                </button>
+              ))}
+            </div>
+
+            <p className="text-xs text-gray-500 mt-2 leading-relaxed">
+              Weights available in variations of 1, 2, 3, 5, and 10 Kilograms
+            </p>
+          </div>
         </div>
 
-        {/* Price Section: mb-5 badhaya gaya hai */}
-        <div className="flex items-baseline gap-3 mb-5 flex-wrap">
-          <span className="text-3xl font-black text-black tracking-tight">₹{currency}{price}</span>
-          <span className="text-lg text-gray-400 line-through font-medium">₹{mrp}</span>
-          {discount > 0 && (
-            <span className="text-lg font-bold text-green-700">({discount}% OFF)</span>
-          )}
-        </div>
-
-        {/* DROPDOWN SECTION: mb-6 badhaya gaya hai */}
-        <div className="mb-6">
-          <label className="text-[12px] font-bold text-gray-700 mb-2.5 block uppercase tracking-wider">
-            Select Weight:
-          </label>
-          <select 
-            value={selectedSize?.label} 
-            onChange={(e) => {
-              const size = sizes.find(s => s.label === e.target.value);
-              setSelectedSize(size);
-            }}
-            // Dropdown size py-3.5 pehle se bada hai
-            className="w-full bg-white border border-gray-300 rounded-lg px-4 py-3.5 text-[15px] font-bold text-gray-700 outline-none focus:border-[#5D2667] transition-colors cursor-pointer appearance-none shadow-sm"
-            style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23666'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem center', backgroundSize: '1.5em' }}
-          >
-            {sizes.map((size, index) => (
-              <option key={index} value={size.label}>
-                {size.label} - ₹{size.price}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* BUTTON SECTION: mt-auto button ko bottom par rakhega */}
-        <div className="mt-auto pt-2">
+        {/* BUTTON */}
+        <div>
           {isAvailable ? (
-            <Link to={`/product/${id}`} className="no-underline block">
-              {/* Button py-4 pehle se bada hai */}
-              <button className="w-full bg-[#5D2667] text-white py-4 rounded-xl text-[15px] font-black uppercase tracking-[2px] hover:bg-[#4a1e52] transition-all flex justify-center items-center gap-2 shadow-lg active:scale-95">
-                BUY NOW 🛒
+            <Link to={`/product/${id}`}>
+              <button className="w-full mt-4 bg-gradient-to-r from-[#BE3C25] via-[#D9552E] to-[#E0804B] text-white py-4 rounded-2xl text-base font-black uppercase tracking-widest hover:brightness-110 active:scale-[0.98] transition-all shadow-lg flex items-center justify-center gap-2">
+                BUY NOW <span className="text-xl">🛒</span>
               </button>
             </Link>
           ) : (
-            <button disabled className="w-full bg-gray-200 text-gray-400 py-4 rounded-xl text-[15px] font-bold uppercase cursor-not-allowed">
+            <button disabled className="w-full mt-4 bg-gray-100 text-gray-400 py-4 rounded-2xl text-sm font-bold uppercase cursor-not-allowed">
               OUT OF STOCK
             </button>
           )}
         </div>
+
       </div>
     </div>
   );

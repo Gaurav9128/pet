@@ -3,6 +3,7 @@ import Title from "../Components/Title";
 import axios from "axios";
 import { StoreContext } from "../context/StoreContext";
 import OrderTracker from "../Components/OrderTracker";
+import { Minus, Plus, AlertCircle } from "lucide-react";
 
 const Orders = () => {
 
@@ -325,115 +326,117 @@ const Orders = () => {
 
       {/* RETURN MODAL */}
 
-      {showReturnModal && selectedItem && (
-
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-
-          <div className="bg-white p-6 md:p-8 w-[90%] md:w-[450px] rounded-2xl shadow-lg border">
-
-            <h2 className="text-xl font-bold mb-5 text-center">
-              Return Product
-            </h2>
-
-            {(() => {
-
-              const totalPaid = Number(selectedItem.finalPrice || 0);
-              const totalQty = Number(selectedItem.quantity || 1);
-
-              const perUnitFinalPrice =
-                totalQty > 0 ? totalPaid / totalQty : 0;
-
-              const refundAmount =
-                returnQuantity * perUnitFinalPrice;
-
-              return (
-                <>
-                  <div className="text-sm mb-4 space-y-1 bg-gray-50 p-3 rounded-lg">
-
-                    <p><b>Product:</b> {selectedItem.name}</p>
-                    <p><b>Order ID:</b> {selectedItem.uniqueOrderId}</p>
-                    <p><b>Size:</b> {selectedItem.size || "N/A"}</p>
-
-                    <p className="text-green-600 font-semibold">
-                      Total Paid : ₹{totalPaid.toFixed(2)}
-                    </p>
-
-                    <p><b>Available Qty:</b> {totalQty}</p>
-
-                  </div>
-
-                  <div className="mb-4">
-
-                    <label className="block text-sm mb-1">
-                      Return Quantity
-                    </label>
-
-                    <input
-                      type="number"
-                      min="1"
-                      max={totalQty}
-                      value={returnQuantity}
-                      onChange={(e) => {
-
-                        const value = Number(e.target.value);
-
-                        if (value > 0 && value <= totalQty) {
-                          setReturnQuantity(value);
-                        }
-
-                      }}
-                      className="w-full border p-3 rounded-lg"
-                    />
-
-                  </div>
-
-                  <div className="mb-4 text-sm font-semibold text-red-600">
-                    Refund Amount : ₹{refundAmount.toFixed(2)}
-                  </div>
-                </>
-              );
-
-            })()}
-
-            <select
-              value={returnReason}
-              onChange={(e) => setReturnReason(e.target.value)}
-              className="w-full border p-3 rounded-lg mb-5"
-            >
-
-              <option value="">Select Return Reason</option>
-              <option value="Damaged Product">Damaged Product</option>
-              <option value="Wrong Item Received">Wrong Item Received</option>
-              <option value="Size Issue">Size Issue</option>
-              <option value="Quality Not Good">Quality Not Good</option>
-              <option value="Other">Other</option>
-
-            </select>
-
-            <div className="flex justify-end gap-4">
-
-              <button
-                onClick={() => setShowReturnModal(false)}
-                className="px-5 py-2 border rounded-lg"
-              >
-                Cancel
-              </button>
-
-              <button
-                onClick={submitReturnRequest}
-                className="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-              >
-                Submit
-              </button>
-
-            </div>
-
-          </div>
-
+    {showReturnModal && selectedItem && (
+  <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-xl flex items-center justify-center z-[9999] p-4 animate-in fade-in duration-300">
+    <div className="bg-white w-full max-w-[480px] rounded-[1rem] shadow-[0_20px_50px_rgba(0,0,0,0.2)] overflow-hidden border border-gray-100">
+      
+      {/* Top Header */}
+      <div className="px-8 pt-8 pb-4 flex justify-between items-center">
+        <div>
+          <h2 className="text-2xl font-black text-gray-900 leading-tight text-center">Return</h2>
+          <p className="text-gray-400 text-sm font-medium">Order: #{selectedItem.uniqueOrderId?.split('-').pop()}</p>
         </div>
+        <button 
+          onClick={() => setShowReturnModal(false)}
+          className="w-10 h-10 flex items-center justify-center bg-gray-50 rounded-full text-gray-400 hover:bg-red-50 hover:text-red-500 transition-all"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+      </div>
 
-      )}
+      <div className="px-8 pb-8 space-y-8">
+        {(() => {
+          const totalPaid = Number(selectedItem.finalPrice || 0);
+          const totalQty = Number(selectedItem.quantity || 1);
+          const refundAmount = (returnQuantity * (totalPaid / totalQty)).toFixed(0);
 
+          return (
+            <>
+              {/* Product Info Block */}
+              <div className="flex items-center gap-4 py-4 border-b border-gray-50">
+                <div className="w-16 h-16 bg-gray-100 rounded-2xl flex-shrink-0 flex items-center justify-center overflow-hidden border border-gray-50">
+                  {selectedItem.image ? (
+                    <img src={selectedItem.image} alt="product" className="object-cover" />
+                  ) : (
+                    <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200" />
+                  )}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-bold text-gray-800 truncate">{selectedItem.name}</h3>
+                  <p className="text-xs font-semibold text-blue-600 bg-blue-50 w-fit px-2 py-0.5 rounded-md mt-1">
+                    {selectedItem.size || "Standard Size"}
+                  </p>
+                </div>
+              </div>
+
+              {/* Interaction Controls */}
+              <div className="space-y-5">
+                {/* Quantity Control */}
+                <div className="flex items-center justify-between">
+                  <span className="text-[15px] font-bold text-gray-700">How many to return?</span>
+                  <div className="flex items-center bg-gray-100 rounded-2xl p-1 shadow-inner">
+                    <button 
+                      onClick={() => setReturnQuantity(Math.max(1, returnQuantity - 1))}
+                      className="w-10 h-10 flex items-center justify-center bg-white rounded-xl shadow-sm text-lg font-bold hover:bg-blue-600 hover:text-white transition-all active:scale-90"
+                    >−</button>
+                    <span className="w-12 text-center font-black text-gray-800 text-lg">{returnQuantity}</span>
+                    <button 
+                      onClick={() => setReturnQuantity(Math.min(totalQty, returnQuantity + 1))}
+                      className="w-10 h-10 flex items-center justify-center bg-white rounded-xl shadow-sm text-lg font-bold hover:bg-blue-600 hover:text-white transition-all active:scale-90"
+                    >+</button>
+                  </div>
+                </div>
+
+                {/* Reason Selection */}
+                <div className="space-y-2">
+                  <span className="text-[15px] font-bold text-gray-700 ml-1">Reason for Return</span>
+                  <select
+                    value={returnReason}
+                    onChange={(e) => setReturnReason(e.target.value)}
+                    className="w-full bg-gray-50 border-none ring-1 ring-gray-200 text-gray-700 p-4 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none transition-all cursor-pointer appearance-none font-medium"
+                    style={{ backgroundImage: 'url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'3\' stroke-linecap=\'round\' stroke-linejoin=\'round\'%3E%3Cpolyline points=\'6 9 12 15 18 9\'%3E%3C/polyline%3E%3C/svg%3E")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1.25rem center', backgroundSize: '1rem' }}
+                  >
+                    <option value="">Choose one...</option>
+                    <option value="Damaged Product">📦 Damaged Product</option>
+                    <option value="Wrong Item Received">🔄 Wrong Item Received</option>
+                    <option value="Size Issue">📏 Size Issue</option>
+                    <option value="Other">📝 Other Reason</option>
+                  </select>
+                </div>
+              </div>
+              &nbsp;
+              {/* Refund Summary - BIG & BOLD */}
+              <div className="bg-gray-900  p-6 text-white relative overflow-hidden group">
+                <div className="relative z-10 flex justify-between items-center">
+                  <div>
+                    <p className="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1 text-center">Refund Amount</p>
+                    <p className="text-4xl font-black tracking-tighter text-blue-400">₹{refundAmount}</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-[11px] text-gray-400 font-medium leading-tight">Instant refund <br/>to source wallet</p>
+                  </div>
+                </div>
+                {/* Visual Accent */}
+                <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full -mr-16 -mt-16 blur-3xl transition-all group-hover:bg-blue-500/20"></div>
+              </div>
+              &nbsp;
+              {/* Final Action */}
+              <div className="pt-2">
+                <button
+                  onClick={submitReturnRequest}
+                  disabled={!returnReason}
+                  className="w-full py-5 bg-blue-600 text-white font-black text-lg rounded-[1.5rem] hover:bg-blue-700 hover:shadow-[0_10px_30px_rgba(37,99,235,0.3)] transition-all active:scale-[0.97] disabled:bg-gray-100 disabled:text-gray-300 disabled:shadow-none shadow-xl shadow-blue-100"
+                >
+                  Initiate Return
+                </button>
+              </div>
+            </>
+          );
+        })()}
+      </div>
+    </div>
+  </div>
+)}
     </div>
 
   );

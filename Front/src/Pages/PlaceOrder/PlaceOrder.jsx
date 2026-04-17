@@ -21,16 +21,16 @@ const PlaceOrder = () => {
   const MIN_COD_AMOUNT = 700;
 
   const [method, setMethod] = useState("cod");
-  const [loading, setLoading] = useState(false); // 👈 Double click rokne ke liye
+  const [loading, setLoading] = useState(false);
 
-  // State & City Data
-  const statesData = {
+  // Default states data (Backup ke liye)
+  const [statesData, setStatesData] = useState({
     "Maharashtra": ["Mumbai", "Pune", "Nagpur"],
     "Delhi": ["New Delhi", "North Delhi", "South Delhi"],
     "Gujarat": ["Ahmedabad", "Surat", "Rajkot"],
     "Rajasthan": ["Jaipur", "Udaipur", "Jodhpur"],
     "Uttar Pradesh": ["Lucknow", "Noida", "Kanpur"]
-  };
+  });
 
   const [formData, setFormData] = useState({
     firstName: "",
@@ -43,6 +43,40 @@ const PlaceOrder = () => {
     country: "India",
     phone: ""
   });
+
+  /* ================= ZIPCODE AUTO-FILL LOGIC ================= */
+  const fetchLocationFromZip = async (zip) => {
+    if (zip.length === 6) {
+      try {
+        const res = await axios.get(`https://api.postalpincode.in/pincode/${zip}`);
+        if (res.data[0].Status === "Success") {
+          const details = res.data[0].PostOffice[0];
+          const fetchedCity = details.District;
+          const fetchedState = details.State;
+
+          // Agar state list mein nahi hai toh dynamic add kar sakte hain
+          if (!statesData[fetchedState]) {
+            setStatesData(prev => ({
+              ...prev,
+              [fetchedState]: [fetchedCity]
+            }));
+          }
+
+          setFormData(prev => ({
+            ...prev,
+            state: fetchedState,
+            city: fetchedCity
+          }));
+          
+          toast.success(`Location set to ${fetchedCity}, ${fetchedState}`);
+        } else {
+          toast.error("Invalid Zipcode");
+        }
+      } catch (err) {
+        console.error("Zipcode Error:", err);
+      }
+    }
+  };
 
   /* ================= AUTO-FILL EMAIL ================= */
   useEffect(() => {
@@ -60,12 +94,18 @@ const PlaceOrder = () => {
   const onChangeHandler = (e) => {
     const { name, value } = e.target;
 
-    // ZipCode 6 digits limit
-    if (name === "zipCode" && value.length > 6) return;
+    if (name === "zipCode") {
+      if (value.length > 6) return;
+      setFormData(prev => ({ ...prev, zipCode: value }));
+      // Call location fetcher
+      if (value.length === 6) {
+        fetchLocationFromZip(value);
+      }
+      return;
+    }
 
     setFormData(prev => ({ ...prev, [name]: value }));
 
-    // Reset City if State changes
     if (name === "state") {
       setFormData(prev => ({ ...prev, state: value, city: "" }));
     }
@@ -80,8 +120,6 @@ const PlaceOrder = () => {
   /* ================= SUBMIT ================= */
   const onSubmitHandler = async (e) => {
     e.preventDefault();
-
-    // 🛑 Agar pehle se process ho raha hai toh return kar jao
     if (loading) return;
 
     if (!token) return toast.error("Please login first");
@@ -104,7 +142,7 @@ const PlaceOrder = () => {
     };
 
     try {
-      setLoading(true); // ⏳ Loading Start (Button disable ho jayega)
+      setLoading(true);
 
       let res;
       if (method === "cod") {
@@ -125,13 +163,13 @@ const PlaceOrder = () => {
             icon: "success",
             confirmButtonColor: "#000",
             confirmButtonText: "Proceed",
-            allowOutsideClick: false // User bahar click karke band na kar sake
+            allowOutsideClick: false 
           }).then((result) => {
             if (result.isConfirmed) {
               clearCart(); 
               navigate("/payment");
             }
-            setLoading(false); // Alert ke baad reset
+            setLoading(false);
           });
         } else {
           window.location.href = res.data.redirectUrl;
@@ -168,7 +206,11 @@ const PlaceOrder = () => {
 
           <select name="city" value={formData.city} onChange={onChangeHandler} required className="dropdown-field" disabled={!formData.state}>
             <option value="">Select City</option>
-            {formData.state && statesData[formData.state].map(c => <option key={c} value={c}>{c}</option>)}
+            {formData.state && statesData[formData.state]?.map(c => <option key={c} value={c}>{c}</option>)}
+            {/* Agar City list mein nahi hai (API se aayi hai), toh usko show karne ke liye niche wala logic */}
+            {formData.city && !statesData[formData.state]?.includes(formData.city) && (
+                <option value={formData.city}>{formData.city}</option>
+            )}
           </select>
         </div>
 
@@ -213,7 +255,6 @@ const PlaceOrder = () => {
           </div>
         </div>
 
-        {/* 🔘 Updated Button with Loading Logic */}
         <button 
           type="submit" 
           className={`order-btn ${loading ? 'btn-loading' : ''}`} 

@@ -1,154 +1,105 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap');
-
 .explore-menu {
-  padding: 50px 5%;
-  background-color: #ffffff;
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px 5%;
 }
 
 .explore-menu-title {
-  font-size: 28px;
-  font-weight: 700;
-  color: #1a1a1a;
-  margin-bottom: 35px;
   text-align: center;
+  color: #262626;
+  font-size: 26px;
+  font-weight: 600;
+  margin-bottom: 20px;
 }
 
-/* Grid layout for clean alignment */
-.explore-menu-list {
+/* 5 Column Grid setup */
+.explore-menu-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
-  gap: 25px;
-  width: 100%;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 15px;
 }
 
-.explore-menu-item {
+/* Card Styling */
+.explore-menu-card {
+  border-radius: 12px;
+  overflow: hidden; /* Taaki corners round rahein */
   cursor: pointer;
+  transition: 0.3s;
+  border: 1px solid #eee;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  transition: transform 0.3s ease;
 }
 
-/* The Professional Pink Box Wrapper */
-.badge-container {
+.explore-menu-card.active {
+  border: 2px solid #be2b2b;
+}
+
+/* Image Container (Grey Background) */
+.image-container {
+  background-color: #f8f8f8; /* Light grey like the image */
+  padding: 25px 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 140px;
+}
+
+.image-container img {
   width: 100%;
-  aspect-ratio: 1/1; /* Makes it a perfect square */
-  background: #FFF0F5; /* Soft Pink tint */
-  border: 1px solid #fce4ec;
-  border-radius: 24px;
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden; /* Clips the bottom discount tag */
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.image-wrapper {
-  width: 75%;
-  height: 70%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.image-wrapper img {
-  max-width: 100%;
-  max-height: 100%;
+  max-width: 130px;
   object-fit: contain;
-  transition: transform 0.4s ease;
 }
 
-/* Bottom Discount Badge */
-.discount-tag {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background-color: #ffffff; /* Signature Pink-Red */
-  color: white;
-  font-size: 11px;
-  font-weight: 700;
-  padding: 8px 0;
-  text-align: center;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-/* Labels below the pink box */
-.text-section {
-  margin-top: 15px;
+/* Text Container (White Background) */
+.text-container {
+  background-color: #ffffff; /* Bottom part is white */
+  padding: 12px;
   text-align: center;
 }
 
-.main-label {
-  font-size: 17px;
-  font-weight: 700;
-  color: #222;
+.text-container p {
   margin: 0;
-}
-
-.sub-label {
-  font-size: 13px;
-  color: #777;
-  margin-top: 4px;
-}
-
-/* Hover & Active Effects */
-.explore-menu-item:hover .badge-container {
-  transform: translateY(-8px);
-  box-shadow: 0 12px 25px rgba(233, 30, 99, 0.15);
-  border-color: #ffffff;
-}
-
-.explore-menu-item:hover img {
-  transform: scale(1.1);
-}
-
-.explore-menu-item.active .badge-container {
-  background: white;
-  border: 3.5px solid #ffffff;
-}
-
-.explore-menu-item.active .main-label {
-  color: #ffffff;
-}
-
-.divider {
-  margin: 40px 0;
-  height: 2px;
-  background-color: #f3f3f3;
-  border: none;
-}
-
-/* Responsive for Mobile */
-@media (max-width: 768px) {
-  .explore-menu-list {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 15px;
-  }
-  .explore-menu-title {
-    font-size: 22px;
-  }
-}
-
-.show-more-btn {
-  background-color: #ff4d4d; /* Aapka theme color */
-  color: white;
-  border: none;
-  padding: 10px 25px;
-  border-radius: 20px;
-  cursor: pointer;
+  color: #333;
+  font-size: 16px;
   font-weight: 600;
+}
+
+/* Red Button Style */
+.show-more-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 25px;
+}
+
+.show-more-btn-red {
+  background-color: #be2b2b; /* Exact Maroon/Red shade */
+  color: white;
+  padding: 10px 30px;
+  border-radius: 25px;
+  border: none;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
   transition: 0.3s;
 }
 
-.show-more-btn:hover {
-  background-color: #e63939;
+.show-more-btn-red:hover {
+  background-color: #a02323;
 }
 
-.explore-menu-item {
-  background-color: var(--card-bg);
-  color: var(--text-color);
+.divider {
+  margin: 20px 0;
+  height: 2px;
+  background-color: #e2e2e2;
+  border: none;
+}
+
+/* Responsive adjustment */
+@media (max-width: 1050px) {
+  .explore-menu-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 750px) {
+  .explore-menu-grid { grid-template-columns: repeat(2, 1fr); }
 }
