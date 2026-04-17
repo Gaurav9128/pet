@@ -37,7 +37,7 @@
 
 /* Image Container (Grey Background) */
 .image-container {
-  background-color: #f8f8f8; /* Light grey like the image */
+  background-color: #FDECEC; /* Light grey like the image */
   padding: 25px 15px;
   display: flex;
   justify-content: center;

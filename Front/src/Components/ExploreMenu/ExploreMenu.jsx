@@ -64,7 +64,8 @@ const ExploreMenu = ({ category, setCategory }) => {
           className="show-more-btn-red" 
           onClick={() => setIsExpanded(!isExpanded)}
         >
-          {isExpanded ? "Show less" : "Show more ⌄"}
+          {isExpanded ? "Show less" : "Show more"}
+          <span> →</span>
         </button>
       </div>
       <hr className="divider" />

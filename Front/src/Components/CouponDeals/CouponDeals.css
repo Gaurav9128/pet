@@ -114,7 +114,7 @@
   border: none;
   padding: 5px 14px;
   border-radius: 30px;
-  background: linear-gradient(135deg, #ff8a00, #ff5f6d);
+  background: linear-gradient(135deg, #be2b2b, #be2b2b);
   color: white;
   font-weight: 600;
   font-size: 12px;
@@ -183,7 +183,7 @@ cursor:not-allowed;
 
 .active-page{
 
-background:#ff6b00 !important;
+background:#be2b2b !important;
 color:white;
 border:none;
 
