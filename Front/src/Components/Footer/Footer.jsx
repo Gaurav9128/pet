@@ -25,7 +25,7 @@ const Footer = () => {
               onClick={handleLogoClick}
               style={{
                 cursor: "pointer",
-                height: "130px",  /* Yahan se bhi height control kar sakte hain */
+                height: "140px",  /* Yahan se bhi height control kar sakte hain */
                 width: "auto"
               }}
             />
