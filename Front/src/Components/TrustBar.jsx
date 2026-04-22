@@ -6,7 +6,7 @@ const TrustBadge = ({ icon: Icon, title, description }) => (
   <div className="flex items-center gap-6 p-10 bg-[#F9F7F9] rounded-2xl flex-1 min-w-[320px] border border-gray-100 shadow-sm">
     <div className="text-[#B33B2B] shrink-0">
       {/* Icon size increased to 52 */}
-      <Icon size={52} strokeWidth={1.2} />
+      <Icon size={52} strokeWidth={1.3} />
     </div>
     <div>
       <h3 className="text-xl font-bold text-gray-900 leading-tight tracking-tight">
