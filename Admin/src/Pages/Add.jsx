@@ -230,6 +230,9 @@ const Add = ({ token }) => {
           <option value="henlo">Henlo</option>
           <option value="pharmacy">Pharmacy</option>
           <option value="consult-vet">Consult a Vet</option>
+          <option value="brand">Brand</option>
+          <option value="Accessories">Accessories</option>
+          <option value="Other">Others</option>
         </select>
 
         <select onChange={e => setSubCategory(e.target.value)} className="border px-3 py-2 rounded">

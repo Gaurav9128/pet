@@ -14,6 +14,9 @@ const CATEGORY_OPTIONS = [
   { label: 'Henlo', value: 'henlo' },
   { label: 'Pharmacy', value: 'pharmacy' },
   { label: 'Consult a Vet', value: 'vet' },
+  {label: 'Brands',value:'brand'},
+  {label: 'Accessories',value:'Accessories'},
+  {label: 'Others',value:'Other'},
 ];
 
 const SUBCATEGORY_OPTIONS = [
