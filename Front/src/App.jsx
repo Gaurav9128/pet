@@ -14,6 +14,7 @@ import PrivacyPolicy from './Pages/PrivacyPolicy.jsx';
 import TermsAndConditions from './Pages/TermCondition.jsx';
 import ContactUs from './Components/ContactUs/ContactUs.jsx';
 import Scroll from "./Components/scroll.jsx";
+import Accessories from './Pages/Accessories.jsx';
 
 // Toastify ke imports hata diye gaye hain kyunki ab hum SweetAlert2 use kar rahe hain
 
@@ -45,6 +46,7 @@ const App = () => {
           <Route path="/privacypolicy" element={<PrivacyPolicy />} />
           <Route path='/termscondition' element={<TermsAndConditions />} />
           <Route path='/contactus' element={<ContactUs />}/>
+          <Route path='/Accessories'element={<Accessories />}/>
         </Routes>
       </div>
 

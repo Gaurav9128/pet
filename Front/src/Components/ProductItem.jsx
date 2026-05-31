@@ -34,7 +34,7 @@ const ProductItem = ({ id, image = [], name, sizes = [], isAvailable = true, rat
         {/* BADGE */}
         <div className="absolute top-2.5 left-2.5 bg-white px-3 py-1 rounded-full flex items-center gap-1.5 z-10 shadow-sm border border-gray-200">
           <span className="text-[#BE3C25] text-xs">🐾</span>
-          <h2 className="text-[#BE3C25] font-bold text-[10px] uppercase tracking-wider">
+          <h2 className="text-[#C02626] font-bold text-[10px] uppercase tracking-wider">
             Belim Tails
           </h2>
         </div>
@@ -66,7 +66,7 @@ const ProductItem = ({ id, image = [], name, sizes = [], isAvailable = true, rat
 
           {/* Price */}
           <div className="flex items-baseline justify-center gap-3 mb-3 flex-wrap">
-            <span className="text-3xl font-extrabold text-[#BE3C25]">
+            <span className="text-3xl font-extrabold text-[#C02626]">
               ₹{currency}{price}
             </span>
 
@@ -75,7 +75,7 @@ const ProductItem = ({ id, image = [], name, sizes = [], isAvailable = true, rat
             </span>
 
             {discount > 0 && (
-              <span className="text-[#E0804B] text-lg font-bold">
+              <span className="text-[#C02626] text-lg font-bold">
                 {discount}% OFF
               </span>
             )}
@@ -94,7 +94,7 @@ const ProductItem = ({ id, image = [], name, sizes = [], isAvailable = true, rat
                   onClick={() => setSelectedSize(size)}
                   className={`px-5 py-2.5 text-[15px] font-semibold rounded-lg border transition-all
       ${selectedSize?.label === size.label
-                      ? "bg-[#BE3C25] text-white border-[#BE3C25]"
+                      ? "bg-[#C02626] text-white border-[#BE3C25]"
                       : "bg-gray-100 text-gray-700 border-gray-200 hover:bg-gray-200"
                     }`}
                 >
@@ -116,10 +116,9 @@ const ProductItem = ({ id, image = [], name, sizes = [], isAvailable = true, rat
       <div>
         {isAvailable ? (
           <Link to={`/product/${id}`}>
-            <button className="w-full mt-4 bg-gradient-to-r from-[#BE3C25] via-[#D9552E] to-[#E0804B] text-white py-4 rounded-2xl text-base font-black uppercase tracking-widest hover:brightness-110 active:scale-[0.98] transition-all shadow-lg flex items-center justify-center gap-2">
+            <button className="w-full mt-4 bg-[#C02626] hover:bg-[#A31E1E] text-white py-4 rounded-2xl text-base font-black uppercase tracking-widest active:scale-[0.98] transition-all shadow-lg shadow-[#C02626]/20 flex items-center justify-center gap-2">
               BUY NOW <span className="text-xl">🛒</span>
-            </button>
-          </Link>
+            </button>          </Link>
         ) : (
           <button disabled className="w-full mt-4 bg-gray-100 text-gray-400 py-4 rounded-2xl text-sm font-bold uppercase cursor-not-allowed">
             OUT OF STOCK

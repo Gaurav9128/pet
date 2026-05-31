@@ -19,15 +19,23 @@ const Navbar = ({ setShowLogin }) => {
     "CAT": ["cats"],
     "DOG": ["dogs"],
     "BRANDS": ["brand"],
-    "ACCESSORIES": ["Accessories"],
+    "ACCESSORIES": ["/Accessories"], // Direct path check karne ke liye '/' zaroori hai
     "OTHER": ["Other"],
   };
 
   const handleSubNavClick = (menuName) => {
     const categoryValues = categoryMap[menuName];
     if (categoryValues && Array.isArray(categoryValues)) {
-      const queryString = categoryValues.join(",");
-      navigate(`/cats?category=${queryString}`);
+      const firstValue = categoryValues[0];
+
+      // UPDATE: Agar value '/' se start ho rahi hai toh direct navigate karein
+      if (typeof firstValue === 'string' && firstValue.startsWith("/")) {
+        navigate(firstValue);
+      } else {
+        // Purana logic categories ke liye
+        const queryString = categoryValues.join(",");
+        navigate(`/cats?category=${queryString}`);
+      }
     }
   };
 
@@ -46,7 +54,7 @@ const Navbar = ({ setShowLogin }) => {
 
   // Fixed: Email fetching from "email" key instead of "userEmail"
   useEffect(() => {
-    const email = localStorage.getItem("email"); // Apki storage key "email" hai
+    const email = localStorage.getItem("email"); 
     if (email) {
       setUserEmail(email);
     } else {
@@ -61,7 +69,7 @@ const Navbar = ({ setShowLogin }) => {
 
   const logoutHandler = () => {
     localStorage.removeItem("token");
-    localStorage.removeItem("email"); // Yaha bhi key name match kar diya
+    localStorage.removeItem("email"); 
     setToken("");
     setUserEmail("");
     setShowUserMenu(false);
@@ -109,7 +117,7 @@ const Navbar = ({ setShowLogin }) => {
 
           {!token ? (
             <button 
-              className="login-btn bg-black text-white px-5 py-2 rounded-full font-medium hover:bg-gray-800 transition-all text-sm shadow-md" 
+              className="login-btn bg-black text-black px-5 py-2 rounded-full font-medium hover:bg-gray-800 transition-all text-sm shadow-md" 
               onClick={() => setShowLogin(true)}
             >
               Account
@@ -129,7 +137,6 @@ const Navbar = ({ setShowLogin }) => {
                   {userEmail ? userEmail.split("@")[0] : "User"}
                   <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${showUserMenu ? 'rotate-180' : ''}`} />
                 </div>
-                {/* Fixed: Email Display */}
                 <span className="text-[10px] text-gray-400 lowercase font-normal block max-w-[150px] truncate">
                   {userEmail}
                 </span>
@@ -155,7 +162,7 @@ const Navbar = ({ setShowLogin }) => {
 
       {/* --- SUB-NAVBAR --- */}
       <div className="px-4 md:px-10 pb-5">
-        <nav className="relative overflow-hidden  max-w-7xl mx-auto bg-white hover:shadow-md transition-shadow duration-300">
+        <nav className="relative overflow-hidden max-w-7xl mx-auto transition-shadow duration-300">
           <div className="absolute inset-0 opacity-[0.03] pointer-events-none flex justify-between items-center px-10">
             <span className="text-4xl rotate-12">🐾</span>
             <span className="text-4xl -rotate-12">🐾</span>

@@ -32,12 +32,12 @@
 }
 
 .explore-menu-card.active {
-  border: 2px solid #be2b2b;
+  border: 2px solid #C02626;
 }
 
 /* Image Container (Grey Background) */
 .image-container {
-  background-color: #FDECEC; /* Light grey like the image */
+  background-color: #F8F9FA; /* Light grey like the image */
   padding: 25px 15px;
   display: flex;
   justify-content: center;
@@ -73,7 +73,7 @@
 }
 
 .show-more-btn-red {
-  background-color: #be2b2b; /* Exact Maroon/Red shade */
+  background-color: #C02626; /* Exact Maroon/Red shade */
   color: white;
   padding: 10px 30px;
   border-radius: 25px;

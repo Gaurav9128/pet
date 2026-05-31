@@ -15,7 +15,7 @@ const CATEGORY_OPTIONS = [
   { label: 'Pharmacy', value: 'pharmacy' },
   { label: 'Consult a Vet', value: 'vet' },
   {label: 'Brands',value:'brand'},
-  {label: 'Accessories',value:'Accessories'},
+  // {label: 'Accessories',value:'Accessories'},
   {label: 'Others',value:'Other'},
 ];
 
@@ -143,7 +143,7 @@ const Collection = () => {
           <br/>
           {/* Categories Section */}
           <div className="mt-8">
-            <p className="mb-4 text-sm font-bold uppercase tracking-widest text-[#1E5F74] border-b pb-2">Categories</p>
+            <p className="mb-4 text-sm font-bold uppercase tracking-widest text-[#C02626] border-b pb-2">Categories</p>
             <div className="flex flex-col gap-2">
               {CATEGORY_OPTIONS.map(cat => (
                 <label key={cat.value} className="group flex items-center gap-3 cursor-pointer py-1">
@@ -153,11 +153,11 @@ const Collection = () => {
                       value={cat.value} 
                       checked={tempCategory.includes(cat.value)} 
                       onChange={toggleCategory}
-                      className="peer appearance-none w-5 h-5 border-2 border-gray-300 rounded checked:bg-[#1E5F74] checked:border-[#1E5F74] transition-all"
+                      className="peer appearance-none w-5 h-5 border-2 border-gray-300 rounded checked:bg-[#C02626] checked:border-[#C02626] transition-all"
                     />
                     <span className="absolute text-white opacity-0 peer-checked:opacity-100 pointer-events-none text-xs">✓</span>
                   </div>
-                  <span className={`text-[15px] transition-colors ${tempCategory.includes(cat.value) ? 'text-[#1E5F74] font-semibold' : 'text-gray-600 group-hover:text-gray-900'}`}>
+                  <span className={`text-[15px] transition-colors ${tempCategory.includes(cat.value) ? 'text-[#C02626] font-semibold' : 'text-gray-600 group-hover:text-gray-900'}`}>
                     {cat.label}
                   </span>
                 </label>
@@ -167,7 +167,7 @@ const Collection = () => {
           <br/>
           {/* Type Section */}
           <div className="mt-10">
-            <p className="mb-4 text-sm font-bold uppercase tracking-widest text-[#1E5F74] border-b pb-2">Product Type</p>
+            <p className="mb-4 text-sm font-bold uppercase tracking-widest text-[#C02626] border-b pb-2">Product Type</p>
             <div className="flex flex-col gap-2">
               {SUBCATEGORY_OPTIONS.map(sub => (
                 <label key={sub.value} className="group flex items-center gap-3 cursor-pointer py-1">
@@ -177,11 +177,11 @@ const Collection = () => {
                       value={sub.value} 
                       checked={tempSubCategory.includes(sub.value)} 
                       onChange={toggleSubCategory}
-                      className="peer appearance-none w-5 h-5 border-2 border-gray-300 rounded checked:bg-[#1E5F74] checked:border-[#1E5F74] transition-all"
+                      className="peer appearance-none w-5 h-5 border-2 border-gray-300 rounded checked:bg-[#C02626] checked:border-[#C02626] transition-all"
                     />
                     <span className="absolute text-white opacity-0 peer-checked:opacity-100 pointer-events-none text-xs">✓</span>
                   </div>
-                  <span className={`text-[15px] transition-colors ${tempSubCategory.includes(sub.value) ? 'text-[#1E5F74] font-semibold' : 'text-gray-600 group-hover:text-gray-900'}`}>
+                  <span className={`text-[15px] transition-colors ${tempSubCategory.includes(sub.value) ? 'text-[#C02626] font-semibold' : 'text-gray-600 group-hover:text-gray-900'}`}>
                     {sub.label}
                   </span>
                 </label>
@@ -193,13 +193,13 @@ const Collection = () => {
           <div className="flex flex-col gap-3 mt-8">
             <button 
               onClick={applyFilters} 
-              className="w-full bg-[#1E5F74] text-white py-3 rounded-lg text-sm font-bold shadow-md hover:bg-[#154656] active:scale-95 transition-all"
+              className="w-full bg-[#C02626] text-white py-3 rounded-lg text-sm font-bold shadow-md hover:bg-[#C02626] active:scale-95 transition-all"
             >
               APPLY FILTERS
             </button>
             <button 
               onClick={resetFilters} 
-              className="w-full bg-white border border-gray-200 text-gray-500 py-2 rounded-lg text-xs font-semibold hover:bg-gray-50 transition-all"
+              className="w-full bg-[#C02626] border border-gray-200 text-white py-3 rounded-lg text-xs font-semibold hover:bg-gray-50 transition-all"
             >
               RESET ALL
             </button>
