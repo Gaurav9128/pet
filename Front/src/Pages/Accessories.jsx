@@ -16,19 +16,25 @@ const CATEGORY_OPTIONS = [
 // Updated Sub-Categories specifically for Accessories
 const SUBCATEGORY_OPTIONS = [
   { label: 'Leash & Collars', value: 'leash-collars' },
-  { label: 'Feeding Bowls', value: 'bowls' },
+  { label: 'Food Bowl', value: 'bowls' },
   { label: 'Pet Toys', value: 'toys' },
   { label: 'Grooming Kits', value: 'grooming' },
   { label: 'Beds & Mats', value: 'beds' },
   { label: 'Clothing', value: 'clothing' },
+  { label: 'Shampoos', value: 'shampoos' },
+  { label: 'Cages', value: 'cages' },
+  { label: 'Wipes', value: 'wipes' },
+  { label: 'Combs & Brushes', value: 'combs-brushes' },
+  { label: 'Others', value: 'others' }
 ];
+
 
 const Accessories = () => {
   const { products = [], searchQuery } = useContext(StoreContext);
   const [searchParams] = useSearchParams();
-
-  const searchFromURL = searchParams.get('search') || '';
-  const categoryFromURL = searchParams.get('category');
+const searchFromURL = searchParams.get('search') || '';
+const categoryFromURL = searchParams.get('category');
+const subCategoryFromURL = searchParams.get('subcategory');
 
   const [showFilter, setShowFilter] = useState(false);
   const [tempCategory, setTempCategory] = useState([]);
@@ -46,6 +52,14 @@ const Accessories = () => {
       setTempCategory(categoriesArray);
     }
   }, [categoryFromURL]);
+
+  useEffect(() => {
+  if (subCategoryFromURL) {
+    setSubCategory([subCategoryFromURL]);
+    setTempSubCategory([subCategoryFromURL]);
+    setCurrentPage(1);
+  }
+}, [subCategoryFromURL]);
 
   const toggleCategory = (e) => {
     const value = e.target.value;
@@ -163,7 +177,7 @@ const Accessories = () => {
                   <button onClick={applyFilters} className="w-full bg-[#C02626] text-white py-4 rounded-2xl text-sm font-black shadow-xl shadow-blue-100 hover:bg-[#154656] transition-all">
                     APPLY FILTERS
                   </button>
-                  <button onClick={resetFilters} className="w-full bg-[#C02626] border border-gray-100 text-white py-3 rounded-2xl text-[13px] font-bold hover:bg-gray-50 flex items-center justify-center gap-2 transition-all">
+                  <button onClick={resetFilters} className="w-full bg-[#C02626]  text-white py-3 rounded-2xl text-[13px] font-black  flex items-center justify-center gap-2 transition-all">
                     <RotateCcw size={16} /> RESET FILTERS
                   </button>
                 </div>

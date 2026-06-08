@@ -20,7 +20,7 @@ const Navbar = ({ setShowLogin }) => {
     "DOG": ["dogs"],
     "BRANDS": ["brand"],
     "ACCESSORIES": ["/Accessories"], // Direct path check karne ke liye '/' zaroori hai
-    "OTHER": ["Other"],
+    // "OTHER": ["others"],
   };
 
   const handleSubNavClick = (menuName) => {

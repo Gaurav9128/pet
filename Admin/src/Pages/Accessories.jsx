@@ -19,7 +19,7 @@ const validateImageResolution = (file) => {
   })
 }
 
-const Add = ({ token }) => {
+const Accessories = ({ token }) => {
 
   /* ---------- RATING ---------- */
   const [rating, setRating] = useState(4)
@@ -30,8 +30,8 @@ const Add = ({ token }) => {
   /* ---------- PRODUCT ---------- */
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
-  const [category, setCategory] = useState('cats')
-  const [subCategory, setSubCategory] = useState('dry-food')
+  const [category] = useState('Accessories')
+  const [subCategory, setSubCategory] = useState('leash-collars')
   const [bestseller, setBestseller] = useState(false)
 
   /* ---------- SIZE PRICE ---------- */
@@ -108,7 +108,7 @@ const Add = ({ token }) => {
 
       formData.append('name', name)
       formData.append('description', description)
-      formData.append('category', category)
+    formData.append('category', 'Accessories')
       formData.append('subCategory', subCategory)
       formData.append('bestseller', bestseller)
       formData.append('rating', rating)
@@ -222,7 +222,7 @@ const Add = ({ token }) => {
 
       {/* ---------- CATEGORY ---------- */}
       <div className="flex flex-col sm:flex-row gap-4">
-        <select onChange={e => setCategory(e.target.value)} className="border px-3 py-2 rounded">
+        {/* <select onChange={e => setCategory(e.target.value)} className="border px-3 py-2 rounded">
           <option value="cats">Cats</option>
           <option value="dogs">Dogs</option>
           <option value="small-pets">Small Pets</option>
@@ -231,16 +231,26 @@ const Add = ({ token }) => {
           <option value="pharmacy">Pharmacy</option>
           <option value="consult-vet">Consult a Vet</option>
           <option value="brand">Brand</option>
-        </select>
+          <option value="Accessories">Accessories</option>
+          <option value="Other">Others</option>
+        </select> */}
 
-        <select onChange={e => setSubCategory(e.target.value)} className="border px-3 py-2 rounded">
-          <option value="dry-food">Dry Food</option>
-          <option value="wet-food">Wet Food</option>
-          <option value="kitten-food">Kitten Food</option>
-          <option value="premium-food">Premium Food</option>
-          <option value="creamy-treats">Creamy Treats</option>
-          <option value="jerky-treats">Jerky Treats</option>
-          <option value="crunchy-treats">Crunchy Treats</option>
+        <select onChange={e => setSubCategory(e.target.value)} className="border px-3 py-2 rounded w-64">
+          <option value="leash-collars">Leash & Collars</option>
+          <option value="bowls">Food Bowl</option>
+          <option value="toys">Pet Toys</option>
+          <option value="grooming">Grooming Kits</option>
+          <option value="beds">Beds & Mats</option>
+          <option value="clothing">Clothing</option>
+          <option value="shampoos">Shampoos</option>
+          <option value="cages">Cages</option>
+          <option value="wipes">Wipes</option>
+          <option value="combs,Brushes">Combs,Brushes</option>
+          <option value="others">Others</option>
+
+
+
+          {/* <option value="crunchy-treats">Crunchy Treats</option>
           <option value="puppy-food">Puppy Food</option>
           <option value="grain-free-food">Grain Free Food</option>
           <option value="baked-dry-food">Baked Dry Food</option>
@@ -252,7 +262,7 @@ const Add = ({ token }) => {
           <option value="kidney-care">Kidney Care</option>
           <option value="liver-care">Liver Care</option>
           <option value="cardiac-care">Cardiac Care</option>
-          <option value="eye-ear-care">Eye & Ear Care</option>
+          <option value="eye-ear-care">Eye & Ear Care</option> */}
         </select>
       </div>
 
@@ -353,4 +363,4 @@ const Add = ({ token }) => {
   )
 }
 
-export default Add
+export default Accessories

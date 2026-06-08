@@ -16,21 +16,36 @@ const ExploreMenu = ({ category, setCategory }) => {
     "Treats": ["small-pets"],
     "Biscuits": ["pet-parent"],
     "Dental Sticks": ["henlo"],
-    "Food Bowl": ["pharmacy"],
-    "Cages": ["vet"],
+    "Food Bowl": ["bowls"],
+    "Cages": ["cages"],
     "Shampoos": ["shampoos"],
-    "Wipes": ["Wipes"],
-    "Combs, Brushes": ["Combs, Brushes"],
+    "Wipes": ["wipes"],
+    "Combs, Brushes": ["combs-brushes"],
   };
 
-  const handleCategoryClick = (menuName) => {
-    setCategory(menuName);
-    const categoryValues = categoryMap[menuName];
-    if (categoryValues && Array.isArray(categoryValues)) {
-      const queryString = categoryValues.join(",");
-      navigate(`/cats?category=${queryString}`);
-    }
-  };
+ const accessoriesMap = {
+  "Bowl": "bowls",
+  "Cages": "cages",
+  "Shampoos": "shampoos",
+  "Wipes": "wipes",
+  "Combs, Brushes": "combs-brushes",
+};
+
+const handleCategoryClick = (menuName) => {
+
+  setCategory(menuName);
+
+  if (accessoriesMap[menuName]) {
+    navigate(`/accessories?subcategory=${accessoriesMap[menuName]}`);
+    return;
+  }
+
+  const categoryValues = categoryMap[menuName];
+
+  if (categoryValues) {
+    navigate(`/cats?category=${categoryValues.join(",")}`);
+  }
+};
 
   return (
     <div className="explore-menu" id="explore-menu">
@@ -39,18 +54,17 @@ const ExploreMenu = ({ category, setCategory }) => {
       <div className="explore-menu-grid">
         {menu_list.slice(0, itemsToShow).map((item, index) => {
           const isActive = category === item.menu_name;
+
           return (
             <div
               key={index}
               className={`explore-menu-card ${isActive ? "active" : ""}`}
               onClick={() => handleCategoryClick(item.menu_name)}
             >
-              {/* Top grey part for image */}
               <div className="image-container">
                 <img src={item.menu_image} alt={item.menu_name} />
               </div>
-              
-              {/* Bottom white part for text */}
+
               <div className="text-container">
                 <p>{item.menu_name}</p>
               </div>
@@ -60,14 +74,15 @@ const ExploreMenu = ({ category, setCategory }) => {
       </div>
 
       <div className="show-more-container">
-        <button 
-          className="show-more-btn-red" 
+        <button
+          className="show-more-btn-red"
           onClick={() => setIsExpanded(!isExpanded)}
         >
           {isExpanded ? "Show less" : "Show more"}
           <span> →</span>
         </button>
       </div>
+
       <hr className="divider" />
     </div>
   );

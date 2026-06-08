@@ -16,7 +16,7 @@ const CATEGORY_OPTIONS = [
   { label: 'Consult a Vet', value: 'vet' },
   {label: 'Brands',value:'brand'},
   // {label: 'Accessories',value:'Accessories'},
-  {label: 'Others',value:'Other'},
+  // {label: 'Others',value:'Other'},
 ];
 
 const SUBCATEGORY_OPTIONS = [

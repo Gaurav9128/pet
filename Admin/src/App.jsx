@@ -14,6 +14,7 @@ import AdminReturnRequests from './Pages/AdminReturnRequests.jsx';
 import AdminCoupons from './Pages/AdminCoupons.jsx';
 import AdminBanner from './Pages/AdminBanner.jsx';
 import AddBanner from './Pages/AddBanner.jsx';
+import Accessories from './Pages/Accessories.jsx';
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const backendUrl = import.meta.env.VITE_BACKEND_URL
@@ -41,6 +42,7 @@ const App = () => {
               <Routes>
                 <Route path='/' element={<Dashboard token={token} />} />
                 <Route path='/add' element={<Add token={token} />} />
+                <Route path='/accessories' element={<Accessories token={token}/>}/>
                 <Route path='/list' element={<List token={token} />} />
                 <Route path='/orders' element={<Orders token={token} />} />
                 <Route path="/update-product/:id" element={<UpdateProduct token={token} />} />
