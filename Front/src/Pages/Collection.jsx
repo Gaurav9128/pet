@@ -14,7 +14,7 @@ const CATEGORY_OPTIONS = [
   { label: 'Henlo', value: 'henlo' },
   { label: 'Pharmacy', value: 'pharmacy' },
   { label: 'Consult a Vet', value: 'vet' },
-  {label: 'Brands',value:'brand'},
+  { label: 'Brands', value: 'brand' },
   // {label: 'Accessories',value:'Accessories'},
   // {label: 'Others',value:'Other'},
 ];
@@ -47,14 +47,17 @@ const Collection = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 20;
 
+  const [openCategory, setOpenCategory] = useState(true);
+  const [openProductType, setOpenProductType] = useState(true);
+
   useEffect(() => {
     if (categoryFromURL) {
-        // URL se "dogs,cats" ko array ['dogs', 'cats'] mein badalna zaroori hai
-        const categoriesArray = categoryFromURL.split(',');
-        setCategory(categoriesArray);
-        setTempCategory(categoriesArray);
+      // URL se "dogs,cats" ko array ['dogs', 'cats'] mein badalna zaroori hai
+      const categoriesArray = categoryFromURL.split(',');
+      setCategory(categoriesArray);
+      setTempCategory(categoriesArray);
     }
-}, [categoryFromURL]);
+  }, [categoryFromURL]);
 
   const toggleCategory = (e) => {
     const value = e.target.value;
@@ -122,88 +125,179 @@ const Collection = () => {
   };
 
   return (
-    <div className="flex flex-col sm:flex-row gap-8 pt-10 border-t font-sans">
-      
+    <div className="flex flex-col sm:flex-row gap-8 sm:gap-10 pt-10 border-t items-start">
+
       {/* --- SIDEBAR FILTERS (PROFESSIONAL LOOK) --- */}
-      <div className="min-w-64">
-        <div 
-          onClick={() => setShowFilter(!showFilter)} 
-          className="flex items-center justify-between sm:cursor-default cursor-pointer bg-gray-50 p-3 rounded-lg sm:bg-transparent sm:p-0"
+      <div className="w-full sm:w-[300px] bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
+        {/* Header */}
+        <div
+          onClick={() => setShowFilter(!showFilter)}
+          className="flex items-center justify-between cursor-pointer sm:cursor-default mb-5"
         >
-          <p className="text-xl font-bold tracking-tight text-gray-800">FILTERS</p>
-          &nbsp;&nbsp;
-          <img 
-            className={`h-3 sm:hidden transition-transform duration-300 ${showFilter ? 'rotate-180' : ''}`} 
-            src={assets.dropdown_icon} 
-            alt="toggle" 
+          <h2 className="text-2xl font-bold text-red-600">
+            Filters
+          </h2>
+
+          <img
+            className={`h-3 sm:hidden transition-transform duration-300 ${showFilter ? "rotate-180" : ""
+              }`}
+            src={assets.dropdown_icon}
+            alt=""
           />
         </div>
-        
-        <div className={`${showFilter ? 'block' : 'hidden'} sm:block transition-all duration-500`}>
-          <br/>
-          {/* Categories Section */}
-          <div className="mt-8">
-            <p className="mb-4 text-sm font-bold uppercase tracking-widest text-[#C02626] border-b pb-2">Categories</p>
-            <div className="flex flex-col gap-2">
-              {CATEGORY_OPTIONS.map(cat => (
-                <label key={cat.value} className="group flex items-center gap-3 cursor-pointer py-1">
-                  <div className="relative flex items-center justify-center">
-                    <input 
-                      type="checkbox" 
-                      value={cat.value} 
-                      checked={tempCategory.includes(cat.value)} 
+
+        <div className={`${showFilter ? "block" : "hidden"} sm:block`}>
+
+          {/* CATEGORY SECTION */}
+          <div className="border-b border-gray-200 pb-4">
+
+            <button
+              onClick={() => setOpenCategory(!openCategory)}
+              className="w-full flex justify-between items-center"
+            >
+              <span className="text-sm tracking-[2px] uppercase font-bold text-gray-700">
+                Categories
+              </span>
+
+              <span
+                className={`text-red-600 text-lg font-bold transition-transform duration-300 ${openCategory ? "rotate-180" : ""
+                  }`}
+              >
+                ▼
+              </span>
+            </button>
+
+            <div
+              className={`overflow-hidden transition-all duration-300 ${openCategory ? "max-h-[500px] mt-4" : "max-h-0"
+                }`}
+            >
+              <div className="space-y-3">
+
+                {CATEGORY_OPTIONS.map(cat => (
+                  <label
+                    key={cat.value}
+                    className="flex items-center gap-3 cursor-pointer group"
+                  >
+                    <input
+                      type="checkbox"
+                      value={cat.value}
+                      checked={tempCategory.includes(cat.value)}
                       onChange={toggleCategory}
-                      className="peer appearance-none w-5 h-5 border-2 border-gray-300 rounded checked:bg-[#C02626] checked:border-[#C02626] transition-all"
+                      className="w-4 h-4 accent-black"
                     />
-                    <span className="absolute text-white opacity-0 peer-checked:opacity-100 pointer-events-none text-xs">✓</span>
-                  </div>
-                  <span className={`text-[15px] transition-colors ${tempCategory.includes(cat.value) ? 'text-[#C02626] font-semibold' : 'text-gray-600 group-hover:text-gray-900'}`}>
-                    {cat.label}
-                  </span>
-                </label>
-              ))}
+
+                    <span
+                      className={`text-sm transition-all ${tempCategory.includes(cat.value)
+                        ? "font-medium text-black"
+                        : "text-gray-600 group-hover:text-black"
+                        }`}
+                    >
+                      {cat.label}
+                    </span>
+                  </label>
+                ))}
+
+              </div>
             </div>
           </div>
-          <br/>
-          {/* Type Section */}
-          <div className="mt-10">
-            <p className="mb-4 text-sm font-bold uppercase tracking-widest text-[#C02626] border-b pb-2">Product Type</p>
-            <div className="flex flex-col gap-2">
-              {SUBCATEGORY_OPTIONS.map(sub => (
-                <label key={sub.value} className="group flex items-center gap-3 cursor-pointer py-1">
-                  <div className="relative flex items-center justify-center">
-                    <input 
-                      type="checkbox" 
-                      value={sub.value} 
-                      checked={tempSubCategory.includes(sub.value)} 
+
+          {/* PRODUCT TYPE */}
+          <div className="pt-5">
+
+            <button
+              onClick={() => setOpenProductType(!openProductType)}
+              className="w-full flex justify-between items-center"
+            >
+              <span className="text-xs tracking-[2px] uppercase font-semibold text-gray-500">
+                Product Type
+              </span>
+
+              <span
+                className={`text-red-600 text-lg font-bold transition-transform duration-300 ${openProductType ? "rotate-180" : ""
+                  }`}
+              >
+                ▼
+              </span>
+            </button>
+
+            <div
+              className={`overflow-hidden transition-all duration-300 ${openProductType ? "max-h-[700px] mt-4" : "max-h-0"
+                }`}
+            >
+              <div className="space-y-3">
+
+                {SUBCATEGORY_OPTIONS.map(sub => (
+                  <label
+                    key={sub.value}
+                    className="flex items-center gap-3 cursor-pointer group"
+                  >
+                    <input
+                      type="checkbox"
+                      value={sub.value}
+                      checked={tempSubCategory.includes(sub.value)}
                       onChange={toggleSubCategory}
-                      className="peer appearance-none w-5 h-5 border-2 border-gray-300 rounded checked:bg-[#C02626] checked:border-[#C02626] transition-all"
+                      className="w-5 h-5 accent-red-600 cursor-pointer"
                     />
-                    <span className="absolute text-white opacity-0 peer-checked:opacity-100 pointer-events-none text-xs">✓</span>
-                  </div>
-                  <span className={`text-[15px] transition-colors ${tempSubCategory.includes(sub.value) ? 'text-[#C02626] font-semibold' : 'text-gray-600 group-hover:text-gray-900'}`}>
-                    {sub.label}
-                  </span>
-                </label>
-              ))}
+
+                    <span
+                      className={`text-base transition-all ${tempSubCategory.includes(sub.value)
+                        ? "font-medium text-black"
+                        : "text-gray-600 group-hover:text-black"
+                        }`}
+                    >
+                      {sub.label}
+                    </span>
+                  </label>
+                ))}
+
+              </div>
             </div>
           </div>
-           &nbsp;
-          {/* Filter Actions */}
-          <div className="flex flex-col gap-3 mt-8">
-            <button 
-              onClick={applyFilters} 
-              className="w-full bg-[#C02626] text-white py-3 rounded-lg text-sm font-bold shadow-md hover:bg-[#C02626] active:scale-95 transition-all"
+&nbsp;
+          {/* BUTTONS */}
+          <div className="mt-8">
+
+            <button
+              onClick={applyFilters}
+              className="
+w-full
+bg-red-600
+text-white
+py-3
+rounded-md
+text-base
+font-semibold
+hover:bg-red-700
+transition-all
+duration-300
+shadow-sm
+"
             >
-              APPLY FILTERS
+              Apply Filters
             </button>
-            <button 
-              onClick={resetFilters} 
-              className="w-full bg-[#C02626] border border-gray-200 text-white py-3 rounded-lg text-xs font-semibold hover:bg-gray-50 transition-all"
+&nbsp;
+            <button
+              onClick={resetFilters}
+              className="
+w-full
+mt-3
+border
+border-red-200
+text-red-600
+py-3
+rounded-md
+text-base
+font-medium
+hover:bg-red-50
+transition-all
+duration-300
+"
             >
-              RESET ALL
+              Clear All
             </button>
+
           </div>
+
         </div>
       </div>
 
@@ -212,9 +306,20 @@ const Collection = () => {
         <div className="flex justify-between mb-6 items-center flex-wrap gap-4">
           <Title text1="ALL" text2="COLLECTIONS" />
           <div className="relative min-w-[200px]">
-            <select 
-              onChange={(e) => setSortType(e.target.value)} 
-              className="w-full border border-gray-200 p-2.5 rounded-lg text-sm font-medium outline-none bg-white shadow-sm focus:ring-2 focus:ring-[#1E5F74] transition-all cursor-pointer"
+            <select
+              onChange={(e) => setSortType(e.target.value)}
+              className="
+w-full
+border
+border-gray-300
+px-4
+py-3
+rounded-md
+text-sm
+bg-white
+outline-none
+focus:border-black
+"
             >
               <option value="relavent">Sort by: Relevant</option>
               <option value="low-high">Price: Low to High</option>
@@ -222,7 +327,7 @@ const Collection = () => {
             </select>
           </div>
         </div>
-           <br/>
+        <br />
         {filteredProducts.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20">
             <p className="text-xl text-gray-400 font-medium italic">Oops! No products found matching your choice.</p>
@@ -241,12 +346,12 @@ const Collection = () => {
                 />
               ))}
             </div>
-<br/>
+            <br />
             {/* Pagination UI */}
             {totalPages > 1 && (
               <div className="flex justify-center items-center gap-2 mt-16 mb-10">
-                <button 
-                  disabled={currentPage === 1} 
+                <button
+                  disabled={currentPage === 1}
                   onClick={() => handlePageChange(currentPage - 1)}
                   className="w-10 h-10 flex items-center justify-center border rounded-full hover:bg-gray-100 disabled:opacity-30 disabled:hover:bg-transparent transition-all"
                 >
@@ -261,8 +366,8 @@ const Collection = () => {
                     {index + 1}
                   </button>
                 ))}
-                <button 
-                  disabled={currentPage === totalPages} 
+                <button
+                  disabled={currentPage === totalPages}
                   onClick={() => handlePageChange(currentPage + 1)}
                   className="w-10 h-10 flex items-center justify-center border rounded-full hover:bg-gray-100 disabled:opacity-30 disabled:hover:bg-transparent transition-all"
                 >

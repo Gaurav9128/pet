@@ -4,6 +4,7 @@ import { assets } from "../../assets/assets";
 import { Link, useNavigate } from "react-router-dom";
 import { StoreContext } from "../../context/StoreContext";
 import { ChevronDown, User } from "lucide-react";
+import { PawPrint } from "lucide-react";
 
 const Navbar = ({ setShowLogin }) => {
   const [showUserMenu, setShowUserMenu] = useState(false);
@@ -54,7 +55,7 @@ const Navbar = ({ setShowLogin }) => {
 
   // Fixed: Email fetching from "email" key instead of "userEmail"
   useEffect(() => {
-    const email = localStorage.getItem("email"); 
+    const email = localStorage.getItem("email");
     if (email) {
       setUserEmail(email);
     } else {
@@ -65,11 +66,11 @@ const Navbar = ({ setShowLogin }) => {
     checkMobile();
     window.addEventListener("resize", checkMobile);
     return () => window.removeEventListener("resize", checkMobile);
-  }, [token]); 
+  }, [token]);
 
   const logoutHandler = () => {
     localStorage.removeItem("token");
-    localStorage.removeItem("email"); 
+    localStorage.removeItem("email");
     setToken("");
     setUserEmail("");
     setShowUserMenu(false);
@@ -116,8 +117,8 @@ const Navbar = ({ setShowLogin }) => {
           </Link>
 
           {!token ? (
-            <button 
-              className="login-btn bg-black text-black px-5 py-2 rounded-full font-medium hover:bg-gray-800 transition-all text-sm shadow-md" 
+            <button
+              className="login-btn bg-black text-black px-5 py-2 rounded-full font-medium hover:bg-gray-800 transition-all text-sm shadow-md"
               onClick={() => setShowLogin(true)}
             >
               Account
@@ -133,7 +134,7 @@ const Navbar = ({ setShowLogin }) => {
                 onClick={() => isMobile && setShowUserMenu((prev) => !prev)}
               >
                 <div className="flex items-center gap-1 font-bold text-gray-800 text-sm">
-                  <User size={16} className="text-orange-500" /> 
+                  <User size={16} className="text-orange-500" />
                   {userEmail ? userEmail.split("@")[0] : "User"}
                   <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${showUserMenu ? 'rotate-180' : ''}`} />
                 </div>
@@ -162,27 +163,43 @@ const Navbar = ({ setShowLogin }) => {
 
       {/* --- SUB-NAVBAR --- */}
       <div className="px-4 md:px-10 pb-5">
-        <nav className="relative overflow-hidden max-w-7xl mx-auto transition-shadow duration-300">
-          <div className="absolute inset-0 opacity-[0.03] pointer-events-none flex justify-between items-center px-10">
-            <span className="text-4xl rotate-12">🐾</span>
-            <span className="text-4xl -rotate-12">🐾</span>
-          </div>
+  <nav className="relative max-w-7xl mx-auto min-h-[70px] border-b border-gray-200 transition-shadow duration-300">
 
-          <ul className="relative z-10 flex flex-wrap items-center justify-center gap-6 md:gap-16 py-3.5">
-            {Object.keys(categoryMap).map((item) => (
-              <li key={item} className="group">
-                <button
-                  onClick={() => handleSubNavClick(item)}
-                  className="flex items-center gap-1.5 text-[11px] md:text-[13px] font-extrabold tracking-[0.25em] text-gray-600 hover:text-orange-500 transition-all duration-300 uppercase"
-                >
-                  {item}
-                  <ChevronDown className="w-3.5 h-3.5 transition-transform duration-300 group-hover:rotate-180 opacity-40" />
-                </button>
-              </li>
-            ))}
-          </ul>
-        </nav>
-      </div>
+    {/* Left Paw Prints */}
+    <div className="absolute left-4 top-0 opacity-10 pointer-events-none">
+      <PawPrint className="w-14 h-14 text-red-500" />
+    </div>
+
+    <div className="absolute left-24 bottom-1 opacity-10 pointer-events-none">
+      <PawPrint className="w-8 h-8 text-red-500" />
+    </div>
+
+    {/* Right Paw Prints */}
+    <div className="absolute right-4 top-0 opacity-10 pointer-events-none">
+      <PawPrint className="w-14 h-14 text-red-500" />
+    </div>
+
+    <div className="absolute right-24 bottom-1 opacity-10 pointer-events-none">
+      <PawPrint className="w-8 h-8 text-red-500" />
+    </div>
+
+    {/* Navigation */}
+    <ul className="relative z-10 flex flex-wrap items-center justify-center gap-6 md:gap-16 py-5">
+      {Object.keys(categoryMap).map((item) => (
+        <li key={item} className="group">
+          <button
+            onClick={() => handleSubNavClick(item)}
+            className="flex items-center gap-1.5 text-[15px] md:text-[16px] font-extrabold tracking-[0.25em] text-gray-600 hover:text-orange-500 transition-all duration-300 uppercase"
+          >
+            {item}
+            <ChevronDown className="w-3.5 h-3.5 transition-transform duration-300 group-hover:rotate-180 opacity-40" />
+          </button>
+        </li>
+      ))}
+    </ul>
+
+  </nav>
+</div>
     </div>
   );
 };
