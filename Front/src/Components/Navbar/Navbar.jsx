@@ -127,7 +127,7 @@ const Navbar = ({ setShowLogin }) => {
 
           {!token ? (
             <button
-              className="login-btn bg-black text-white px-5 py-2 rounded-full font-medium hover:bg-gray-800 transition-all text-sm shadow-md"
+              className="login-btn bg-black text-black px-5 py-2 rounded-full font-medium hover:bg-gray-800 transition-all text-sm shadow-md"
               onClick={() => setShowLogin(true)}
             >
               Account
