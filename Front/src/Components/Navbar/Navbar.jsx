@@ -162,37 +162,68 @@ const Navbar = ({ setShowLogin }) => {
       </div>
 
       {/* --- SUB-NAVBAR --- */}
-      <div className="px-4 md:px-10 pb-5">
-  <nav className="relative max-w-7xl mx-auto min-h-[70px] border-b border-gray-200 transition-shadow duration-300">
+      {/* --- SUB-NAVBAR --- */}
+<div className="px-4 md:px-10 pb-5">
+  <nav className="relative max-w-7xl mx-auto">
 
-    {/* Left Paw Prints */}
-    <div className="absolute left-4 top-0 opacity-10 pointer-events-none">
-      <PawPrint className="w-14 h-14 text-red-500" />
+    {/* Left Paw Prints - Desktop Only */}
+    <div className="hidden md:block absolute left-4 top-1/2 -translate-y-1/2 opacity-10 pointer-events-none">
+      <PawPrint className="w-12 h-12 lg:w-14 lg:h-14 text-red-500" />
     </div>
 
-    <div className="absolute left-24 bottom-1 opacity-10 pointer-events-none">
+    <div className="hidden lg:block absolute left-24 top-1/2 -translate-y-1/2 opacity-10 pointer-events-none">
       <PawPrint className="w-8 h-8 text-red-500" />
     </div>
 
-    {/* Right Paw Prints */}
-    <div className="absolute right-4 top-0 opacity-10 pointer-events-none">
-      <PawPrint className="w-14 h-14 text-red-500" />
+    {/* Right Paw Prints - Desktop Only */}
+    <div className="hidden md:block absolute right-4 top-1/2 -translate-y-1/2 opacity-10 pointer-events-none">
+      <PawPrint className="w-12 h-12 lg:w-14 lg:h-14 text-red-500" />
     </div>
 
-    <div className="absolute right-24 bottom-1 opacity-10 pointer-events-none">
+    <div className="hidden lg:block absolute right-24 top-1/2 -translate-y-1/2 opacity-10 pointer-events-none">
       <PawPrint className="w-8 h-8 text-red-500" />
     </div>
 
     {/* Navigation */}
-    <ul className="relative z-10 flex flex-wrap items-center justify-center gap-6 md:gap-16 py-5">
+    <ul
+      className="
+        flex
+        items-center
+        justify-center
+        flex-wrap
+        md:flex-nowrap
+        gap-4
+        sm:gap-6
+        md:gap-10
+        lg:gap-16
+        py-4
+        md:py-5
+        relative
+        z-10
+      "
+    >
       {Object.keys(categoryMap).map((item) => (
         <li key={item} className="group">
           <button
             onClick={() => handleSubNavClick(item)}
-            className="flex items-center gap-1.5 text-[15px] md:text-[16px] font-extrabold tracking-[0.25em] text-gray-600 hover:text-orange-500 transition-all duration-300 uppercase"
+            className="
+              flex items-center gap-1
+              text-xs
+              sm:text-sm
+              md:text-[15px]
+              lg:text-[16px]
+              font-extrabold
+              tracking-[0.15em]
+              md:tracking-[0.25em]
+              text-gray-600
+              hover:text-orange-500
+              transition-all
+              duration-300
+              uppercase
+            "
           >
             {item}
-            <ChevronDown className="w-3.5 h-3.5 transition-transform duration-300 group-hover:rotate-180 opacity-40" />
+            <ChevronDown className="w-3 h-3 md:w-3.5 md:h-3.5 transition-transform duration-300 group-hover:rotate-180 opacity-40" />
           </button>
         </li>
       ))}

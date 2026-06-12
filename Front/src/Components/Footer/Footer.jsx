@@ -63,11 +63,11 @@ const Footer = () => {
         <div className="footer-bottom-left">
           <p>© 2026 Belim Tails. All Rights Reserved.</p>
         </div>
-        <div className="stats-container">
+        {/* <div className="stats-container">
           <span className="stat-item">Visits: 1492</span>
           <span className="stat-item">Online: 5</span>
           <span className="stat-item admin-tag">Admin</span>
-        </div>
+        </div> */}
       </div>
     </footer>
   );
