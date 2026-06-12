@@ -80,7 +80,7 @@ const Navbar = ({ setShowLogin }) => {
   return (
     <div className="navbar bg-white w-full border-b border-gray-100">
       {/* --- TOP NAVBAR --- */}
-      <div className="navbar-top flex items-center justify-between px-4 md:px-10 py-4">
+      <div className="navbar-top flex flex-wrap md:flex-nowrap items-center justify-between px-4 md:px-10 py-4 gap-3">
         <div className="navbar-left">
           <img
             src={assets.logo_2}
@@ -91,7 +91,16 @@ const Navbar = ({ setShowLogin }) => {
         </div>
 
         {/* Search Bar */}
-        <div className="search-bar flex-1 max-w-xl mx-4 md:mx-12 relative hidden sm:block">
+        <div className="search-bar
+    order-3
+    md:order-none
+    w-full
+    md:flex-1
+    md:max-w-xl
+    md:mx-12
+    relative
+    mt-2
+    md:mt-0">
           <input
             type="text"
             placeholder="Search for products..."
@@ -118,7 +127,7 @@ const Navbar = ({ setShowLogin }) => {
 
           {!token ? (
             <button
-              className="login-btn bg-black text-black px-5 py-2 rounded-full font-medium hover:bg-gray-800 transition-all text-sm shadow-md"
+              className="login-btn bg-black text-white px-5 py-2 rounded-full font-medium hover:bg-gray-800 transition-all text-sm shadow-md"
               onClick={() => setShowLogin(true)}
             >
               Account
@@ -133,12 +142,12 @@ const Navbar = ({ setShowLogin }) => {
                 className="user-btn flex flex-col items-end gap-0 cursor-pointer"
                 onClick={() => isMobile && setShowUserMenu((prev) => !prev)}
               >
-                <div className="flex items-center gap-1 font-bold text-gray-800 text-sm">
+                <div className="flex items-center gap-1 font-bold text-gray-800 text-xs md:text-sm">
                   <User size={16} className="text-orange-500" />
                   {userEmail ? userEmail.split("@")[0] : "User"}
                   <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${showUserMenu ? 'rotate-180' : ''}`} />
                 </div>
-                <span className="text-[10px] text-gray-400 lowercase font-normal block max-w-[150px] truncate">
+                <span className="hidden md:block text-[10px] text-gray-400 lowercase font-normal max-w-[150px] truncate">
                   {userEmail}
                 </span>
               </button>

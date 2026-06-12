@@ -32,6 +32,15 @@
   transition: transform 0.2s ease;
 }
 
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 /* SEARCH BAR (CENTER) */
 .search-bar {
   flex: 1;
