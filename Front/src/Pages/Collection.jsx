@@ -50,6 +50,8 @@ const Collection = () => {
   const [openCategory, setOpenCategory] = useState(true);
   const [openProductType, setOpenProductType] = useState(true);
 
+  const brandFromURL = searchParams.get('brand') || '';
+
   useEffect(() => {
     if (categoryFromURL) {
       // URL se "dogs,cats" ko array ['dogs', 'cats'] mein badalna zaroori hai
@@ -93,26 +95,42 @@ const Collection = () => {
     return Math.min(...product.sizes.map(s => Number(s.price) || 0));
   };
 
-  const filteredProducts = useMemo(() => {
-    let result = [...products].filter(p => p.isAvailable);
-    const finalSearch = (searchQuery || searchFromURL).toLowerCase();
+  // Filter Logic: Jo strict uppercase aur lowercase dono ko seamlessly handle karega
+const filteredProducts = useMemo(() => {
+  let result = [...products].filter(p => p.isAvailable);
+  const finalSearch = (searchQuery || searchFromURL).toLowerCase();
 
-    if (finalSearch) {
-      result = result.filter(p => (p.name || '').toLowerCase().includes(finalSearch));
-    }
-    if (category.length > 0) {
-      result = result.filter(p => category.includes(p.category));
-    }
-    if (subCategory.length > 0) {
-      result = result.filter(p => subCategory.includes(p.subCategory));
-    }
-    if (sortType === 'low-high') {
-      result.sort((a, b) => getLowestPrice(a) - getLowestPrice(b));
-    } else if (sortType === 'high-low') {
-      result.sort((a, b) => getLowestPrice(b) - getLowestPrice(a));
-    }
-    return result;
-  }, [products, searchQuery, searchFromURL, category, subCategory, sortType]);
+  // 1. Text Search Filter
+  if (finalSearch) {
+    result = result.filter(p => (p.name || '').toLowerCase().includes(finalSearch));
+  }
+  
+  // 2. Category Filter
+  if (category.length > 0) {
+    result = result.filter(p => category.includes(p.category));
+  }
+  
+  // 3. SubCategory Filter
+  if (subCategory.length > 0) {
+    result = result.filter(p => subCategory.includes(p.subCategory));
+  }
+  
+  // 4. BRAND FILTER (Safe Case Matching)
+  // Dono sides ko lowercase me badal kar compare kar rahe hain taaki case-matching automatic fail safe ho jaye
+  if (brandFromURL) {
+    result = result.filter(
+      p => (p.brand || '').toLowerCase() === brandFromURL.toLowerCase()
+    );
+  }
+
+  // 5. Sorting Logic
+  if (sortType === 'low-high') {
+    result.sort((a, b) => getLowestPrice(a) - getLowestPrice(b));
+  } else if (sortType === 'high-low') {
+    result.sort((a, b) => getLowestPrice(b) - getLowestPrice(a));
+  }
+  return result;
+}, [products, searchQuery, searchFromURL, category, subCategory, sortType, brandFromURL]);
 
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
