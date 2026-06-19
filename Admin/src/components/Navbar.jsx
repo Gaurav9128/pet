@@ -1,14 +1,15 @@
 import React from 'react';
-import { assets } from '../assets/assets';
 import { Link } from 'react-router-dom';
+// Import the logo directly from your assets folder
+import logo_2 from '../assets/logo_2.png'; 
 
 const Navbar = ({ setToken }) => {
   return (
     <div className='flex items-center py-2 px-[4%] justify-between'>
       
-      {/* Logo clickable */}
+      {/* Clickable Logo */}
       <Link to="/">
-        <img className='w-[max(10%,50px)]' src={assets.logo} alt="Logo" />
+        <img src={logo_2} alt="logo" className="logo w-32 md:w-35 cursor-pointer" />
       </Link>
 
       <button

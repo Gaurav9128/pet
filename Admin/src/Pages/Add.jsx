@@ -21,6 +21,9 @@ const validateImageResolution = (file) => {
 
 const Add = ({ token }) => {
 
+  /* ---------- LOADING STATE ---------- */
+  const [loading, setLoading] = useState(false)
+
   /* ---------- RATING ---------- */
   const [rating, setRating] = useState(4)
 
@@ -77,6 +80,12 @@ const Add = ({ token }) => {
     setPrice('')
   }
 
+  /* ---------- REMOVE SIZE ---------- */
+  // 1. Function to remove a size from the state array
+  const removeSize = (labelToRemove) => {
+    setSizes(prev => prev.filter(item => item.label !== labelToRemove))
+  }
+
   /* ---------- ADD DETAIL ---------- */
   const addDetail = () => {
     if (!detailLabel || !detailValue) {
@@ -94,6 +103,12 @@ const Add = ({ token }) => {
     setDetailValue('')
   }
 
+  /* ---------- REMOVE DETAIL ---------- */
+  // 2. Function to remove a detail from the state array
+  const removeDetail = (labelToRemove) => {
+    setDetails(prev => prev.filter(item => item.label !== labelToRemove))
+  }
+
   /* ---------- SUBMIT ---------- */
   const onSubmitHandler = async (e) => {
     e.preventDefault()
@@ -102,6 +117,8 @@ const Add = ({ token }) => {
       toast.error('Please add at least one size')
       return
     }
+
+    setLoading(true)
 
     try {
       const formData = new FormData()
@@ -113,7 +130,7 @@ const Add = ({ token }) => {
       formData.append('bestseller', bestseller)
       formData.append('rating', rating)
       formData.append('sizes', JSON.stringify(sizes))
-      formData.append('details', JSON.stringify(details)) // ✅ Send details
+      formData.append('details', JSON.stringify(details))
 
       images.forEach((img, i) => {
         if (img) formData.append(`image${i + 1}`, img)
@@ -128,7 +145,6 @@ const Add = ({ token }) => {
       if (res.data.success) {
         toast.success(res.data.message)
 
-        // Reset all fields
         setName('')
         setDescription('')
         setSizes([])
@@ -142,6 +158,8 @@ const Add = ({ token }) => {
     } catch (err) {
       console.log(err)
       toast.error('Something went wrong')
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -176,7 +194,7 @@ const Add = ({ token }) => {
 
                   } catch (err) {
                     toast.error(err)
-                    e.target.value = null // reset input
+                    e.target.value = null 
                   }
                 }}
               />
@@ -222,7 +240,7 @@ const Add = ({ token }) => {
 
       {/* ---------- CATEGORY ---------- */}
       <div className="flex flex-col sm:flex-row gap-4">
-        <select onChange={e => setCategory(e.target.value)} className="border px-3 py-2 rounded">
+        <select value={category} onChange={e => setCategory(e.target.value)} className="border px-3 py-2 rounded">
           <option value="cats">Cats</option>
           <option value="dogs">Dogs</option>
           <option value="small-pets">Small Pets</option>
@@ -233,7 +251,7 @@ const Add = ({ token }) => {
           <option value="brand">Brand</option>
         </select>
 
-        <select onChange={e => setSubCategory(e.target.value)} className="border px-3 py-2 rounded">
+        <select value={subCategory} onChange={e => setSubCategory(e.target.value)} className="border px-3 py-2 rounded">
           <option value="dry-food">Dry Food</option>
           <option value="wet-food">Wet Food</option>
           <option value="kitten-food">Kitten Food</option>
@@ -292,13 +310,22 @@ const Add = ({ token }) => {
 
         <div className="flex flex-wrap gap-2">
           {sizes.map((s, i) => (
-            <div key={i} className="bg-pink-100 px-3 py-2 rounded text-sm">
+            // 3. Made container relative and added right padding (pr-8) to make space for the close button
+            <div key={i} className="bg-pink-100 px-3 py-2 rounded text-sm relative pr-8 min-w-[120px]">
               <p className="font-semibold">{s.label}</p>
               <p>
                 ₹{s.price}{' '}
                 <span className="line-through text-gray-500">₹{s.mrp}</span>{' '}
                 <span className="text-green-600">({s.discount}% off)</span>
               </p>
+              <button
+                type="button"
+                onClick={() => removeSize(s.label)}
+                className="absolute top-1 right-2 text-red-500 hover:text-red-700 font-bold text-base cursor-pointer"
+                title="Remove size"
+              >
+                ✕
+              </button>
             </div>
           ))}
         </div>
@@ -331,9 +358,18 @@ const Add = ({ token }) => {
 
         <div className="flex flex-wrap gap-2">
           {details.map((d, i) => (
-            <div key={i} className="bg-blue-100 px-3 py-2 rounded text-sm">
+            // 4. Added absolute close button to the Product Details cards too
+            <div key={i} className="bg-blue-100 px-3 py-2 rounded text-sm relative pr-8 min-w-[120px]">
               <p className="font-semibold">{d.label}</p>
               <p>{d.value}</p>
+              <button
+                type="button"
+                onClick={() => removeDetail(d.label)}
+                className="absolute top-1 right-2 text-red-500 hover:text-red-700 font-bold text-base cursor-pointer"
+                title="Remove detail"
+              >
+                ✕
+              </button>
             </div>
           ))}
         </div>
@@ -345,8 +381,12 @@ const Add = ({ token }) => {
         Add to bestseller
       </label>
 
-      <button className="bg-black text-white py-3 rounded w-full sm:w-32">
-        ADD PRODUCT
+      {/* ---------- SUBMIT BUTTON ---------- */}
+      <button 
+        disabled={loading} 
+        className={`text-white py-3 rounded w-full sm:w-32 transition-all ${loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-black'}`}
+      >
+        {loading ? 'Adding...' : 'ADD PRODUCT'}
       </button>
 
     </form>
