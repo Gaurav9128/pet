@@ -48,6 +48,15 @@ const Add = ({ token }) => {
   const [detailLabel, setDetailLabel] = useState('')
   const [detailValue, setDetailValue] = useState('')
 
+  /* ---------- REMOVE IMAGE FUNCTION ---------- */
+  // Clears a specific image slot back to null if a mistake is made
+  const removeImage = (index, e) => {
+    e.preventDefault(); // Prevents clicking the label underneath
+    const copy = [...images]
+    copy[index] = null
+    setImages(copy)
+  }
+
   /* ---------- ADD SIZE ---------- */
   const addSize = () => {
     if (!sizeLabel || !mrp || !price) {
@@ -81,7 +90,6 @@ const Add = ({ token }) => {
   }
 
   /* ---------- REMOVE SIZE ---------- */
-  // 1. Function to remove a size from the state array
   const removeSize = (labelToRemove) => {
     setSizes(prev => prev.filter(item => item.label !== labelToRemove))
   }
@@ -104,7 +112,6 @@ const Add = ({ token }) => {
   }
 
   /* ---------- REMOVE DETAIL ---------- */
-  // 2. Function to remove a detail from the state array
   const removeDetail = (labelToRemove) => {
     setDetails(prev => prev.filter(item => item.label !== labelToRemove))
   }
@@ -171,34 +178,48 @@ const Add = ({ token }) => {
         <p className="mb-2 font-medium">Upload Images</p>
         <div className="flex gap-3 flex-wrap">
           {images.map((img, i) => (
-            <label key={i}>
-              <img
-                className="w-20 sm:w-24 border rounded cursor-pointer"
-                src={!img ? assets.upload_area : URL.createObjectURL(img)}
-                alt=""
-              />
-              <input
-                hidden
-                type="file"
-                accept="image/*"
-                onChange={async (e) => {
-                  const file = e.target.files[0]
-                  if (!file) return
+            <div key={i} className="relative group w-20 sm:w-24">
+              <label>
+                <img
+                  className="w-full border rounded cursor-pointer h-20 sm:h-24 object-cover"
+                  src={!img ? assets.upload_area : URL.createObjectURL(img)}
+                  alt=""
+                />
+                <input
+                  hidden
+                  type="file"
+                  accept="image/*"
+                  onChange={async (e) => {
+                    const file = e.target.files[0]
+                    if (!file) return
 
-                  try {
-                    await validateImageResolution(file)
+                    try {
+                      await validateImageResolution(file)
 
-                    const copy = [...images]
-                    copy[i] = file
-                    setImages(copy)
+                      const copy = [...images]
+                      copy[i] = file
+                      setImages(copy)
 
-                  } catch (err) {
-                    toast.error(err)
-                    e.target.value = null 
-                  }
-                }}
-              />
-            </label>
+                    } catch (err) {
+                      toast.error(err)
+                      e.target.value = null 
+                    }
+                  }}
+                />
+              </label>
+              
+              {/* Image Cross Button (Shows only if an image is uploaded) */}
+              {img && (
+                <button
+                  type="button"
+                  onClick={(e) => removeImage(i, e)}
+                  className="absolute -top-2 -right-2 bg-red-500 text-white w-5 h-5 rounded-full flex items-center justify-center font-bold text-xs shadow-md cursor-pointer hover:bg-red-700 transition-colors"
+                  title="Remove image"
+                >
+                  ✕
+                </button>
+              )}
+            </div>
           ))}
         </div>
       </div>
@@ -310,7 +331,6 @@ const Add = ({ token }) => {
 
         <div className="flex flex-wrap gap-2">
           {sizes.map((s, i) => (
-            // 3. Made container relative and added right padding (pr-8) to make space for the close button
             <div key={i} className="bg-pink-100 px-3 py-2 rounded text-sm relative pr-8 min-w-[120px]">
               <p className="font-semibold">{s.label}</p>
               <p>
@@ -358,7 +378,6 @@ const Add = ({ token }) => {
 
         <div className="flex flex-wrap gap-2">
           {details.map((d, i) => (
-            // 4. Added absolute close button to the Product Details cards too
             <div key={i} className="bg-blue-100 px-3 py-2 rounded text-sm relative pr-8 min-w-[120px]">
               <p className="font-semibold">{d.label}</p>
               <p>{d.value}</p>
