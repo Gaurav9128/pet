@@ -62,7 +62,7 @@ const ProductItem = ({
         <div className="flex items-center gap-1.5 text-[#5D1951] font-black tracking-tight">
           <span className="text-xl">🐾</span>
           <div className="flex flex-col leading-[0.85] text-[14px] uppercase tracking-wider font-black">
-            <span>Happy</span>
+            <span>Belim</span>
             <span>Tails</span>
           </div>
         </div>
