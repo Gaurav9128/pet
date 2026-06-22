@@ -1,5 +1,6 @@
 import React, { useContext, useState } from "react";
 import { Link } from "react-router-dom";
+import { Heart, ShoppingCart, Star } from "lucide-react";
 import { StoreContext } from "../context/StoreContext";
 
 const ProductItem = ({
@@ -11,163 +12,260 @@ const ProductItem = ({
   rating = 4.5,
 }) => {
   const { currency } = useContext(StoreContext);
-  const [selectedSize, setSelectedSize] = useState(sizes[0] || null);
+
+  const [selectedSize, setSelectedSize] = useState(
+    sizes.length ? sizes[0] : null
+  );
 
   const getPriceData = () => {
-    if (!sizes.length) return { price: 0, mrp: 0, discount: 0 };
+    if (!sizes.length)
+      return {
+        price: 0,
+        mrp: 0,
+        discount: 0,
+      };
+
     const activeSize = selectedSize || sizes[0];
+
     const price = Number(activeSize.price);
     const mrp = Number(activeSize.mrp);
-    const discount = mrp > price ? Math.round(((mrp - price) / mrp) * 100) : 0;
+
+    const discount =
+      mrp > price ? Math.round(((mrp - price) / mrp) * 100) : 0;
+
     return { price, mrp, discount };
   };
 
   const { price, mrp, discount } = getPriceData();
 
-  const renderStars = () => {
-    return Array.from({ length: 5 }, (_, i) => (
-      <span
-        key={i}
-        className={i < Math.floor(rating) ? "text-[#F1C40F] text-xl" : "text-gray-300 text-xl"}
-      >
-        ★
-      </span>
-    ));
-  };
-
-  // Fixed Variation logic: String split bypass algorithm to output direct labels accurately
-  const getWeightString = () => {
-    if (!sizes.length) return "";
-    
-    // Pure strings ko as-it-is extract karenge (Jaise: "85 GM", "85 X 12 GM")
-    const cleanLabels = sizes.map((s) => s.label.trim());
-    
-    if (cleanLabels.length === 1) return cleanLabels[0];
-    
-    const last = cleanLabels.pop();
-    return `${cleanLabels.join(", ")}, and ${last}`;
-  };
-
   return (
-    // Main Container wrapper with structural padding constraint match
-    <div className="bg-[#FCF9F4] rounded-[28px] border border-gray-200/60 shadow-sm hover:shadow-md transition-all duration-300 w-full max-w-[360px] p-5 pb-6 flex flex-col justify-between font-sans h-full">
-      
-      <div>
-        {/* PRODUCT IMAGE CONTAINER */}
-        <div className="bg-white rounded-[24px] h-[260px] flex flex-col items-center justify-start mb-4 relative border border-gray-100 p-4 shadow-sm">
-          
-          {/* BRAND BADGE */}
-          <div className="w-full flex items-center gap-2 mb-2 px-0.5">
-            <span className="text-[#5D1951] text-2xl leading-none">🐾</span>
-            <div className="flex flex-col leading-none">
-              <span className="text-[#5D1951] font-black text-sm tracking-tight">Belim</span>
-              <span className="text-[#5D1951] font-bold text-xs tracking-tight">Tails</span>
+    <div
+      className="
+        group
+        bg-[#FFFDF6]
+        
+        border border-amber-100/70
+        shadow-[0_8px_30px_rgba(0,0,0,0.02)]
+        hover:shadow-[0_16px_40px_rgba(93,25,81,0.08)]
+        transition-all duration-300
+        overflow-hidden
+        flex flex-col
+        h-full
+        w-full
+        max-w-[380px]
+        mx-auto
+        p-5            {/* Injected solid equal padding around the complete box */}
+      "
+    >
+      {/* 1. BRAND LOGO & WISHLIST ROW */}
+      <div className="flex justify-between items-center w-full mb-4 px-1">
+        <div className="flex items-center gap-1.5 text-[#5D1951] font-black tracking-tight">
+          <span className="text-xl">🐾</span>
+          <div className="flex flex-col leading-[0.85] text-[14px] uppercase tracking-wider font-black">
+            <span>Happy</span>
+            <span>Tails</span>
+          </div>
+        </div>
+      </div>
+
+      {/* 2. PRODUCT IMAGE AREA */}
+      <Link
+        to={`/product/${id}`}
+        className="
+          flex
+          justify-center
+          items-center
+          w-full
+          h-[250px]
+          bg-[#F9F7F1]
+          rounded-[24px]
+          p-4
+          overflow-hidden
+          border border-[#EFECE0]
+        "
+      >
+        <img
+          src={image?.[0]}
+          alt={name}
+          className="
+            max-h-[210px]
+            w-auto
+            object-contain
+            transition-all
+            duration-500
+            group-hover:scale-105
+          "
+          onError={(e) => {
+            e.target.src = "https://images.unsplash.com/photo-1589924691995-400dc9ecc119?q=80&w=500";
+          }}
+        />
+      </Link>
+
+      {/* 3. CONTENT BOUNDARY BLOCK (Handles perfect left/right symmetry gaps) */}
+      {/* CONTENT AREA: px-1 ko badal kar px-4 kiya hai taaki dono sides se perfect breathing gap mile */}
+      {/* CONTENT AREA: px-5 padding ke sath center alignment aur fixed width logic */}
+      {/* CONTENT AREA */}
+      <div className="w-full px-5 flex flex-col items-center text-center flex-1">
+        
+        {/* 1. PRODUCT TITLE SECTION */}
+        <Link to={`/product/${id}`} className="mt-4 block w-full">
+          <h3
+            className="
+              text-[20px]
+              font-bold
+              text-[#222222]
+              leading-[1.35]
+              tracking-tight
+              line-clamp-2
+              min-h-[54px]
+              hover:text-[#5D1951]
+              transition-colors
+              w-full
+              text-center
+            "
+          >
+            {name}
+          </h3>
+        </Link>
+&nbsp;
+        {/* 2. RATING SECTION (Title se perfect gap ke liye mt-3 kiya hai) */}
+        <div className="flex items-center justify-center gap-1.5 mt-4 w-full">
+          <div className="flex items-center">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <Star
+                key={i}
+                size={16}
+                fill={i < Math.floor(rating) ? "#FACC15" : "none"}
+                color={i < Math.floor(rating) ? "#FACC15" : "#D1D5DB"}
+              />
+            ))}
+          </div>
+          <span className="text-[13px] font-bold text-gray-400 mt-0.5">
+            ({rating}/5)
+          </span>
+        </div>
+        {/* 3. PRICING SECTION (Rating se badiya gap ke liye mt-4 kiya hai) */}
+        <div className="mt-4 flex items-baseline justify-center gap-2.5 flex-wrap w-full">
+          <span className="text-[34px] font-black text-[#222222] tracking-tight leading-none">
+            {currency || "₹"}{price}
+          </span>
+
+          {mrp > 0 && (
+            <span className="text-gray-400 text-[18px] line-through font-medium leading-none">
+              {currency || "₹"}{mrp}
+            </span>
+          )}
+
+          {discount > 0 && (
+            <span className="text-[16px] font-bold text-[#2E7D32] leading-none">
+              ({discount}% OFF)
+            </span>
+          )}
+        </div>
+&nbsp;
+        {/* 4. SELECT WEIGHT HEADING (Price se clear gap ke liye mt-6 kiya hai) */}
+        <p className="text-[13px] font-black text-[#222222] uppercase tracking-wider mt-6 mb-3 w-full text-center">
+          Select Weight:
+        </p>
+
+        {/* 5. STRUCTURED BUTTONS GRID */}
+        {sizes.length > 0 && (
+          <div className="w-full px-1">
+            <div className="grid grid-cols-3 gap-3 w-full justify-items-center">
+              {sizes.slice(0, 5).map((size, index) => {
+                const isSelected = selectedSize?.label === size.label;
+                const shortLabel = size.label.length > 8 ? size.label.split(" ")[0] : size.label;
+
+                return (
+                  <button
+                    key={index}
+                    onClick={() => setSelectedSize(size)}
+                    className={`
+                      w-full
+                      py-2.5 
+                      px-1
+                      text-center 
+                      font-black 
+                      text-[15px]
+                      rounded-full 
+                      border-[1.5px]
+                      transition-all 
+                      duration-150
+                      truncate
+                      ${isSelected
+                        ? "bg-[#5D1951] text-white border-[#5D1951] shadow-sm"
+                        : "bg-white text-[#222222] border-gray-300 hover:border-gray-500"
+                      }
+                    `}
+                    title={size.label}
+                  >
+                    {shortLabel}
+                  </button>
+                );
+              })}
+
+              {/* MORE OPTIONS CHIP */}
+              <Link to={`/product/${id}`} className="w-full">
+                <button className="w-full py-2.5 px-1 text-center font-black text-[15px] rounded-full border-[1.5px] border-gray-300 bg-white text-[#222222] hover:border-gray-500 transition-all duration-150 cursor-pointer">
+                  {"more..."}
+                </button>
+              </Link>
             </div>
           </div>
-
-          {/* PRODUCT IMAGE LINK */}
-          <Link
-            to={`/product/${id}`}
-            className="w-full flex-1 flex items-center justify-center min-h-0 mt-2"
-          >
-            <img
-              src={image?.[0]}
-              alt={name}
-              className="max-w-full max-h-[180px] object-contain transition-transform duration-300 hover:scale-105"
-            />
-          </Link>
-        </div>
-
-        {/* CONTENT DETAILS SECTION */}
-        <div className="flex flex-col text-left px-1">
-          
-          {/* PRODUCT TITLE */}
-          <h2 className="text-[22px] font-bold text-[#1A1A1A] leading-[1.25] tracking-tight mb-1.5 line-clamp-2 min-h-[55px]">
-            {name}
-          </h2>
-
-          {/* RATING SECTION */}
-          <div className="flex items-center gap-1 mb-2.5">
-            <div className="flex items-center leading-none">{renderStars()}</div>
-            <span className="text-gray-700 text-xs font-bold mt-0.5 pl-0.5">
-              ({rating}/5)
-            </span>
-          </div>
-
-          {/* PRICE DISPLAY */}
-          <div className="flex items-baseline gap-2 mb-4 flex-wrap">
-            <span className="text-[32px] font-black text-[#be2b2b] tracking-tight">
-              ₹{price}
-            </span>
-            <span className="text-gray-400 line-through text-xl font-medium pl-1">
-              ₹{mrp}
-            </span>
-            {discount > 0 && (
-              <span className="text-[#be2b2b] text-xl font-bold pl-1">
-                ({discount}% OFF)
-              </span>
-            )}
-          </div>
-
-          {/* WEIGHT SELECTION SYSTEM */}
-          <div className="mb-5">
-            <p className="text-base font-bold text-[#1A1A1A] mb-3">
-              Select Weight:
-            </p>
-
-            {/* Exact 3-Column Oval Capsule Grid Layout matching image spec */}
-            {/* Buttons ko bada rakhne aur flexible width dene ke liye flex-wrap layout */}
-<div className="flex flex-wrap gap-2.5">
-  {sizes.map((size, index) => {
-    const isSelected = selectedSize?.label === size.label;
-    return (
-      <button
-        key={index}
-        type="button"
-        onClick={() => setSelectedSize(size)}
-        // py-2.5 aur px-5 se button bada dikhega, aur rounded-[10px] se roundness kam ho jayegi
-        className={`py-2.5 px-5 text-center text-[15px] font-black tracking-wide rounded-[10px] border-2 transition-all duration-200 inline-block min-w-[90px]
-        ${
-          isSelected
-            ? "bg-white text-[#1A1A1A] border-[#1A1A1A] shadow-sm"
-            : "bg-white text-[#1A1A1A] border-gray-400/80 hover:bg-gray-50"
-        }`}
-      >
-        {size.label.toUpperCase()}
-      </button>
-    );
-  })}
-</div>
-
-            {/* Fixed String interpolation note layout */}
-            {sizes.length > 0 && (
-              <p className="text-xs font-medium text-gray-500 mt-3 leading-snug">
-                Weights available in variations of {getWeightString()}
-              </p>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* ACTION BUTTON */}
-      <div className="px-1">
-        {isAvailable ? (
-          <Link to={`/product/${id}`}>
-            <button className="w-full bg-[#be2b2b] hover:bg-[#be2b2b] text-white py-3.5 rounded-[12px] text-xl font-extrabold uppercase tracking-widest transition-all duration-200 active:scale-[0.99] flex items-center justify-center gap-2 shadow-sm">
-              BUY NOW
-              <span className="text-xl">🛒</span>
-            </button>
-          </Link>
-        ) : (
-          <button
-            disabled
-            className="w-full bg-gray-200 text-gray-400 py-3.5 rounded-[12px] text-base font-bold uppercase cursor-not-allowed"
-          >
-            OUT OF STOCK
-          </button>
         )}
-      </div>
+&nbsp;
+        {/* PUSHES THE BUY BUTTON RIGIDLY DOWN */}
+        <div className="flex-1" />
 
+        {/* 6. BUY NOW CTA BUTTON (Weight selector se neat spacing ke liye mt-5 kiya hai) */}
+        <div className="mt-5 mb-2 w-full">
+          {isAvailable ? (
+            <Link to={`/product/${id}`} className="block w-full">
+              <button
+                className="
+                  w-full
+                  bg-[#5D1951]
+                  hover:bg-[#461243]
+                  text-white
+                  py-4 
+                  rounded-[16px] 
+                  font-black
+                  text-[20px] 
+                  tracking-wider
+                  uppercase
+                  flex
+                  items-center
+                  justify-center 
+                  gap-2.5
+                  transition-colors
+                  duration-200
+                  shadow-sm
+                "
+              >
+                BUY NOW
+                <ShoppingCart size={22} fill="currentColor" />
+              </button>
+            </Link>
+          ) : (
+            <button
+              disabled
+              className="
+                w-full
+                py-4
+                rounded-[16px]
+                bg-gray-200
+                text-gray-400
+                font-black
+                text-[20px]
+                cursor-not-allowed
+              "
+            >
+              OUT OF STOCK
+            </button>
+          )}
+        </div>
+        &nbsp;
+      </div>
     </div>
   );
 };

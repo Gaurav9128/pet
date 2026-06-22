@@ -31,7 +31,7 @@ const BestSeller = () => {
 <br/>
       {/* PRODUCT GRID - Balanced spacing for rounded borders */}
       {/* PRODUCT GRID - Updated to show 4 columns on medium screens and up */}
-<div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 gap-y-6 sm:gap-6 sm:gap-y-10">
+<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 gap-y-4 sm:gap-4 sm:gap-y-8">
   {visibleProducts.map((item) => (
     <ProductItem
       key={item._id}
