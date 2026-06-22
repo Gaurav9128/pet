@@ -69,6 +69,8 @@ const ProductItem = ({
       </div>
 
       {/* 2. PRODUCT IMAGE AREA */}
+      {/* PRODUCT IMAGE AREA */}
+      {/* PRODUCT IMAGE AREA */}
       <Link
         to={`/product/${id}`}
         className="
@@ -76,10 +78,10 @@ const ProductItem = ({
           justify-center
           items-center
           w-full
-          h-[250px]
+          h-[290px]
           bg-[#F9F7F1]
           rounded-[24px]
-          p-4
+          p-2               {/* Minimum internal padding taaki image edges tak fail sake */}
           overflow-hidden
           border border-[#EFECE0]
         "
@@ -88,9 +90,9 @@ const ProductItem = ({
           src={image?.[0]}
           alt={name}
           className="
-            max-h-[210px]
-            w-auto
-            object-contain
+            max-h-[260px]
+            w-full            {/* w-auto se w-full kiya taaki horizontal width poori expand ho */}
+            object-contain    {/* object-contain ensure karega ki width badhne par bhi image distort na ho */}
             transition-all
             duration-500
             group-hover:scale-105
